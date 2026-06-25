@@ -9,7 +9,7 @@
 		type VehicleRequestSchema 
 	} from './schema.js';
 	import { zod } from 'sveltekit-superforms/adapters';
-	import { Car, User, CheckCircle2, FileText, Calculator, Shield } from "lucide-svelte";
+	import { Car, User, CheckCircle2, FileText, Calculator, Shield } from "@lucide/svelte";
 	import Button from "$lib/components/ui/button/button.svelte";
 	import { toast } from 'svelte-sonner';
 	import { server } from '$lib/siteConfig';

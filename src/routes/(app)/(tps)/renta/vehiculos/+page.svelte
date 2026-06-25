@@ -6,10 +6,10 @@
   import { Label } from '$lib/components/ui/label';
   import * as Select from '$lib/components/ui/select/index.js';
   import { Slider } from '$lib/components/ui/slider';
-  import { Shield, Users, Star, Search, Car } from 'lucide-svelte';
+  import { Shield, Users, Star, Search, Car } from '@lucide/svelte';
   import RangeCalendar from "$lib/components/ui/range-calendar/range-calendar.svelte";
   import * as Popover from "$lib/components/ui/popover/index.js";
-  import ChevronDownIcon from "lucide-svelte/icons/chevron-down";
+  import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
   import { getLocalTimeZone } from "@internationalized/date";
   import type { DateRange } from "bits-ui";
 

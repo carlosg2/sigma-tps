@@ -16,7 +16,7 @@
 	} from './schema.js';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import * as RadioGroup from "$lib/components/ui/radio-group/index.js";
-	import { Car, FileText, Settings, Wrench, Package, CheckCircle2, User, Phone, Mail, ChevronLeft, ChevronRight } from "lucide-svelte";
+	import { Car, FileText, Settings, Wrench, Package, CheckCircle2, User, Phone, Mail, ChevronLeft, ChevronRight } from "@lucide/svelte";
 	import Button from "$lib/components/ui/button/button.svelte";
 	import { Separator } from "$lib/components/ui/separator/index.js";
 	import Progress from "$lib/components/ui/progress/progress.svelte";

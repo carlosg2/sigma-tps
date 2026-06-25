@@ -29,7 +29,7 @@
     ArrowLeft,
     Check,
     AlertCircle
-  } from 'lucide-svelte';
+  } from '@lucide/svelte';
   import { type DateValue, DateFormatter, getLocalTimeZone, parseDate } from '@internationalized/date';
   import { cn } from '$lib/utils.js';
 

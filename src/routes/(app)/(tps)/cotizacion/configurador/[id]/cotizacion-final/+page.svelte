@@ -8,7 +8,7 @@
 	import { goto } from '$app/navigation';
 	import { toast } from "svelte-sonner";
 	import { server } from "$lib/siteConfig";
-	import { Check, X } from "lucide-svelte";
+	import { Check, X } from "@lucide/svelte";
 
 	interface CotizacionData {
 		solicitudId: string;

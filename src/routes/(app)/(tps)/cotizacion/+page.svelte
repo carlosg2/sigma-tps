@@ -8,7 +8,7 @@
 	import { Search, User, Phone, Mail, MapPin, Plus } from "@lucide/svelte";
 	import { server } from '$lib/siteConfig';
 	import { goto } from '$app/navigation';
-	import { Send } from "lucide-svelte";
+	import { Send } from "@lucide/svelte";
 
 	interface Cliente {
 		Cliente: string;

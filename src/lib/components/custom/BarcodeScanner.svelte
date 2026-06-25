@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
-    import { ScanLine, X, Camera, AlertCircle, Loader2 } from "lucide-svelte";
+    import { ScanLine, X, Camera, AlertCircle, Loader2 } from "@lucide/svelte";
     import { Button } from "$lib/components/ui/button";
     import { browser } from '$app/environment';
     import { cn } from "$lib/utils";

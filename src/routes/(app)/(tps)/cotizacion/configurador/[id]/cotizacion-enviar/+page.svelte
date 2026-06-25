@@ -32,7 +32,7 @@
 		Weight,
 		User,
 		Send
-	} from 'lucide-svelte';
+	} from '@lucide/svelte';
 
 	// Interfaces actualizadas siguiendo el patrón de renta/cotizacion
 	interface CotizacionData {

@@ -2,7 +2,7 @@
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
   import { Badge } from '$lib/components/ui/badge';
-  import { Shield, Car, Users, Clock, Star, ArrowRight } from 'lucide-svelte';
+  import { Shield, Car, Users, Clock, Star, ArrowRight } from '@lucide/svelte';
 </script>
 
 <svelte:head>

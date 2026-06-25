@@ -86,7 +86,7 @@ Los datos se cargan desde el endpoint:
 - `Input` - Campo de búsqueda
 - `DropdownMenu` - Menús de acciones y filtros
 - `Select` - Selector de filas por página
-- Iconos de `lucide-svelte`
+- Iconos de `@lucide/svelte`
 
 ## 🚀 Ejemplo de Uso
 

@@ -40,7 +40,7 @@ export const getAppById = (/** @type {string} */ appName) => {
   LayoutDashboard,
   Group,
   ListChecks
-} from 'lucide-svelte'; */
+} from '@lucide/svelte'; */
 
 
   import Lightbulb from "@lucide/svelte/icons/lightbulb";

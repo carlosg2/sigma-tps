@@ -4,7 +4,7 @@
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
   import { Badge } from '$lib/components/ui/badge';
   import { Separator } from '$lib/components/ui/separator';
-  import { Shield, Users, Fuel, Settings, Star, ArrowLeft, Calendar, Phone } from 'lucide-svelte';
+  import { Shield, Users, Fuel, Settings, Star, ArrowLeft, Calendar, Phone } from '@lucide/svelte';
 
   // Mock vehicle data (in real app, this would come from a data source)
   const vehicles = {

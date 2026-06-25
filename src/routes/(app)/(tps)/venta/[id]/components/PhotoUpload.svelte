@@ -9,7 +9,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
 	import { toast } from 'svelte-sonner';
-	import { Camera, X, Image } from 'lucide-svelte';
+	import { Camera, X, Image } from '@lucide/svelte';
 	import { Progress } from '$lib/components/ui/progress';
 
 	let { 

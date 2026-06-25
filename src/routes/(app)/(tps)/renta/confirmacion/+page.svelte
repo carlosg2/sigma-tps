@@ -29,7 +29,7 @@
     AlertCircle,
     CheckCircle,
     ArrowRight
-  } from 'lucide-svelte';
+  } from '@lucide/svelte';
 
   // Mock booking data (in real app, this would come from the booking process)
   let bookingData = $state({

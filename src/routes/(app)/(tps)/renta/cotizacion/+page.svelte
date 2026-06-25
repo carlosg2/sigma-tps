@@ -27,7 +27,7 @@
     CreditCard,
     AlertCircle,
     Star
-  } from 'lucide-svelte';
+  } from '@lucide/svelte';
 
   // Estado para los datos de la reserva
   let bookingData = $state(null);

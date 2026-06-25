@@ -28,7 +28,7 @@
     CreditCard,
     AlertCircle,
     Star
-  } from 'lucide-svelte';
+  } from '@lucide/svelte';
 
   // Recibir datos del load
   let { data } = $props();
