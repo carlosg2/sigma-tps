@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { qr } from '@svelte-put/qr/svg';
+  /* import { qr } from '@svelte-put/qr/svg'; */
   import { goto } from '$app/navigation';
   import { parseDate, getLocalTimeZone } from '@internationalized/date';
   import { server } from '$lib/siteConfig';
@@ -1379,13 +1379,13 @@
       <Alert>
         <CheckCircle class="h-4 w-4" />
         <AlertDescription>
-          <svg
+          <!-- <svg
             use:qr={{
               data: '129265',
               
               shape: 'circle',
             }}
-          />
+          /> -->
         </AlertDescription>
       </Alert>
       
