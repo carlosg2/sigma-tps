@@ -1,0 +1,23 @@
+<script lang="ts">
+	import Example from "../example.svelte";
+	import { ButtonGroup } from "$lib/components/ui/button-group/index.js";
+	import { Button } from "$lib/components/ui/button/index.js";
+	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+</script>
+
+<Example title="With Like">
+	<ButtonGroup>
+		<Button variant="outline">
+			<IconPlaceholder
+				lucide="HeartIcon"
+				tabler="IconBell"
+				hugeicons="Notification02Icon"
+				phosphor="HeartIcon"
+				remixicon="RiHeartLine"
+				data-icon="inline-start"
+			/>
+			Like
+		</Button>
+		<Button variant="outline" size="icon" class="w-12">1.2K</Button>
+	</ButtonGroup>
+</Example>

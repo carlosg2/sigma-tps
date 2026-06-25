@@ -1,0 +1,203 @@
+/*
+ * Full variable font overrides for OpenType feature support.
+ *
+ * The @fontsource-variable packages use Google Fonts' subsetted woff2 files which
+ * strip alternate glyphs (cv*, ss*, zero, smcp, salt, onum, etc.). Only a few
+ * features like frac survive in the subsets, so toggling the rest has no effect.
+ *
+ * These @font-face rules override the subset files with the full variable fonts
+ * (downloaded from the google/fonts GitHub repo, which are NOT subsetted). The
+ * matching family name + unicode-range makes these rules take priority over the
+ * fontsource subsets for the latin range.
+ *
+ * This file MUST be imported AFTER the @fontsource-variable imports in layout.css.
+ *
+ * IMPORTANT — font-stretch MUST be `normal` (not a width range like `75% 100%`).
+ * The fontsource subset faces declare `font-stretch: normal`; at the default
+ * stretch (100%) Chrome prefers an exact `normal` match over a face declaring a
+ * range that merely *contains* 100%, so a range here makes the override lose the
+ * cascade and the subset (without alt glyphs) renders instead. The `wdth` axis is
+ * still fully controllable via `font-variation-settings: 'wdth' N`.
+ *
+ * To add a font: download its full variable TTF from
+ * https://github.com/google/fonts, convert with `fonttools ttLib.woff2 compress`,
+ * place the woff2 in static/fonts/, and add an @font-face block here.
+ */
+
+/* Geist Variable — full (68KB, from the official `geist` npm package by Vercel).
+   The fontsource subset only ships tnum/pnum/frac; this adds case, dlig, subs,
+   sups, ordn and ss01–ss11. */
+@font-face {
+	font-family: "Geist Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 100 900;
+	src: url("/fonts/Geist.woff2") format("woff2-variations");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+		U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+		U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Inter Variable — full (344KB, from rsms.me). Adds the complete feature set:
+   cv01–cv14, ss01–ss08, tnum, pnum, dlig, case, zero, salt, frac, etc. */
+@font-face {
+	font-family: "Inter Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 100 900;
+	src: url("/fonts/InterVariable.woff2") format("woff2-variations");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+		U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+		U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* IBM Plex Sans Variable — full (224KB vs subset). Adds ss01–ss06, salt, zero,
+   onum, subs, sups, lnum, ordn, sinf. Note: IBM Plex Sans does NOT define cv* or
+   dlig, and uses tabular figures by default (tnum is a no-op). */
+@font-face {
+	font-family: "IBM Plex Sans Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 100 700;
+	font-stretch: normal;
+	src: url("/fonts/IBMPlexSans.woff2") format("woff2-variations");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+		U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+		U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Noto Sans Variable — full (869KB) */
+@font-face {
+	font-family: "Noto Sans Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 100 900;
+	font-stretch: normal;
+	src: url("/fonts/NotoSans.woff2") format("woff2-variations");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+		U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+		U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Roboto Variable — full (217KB) */
+@font-face {
+	font-family: "Roboto Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 100 900;
+	font-stretch: normal;
+	src: url("/fonts/Roboto.woff2") format("woff2-variations");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+		U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+		U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Raleway Variable — full (126KB) */
+@font-face {
+	font-family: "Raleway Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 100 900;
+	src: url("/fonts/Raleway.woff2") format("woff2-variations");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+		U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+		U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Space Grotesk Variable — full (48KB) */
+@font-face {
+	font-family: "Space Grotesk Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 300 700;
+	src: url("/fonts/SpaceGrotesk.woff2") format("woff2-variations");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+		U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+		U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Montserrat Variable — full (211KB) */
+@font-face {
+	font-family: "Montserrat Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 100 900;
+	src: url("/fonts/Montserrat.woff2") format("woff2-variations");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+		U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+		U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Source Sans 3 Variable — full (165KB) */
+@font-face {
+	font-family: "Source Sans 3 Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 200 900;
+	src: url("/fonts/SourceSans3.woff2") format("woff2-variations");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+		U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+		U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Instrument Sans Variable — full (87KB) */
+@font-face {
+	font-family: "Instrument Sans Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 400 700;
+	font-stretch: normal;
+	src: url("/fonts/InstrumentSans.woff2") format("woff2-variations");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+		U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+		U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* JetBrains Mono Variable — full (70KB) */
+@font-face {
+	font-family: "JetBrains Mono Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 100 800;
+	src: url("/fonts/JetBrainsMono.woff2") format("woff2-variations");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+		U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+		U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Noto Serif Variable — full (784KB) */
+@font-face {
+	font-family: "Noto Serif Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 100 900;
+	src: url("/fonts/NotoSerif.woff2") format("woff2-variations");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+		U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+		U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Merriweather Variable — full (2.4MB) */
+@font-face {
+	font-family: "Merriweather Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 300 900;
+	font-stretch: normal;
+	src: url("/fonts/Merriweather.woff2") format("woff2-variations");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+		U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+		U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Playfair Display Variable — full (104KB) */
+@font-face {
+	font-family: "Playfair Display Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 400 900;
+	src: url("/fonts/PlayfairDisplay.woff2") format("woff2-variations");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+		U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+		U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}

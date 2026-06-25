@@ -1,0 +1,27 @@
+<script lang="ts">
+	import { cn, type WithElementRef } from "$lib/utils.js";
+	import type { HTMLAttributes } from "svelte/elements";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		sticky = false,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLTableSectionElement>> & {
+		sticky?: boolean;
+	} = $props();
+</script>
+
+<thead
+	bind:this={ref}
+	data-slot="table-header"
+	class={cn(
+		"[&_tr]:border-y",
+		sticky && "sticky top-0 z-10 bg-background border-b border-border",
+		className
+	)}
+	{...restProps}
+>
+	{@render children?.()}
+</thead>
