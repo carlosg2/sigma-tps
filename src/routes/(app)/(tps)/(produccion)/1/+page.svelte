@@ -1,6 +1,6 @@
 <script lang="ts">
 	import data from "./data.js";
-	import SectionCards from "$lib/components/section-cards.svelte";
+	import SectionCards from "./components/section-cards.svelte";
 	import ChartAreaInteractive from "./components/chart-area-interactive.svelte";
 	import DataTable from "./components/data-table.svelte";
 

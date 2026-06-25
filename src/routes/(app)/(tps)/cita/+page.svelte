@@ -7,7 +7,7 @@
 	import { Separator } from "$lib/components/ui/separator";
 	import { Search, Car, User, Phone, Mail, Calendar, Palette, Wrench, Clock, MapPin, DollarSign, CheckCircle2, AlertCircle, Settings, Plus, SearchCheck } from "@lucide/svelte";
 	import { server } from '$lib/siteConfig';
-	import { Icon } from "lucide-svelte";
+	import { Icon } from "@lucide/svelte";
 
 	interface Proyecto {
 		Folio: string;

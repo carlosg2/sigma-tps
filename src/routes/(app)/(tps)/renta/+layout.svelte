@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { Button } from '$lib/components/ui/button';
-  import { Shield, Car, Phone, Menu } from 'lucide-svelte';
+  import { Shield, Car, Phone, Menu } from '@lucide/svelte';
   interface Props {
     children?: import('svelte').Snippet;
   }
