@@ -269,6 +269,16 @@
 	--sg-scrollbar-thumb-radius:    4px;
 }
 
+/* Cell grid lines — SvGrid ships no borders by default; add them via the stable
+   table[role='grid'] selector (no Svelte scope hash needed).
+   border-bottom + border-right only (not top/left) avoids double-borders with
+   border-collapse:separate + border-spacing:0. */
+table[role='grid'] td,
+table[role='grid'] th {
+	border-bottom: 1px solid var(--sg-border);
+	border-right:  1px solid var(--sg-border);
+}
+
 /* html.dark tiene especificidad 0-1-1 (elemento + clase), mayor que :root y .dark (0-1-0),
    garantizando que estos tokens ganen sin importar el orden de los bloques .dark de shadcn. */
 html.dark {

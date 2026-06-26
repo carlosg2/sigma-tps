@@ -23,7 +23,7 @@
   import { Button } from '$lib/components/ui/button/index.js'
   import { Progress } from '$lib/components/ui/progress/index.js'
   import { Separator } from '$lib/components/ui/separator/index.js'
-  import AppSidebar from '../(previo)/(demos)/dashboard-01/components/app-sidebar.svelte'
+  import AppSidebar from '../dashboard-01/components/app-sidebar.svelte'
   import TrendingUpIcon from '@tabler/icons-svelte/icons/trending-up'
   import IconPlaceholder from '$lib/components/custom/icon-placeholder/icon-placeholder.svelte'
 
