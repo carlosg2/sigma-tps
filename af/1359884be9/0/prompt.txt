@@ -1,0 +1,93 @@
+cuando doy barra espaciadora, toda la fila se pone gris y es imposible leerla, que esta haciendo? la esta seleccionando? 
+
+investiga como podemos mejorar usando el sv-grid mcp
+
+---
+
+no, lo sigo viendo en fondo gris imposible de leer bien en dark mode al hacer seleccion con barra espaciadora
+
+---
+
+reference:  ---
+title: Using SvGrid with shadcn-svelte
+description: Make SvGrid match your shadcn-svelte design by mapping its --sg-* tokens to shadcn's CSS variables, so the grid blends into the rest of your UI.
+date: 2026-06-13
+category: Integration
+tags: shadcn-svelte, theming, design system, integration, svelte data grid
+author: Boyko Markov
+---
+
+shadcn-svelte styles everything through a tidy set of CSS variables, `--background`, `--foreground`, `--border`, `--primary`. SvGrid is themed through `--sg-*` variables. Wire one set to the other and the grid stops looking like a guest and starts looking like part of your shadcn UI.
+
+![SvGrid themed to match a design system.](/blog-media/theme-integrations.png)
+*SvGrid themed to match a design system.*
+
+## Bridge the tokens
+
+shadcn-svelte defines its palette on `:root` and `.dark`. Map SvGrid's tokens to those same variables:
+
+```css
+.app-grid {
+  --sg-bg:         hsl(var(--background));
+  --sg-fg:         hsl(var(--foreground));
+  --sg-border:     hsl(var(--border));
+  --sg-header-bg:  hsl(var(--muted));
+  --sg-row-alt-bg: hsl(var(--muted) / 0.4);
+  --sg-accent:     hsl(var(--primary));
+}
+```
+
+Because shadcn already defines light and dark values for these variables, the grid gets dark mode for free, flip shadcn's `.dark` class and SvGrid follows.
+
+## Use shadcn components in cells
+
+For custom cells, render shadcn-svelte components inside a snippet so actions match the rest of your app:
+
+```svelte
+{#snippet RowActions(p: { row: Row })}
+  <Button variant="ghost" size="sm" onclick={() => edit(p.row)}>Edit</Button>
+{/snippet}
+// column: { id: 'actions', header: '', cell: (c) => renderSnippet(RowActions, { row: c.row.original }) }
+```
+
+Keep these accessible, shadcn's `Button` renders a real `<button>`, so keyboard and screen-reader support carry over. See [custom cell renderers](custom-cell-renderers-with-snippets).
+
+## Toolbar consistency
+
+Build the grid's toolbar (search input, filter dropdowns, view toggles) from shadcn components, and let SvGrid own the grid body. The result reads as one cohesive design system.
+
+## Frequently asked questions
+
+### How do I make SvGrid match shadcn-svelte?
+
+Map SvGrid's `--sg-*` variables to shadcn's tokens (for example `--sg-bg: hsl(var(--background))`, `--sg-accent: hsl(var(--primary))`). The grid then inherits shadcn's palette and dark mode automatically.
+
+### Can I use shadcn-svelte components inside grid cells?
+
+Yes. Render them in a Svelte snippet via `renderSnippet`. shadcn components use real interactive elements, so accessibility carries over, and the cells match the rest of your UI.
+
+---
+
+1 solo faltan los scroll-bars no se ven bien (inspirate en scroll-area)
+
+ 2 corregir la linea blanca que se ve en la parte de abajo de la tabla.
+
+---
+
+sigo viendo la linea blanca abajo. porque?
+
+---
+
+no se sigue viendo la inea blanca, analiza e inspecciona mejor
+
+---
+
+aun logo viendo la linea blanca, no haz corregido nada. analiza mejor, se ve abajo del scroll-bar horizontal la linea blanca que no queremos.
+
+---
+
+la cambie a transparente, pero no m egusta, podrias quitar totalmente ese borde?
+
+---
+
+quedo muy sucio toda esta seccion, limpiala y haz mas consisos los cambios y comentarios
