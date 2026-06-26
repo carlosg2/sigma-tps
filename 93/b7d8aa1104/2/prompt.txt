@@ -1,0 +1,52 @@
+# ENOENT: no such file or directory, stat '/Users/carlosgarzagarza/Documents/GitHub/sigma-tps/.svelte-kit/types/src/routes/proxy+layout.server.ts'
+
+---
+
+quita los demas, solo ocupamos este sp:
+
+[12:30 p.m., 24/6/2026] Daniel Roldan: 📌 Store: spWebArtMaterialLista
+
+🔹 Parámetro de entrada  
+👤 @WebUsuario: usuario web que ejecuta la consulta.  
+Nota: en esta versión se recibe, pero no se usa en filtros ni validaciones.
+
+🔹 Qué regresa  
+📦 Articulo: clave del artículo padre  
+📝 ArticuloDesc: descripción del artículo padre  
+🔩 Material: clave del componente  
+🧾 MaterialDesc: descripción del componente  
+🔢 Cantidad: cantidad requerida  
+📏 Unidad: unidad de medida  
+🏬 Almacen: almacén de surtido  
+🪜 Nivel: nivel dentro de la estructura  
+📍 Linea: renglón de la lista  
+🎨 Estilo: estilo o variante  
+🗂️ GrupoMayor: grupo principal del material  
+🏭 Sitio: planta o sitio  
+📄 TipoDeLinea: tipo de registro  
+🧩 ConjuntoConf: conjunto o configuración  
+🏷️ Categoria: categoría del material  
+⚙️ NoOper: número de operación
+
+🔹 Filtros que aplica  
+✅ Solo artículos con Estatus = ALTA  
+🛡️ Solo artículos padre con Grupo = BLIND
+
+Si quieres, te lo dejo en una versión todavía más ejecutiva de 5 líneas para reenviar directo.
+[12:31 p.m., 24/6/2026] Daniel Roldan: EXEC spWebArtMaterialLista       
+                     @WebUsuario  
+
+
+--- usa este server
+{ sever: 'TPS',
+    api: 'https://api.maserp.mx/api/TPS/' },
+
+    muestra la info en +page.svelte
+
+---
+
+hay un campo nuevo que se llama GrupoDesc, agregalo
+
+---
+
+refactoriza para que use este grid con todas sus carecteristicas bien implementadas
