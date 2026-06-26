@@ -5,7 +5,7 @@
 	import * as Item from "$lib/components/ui/item/index.js";
 	import * as Avatar from "$lib/components/ui/avatar/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 </script>
 
 <Example title="Account Menu">

@@ -9,7 +9,7 @@
 
 <script lang="ts">
 	import { NavigationMenu as NavigationMenuPrimitive } from "bits-ui";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 	let {
 		ref = $bindable(null),
 		class: className,

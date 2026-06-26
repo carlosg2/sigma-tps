@@ -196,12 +196,12 @@
     <div 
         bind:this={cameraOverlayEl} 
         class={cn(
-            "fixed inset-0 z-[100] bg-background/95 backdrop-blur-sm transition-all duration-300",
+            "fixed inset-0 z-100 bg-background/95 backdrop-blur-sm transition-all duration-300",
             isOverlayVisible ? "opacity-100 visible" : "opacity-0 invisible"
         )}
     >
         <!-- Header con controles -->
-        <div class="absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-4 bg-gradient-to-b from-black/80 to-transparent">
+        <div class="absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-4 bg-linear-to-b from-black/80 to-transparent">
             <div class="flex items-center gap-3">
                 <div class="flex items-center gap-2 text-white">
                     <Camera class="size-5" />
@@ -251,7 +251,7 @@
                         <!-- Línea de escaneo animada - escalable -->
                         <div class="absolute inset-x-2 sm:inset-x-4 md:inset-x-6 top-1/2 h-0.5 opacity-80">
                             <!-- <div class="absolute inset-0 bg-primary animate-pulse"></div> -->
-                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent animate-ping"></div>
+                            <div class="absolute inset-0 bg-linear-to-r from-transparent via-white to-transparent animate-ping"></div>
                         </div>
                         
                         <!-- Indicadores laterales - escalables -->
@@ -263,7 +263,7 @@
         </div>
 
         <!-- Footer con estado y controles -->
-        <div class="absolute bottom-0 left-0 right-0 z-10 p-6 bg-gradient-to-t from-black/80 to-transparent">
+        <div class="absolute bottom-0 left-0 right-0 z-10 p-6 bg-linear-to-t from-black/80 to-transparent">
             <div class="flex flex-col items-center gap-4">
                 <!-- Estado del escáner -->
                 <div class="flex items-center gap-2 text-white/90">

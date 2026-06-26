@@ -2,7 +2,7 @@
 	import Example from "../example.svelte";
 	import * as Item from "$lib/components/ui/item/index.js";
 	import { Progress } from "$lib/components/ui/progress/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 
 	const files = [
 		{

@@ -7,7 +7,7 @@
 	import * as Popover from "$lib/components/ui/popover/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { Separator } from "$lib/components/ui/separator/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 	import { AreaChart } from "layerchart";
 	import { curveNatural } from "d3-shape";
 	import { scaleBand } from "d3-scale";
@@ -95,7 +95,7 @@
 							</Button>
 						{/snippet}
 					</Popover.Trigger>
-					<Popover.Content class="w-[var(--bits-popover-anchor-width)] p-0" align="start">
+					<Popover.Content class="w-(--bits-popover-anchor-width) p-0" align="start">
 						<Command.Root>
 							<Command.Input placeholder="Search ticker..." />
 							<Command.List>
@@ -120,7 +120,7 @@
 			</Field.Field>
 		</Field.Group>
 		<Separator />
-		<Chart.Container config={chartConfig} class="h-[200px] w-full">
+		<Chart.Container config={chartConfig} class="h-50 w-full">
 			{#if mounted}
 				<AreaChart
 					{data}

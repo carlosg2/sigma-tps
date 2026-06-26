@@ -12,7 +12,7 @@
 	import { Textarea } from "$lib/components/ui/textarea/index.js";
 	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 	import { Kbd } from "$lib/components/ui/kbd/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 
 	const spokenLanguages = [
 		{ label: "Auto", value: "auto" },

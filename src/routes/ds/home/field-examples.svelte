@@ -8,7 +8,7 @@
 	import { Slider } from "$lib/components/ui/slider/index.js";
 	import * as RadioGroup from "$lib/components/ui/radio-group/index.js";
 	import * as ButtonGroup from "$lib/components/ui/button-group/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 
 	let gpuCount = $state(8);
 	let value = $state([200, 800]);

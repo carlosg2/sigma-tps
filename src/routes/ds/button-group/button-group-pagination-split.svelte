@@ -2,7 +2,7 @@
 	import Example from "../example.svelte";
 	import { ButtonGroup } from "$lib/components/ui/button-group/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 </script>
 
 <Example title="Pagination Split">

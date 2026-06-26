@@ -4,7 +4,7 @@
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import * as Item from "$lib/components/ui/item/index.js";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 	import { buttonVariants } from "$lib/components/ui/button/button.svelte";
 	import { cn } from "$lib/utils.js";
 

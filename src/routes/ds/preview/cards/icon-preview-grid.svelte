@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Card from "$lib/components/ui/card/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 	// Icon registry seeds — parsed by scripts/build-icons.ts to generate registry files.
 	// lucide="CopyIcon" lucide="CircleAlertIcon" lucide="TrashIcon" lucide="ShareIcon" lucide="ShoppingBagIcon" lucide="MoreHorizontalIcon" lucide="Loader2Icon" lucide="ArrowLeftIcon" lucide="ArrowRightIcon" lucide="SearchIcon" lucide="SettingsIcon"
 	// tabler="IconCopy" tabler="IconExclamationCircle" tabler="IconTrash" tabler="IconShare" tabler="IconShoppingBag" tabler="IconDots" tabler="IconLoader" tabler="IconPlus" tabler="IconMinus" tabler="IconArrowLeft" tabler="IconArrowRight" tabler="IconCheck" tabler="IconChevronDown" tabler="IconChevronRight" tabler="IconSearch" tabler="IconSettings"

@@ -5,7 +5,7 @@
 	import * as Popover from "$lib/components/ui/popover/index.js";
 	import * as InputGroup from "$lib/components/ui/input-group/index.js";
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 	import { DateFormatter, getLocalTimeZone } from "@internationalized/date";
 	import { SvelteSet } from "svelte/reactivity";
 	import type { DateRange } from "bits-ui";

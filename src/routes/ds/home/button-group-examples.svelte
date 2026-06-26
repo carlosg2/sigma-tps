@@ -5,7 +5,7 @@
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import * as Popover from "$lib/components/ui/popover/index.js";
 	import { Textarea } from "$lib/components/ui/textarea/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 
 	let label = $state("personal");
 </script>

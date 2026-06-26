@@ -4,7 +4,7 @@
 	import * as InputGroup from "$lib/components/ui/input-group/index.js";
 	import * as Item from "$lib/components/ui/item/index.js";
 	import * as ToggleGroup from "$lib/components/ui/toggle-group/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 
 	const HOLDINGS = [
 		{

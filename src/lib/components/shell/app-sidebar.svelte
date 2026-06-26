@@ -382,6 +382,7 @@
 <Sidebar.Root {collapsible} {...restProps}>
   <Sidebar.Header>
 		<TeamSwitcher teams={data.teams} />
+		
     <!-- <Sidebar.Menu>
       <Sidebar.MenuItem>
         <Sidebar.MenuButton class="data-[slot=sidebar-menu-button]:!p-1.5">
@@ -400,7 +401,9 @@
 		<NavColapsable items={data.navMain} />
     <!-- <NavDocuments items={datax.documents} /> -->
 		<!-- <NavProjects projects={data.projects} /> -->
-    <NavSecondary items={datax.navSecondary} class="mt-auto" />
+    
+		<NavSecondary items={datax.navSecondary} class="mt-auto" />
+		
   </Sidebar.Content>
   <Sidebar.Footer>
     <NavUser user={data.user} />

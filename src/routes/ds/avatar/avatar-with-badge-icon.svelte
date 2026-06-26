@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Example from "../example.svelte";
 	import * as Avatar from "$lib/components/ui/avatar/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 </script>
 
 <Example title="Badge with Icon">

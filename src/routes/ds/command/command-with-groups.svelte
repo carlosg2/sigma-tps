@@ -2,7 +2,7 @@
 	import Example from "../example.svelte";
 	import { Button } from "$lib/components/ui/button/index.js";
 	import * as Command from "$lib/components/ui/command/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 
 	let open = $state(false);
 </script>

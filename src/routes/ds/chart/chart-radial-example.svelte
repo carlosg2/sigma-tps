@@ -3,7 +3,7 @@
 	import * as Card from "$lib/components/ui/card/index.js";
 	import * as Chart from "$lib/components/ui/chart/index.js";
 	import { ArcChart, Text } from "layerchart";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 
 	const radialChartData = [{ browser: "safari", visitors: 1260, fill: "var(--color-safari)" }];
 

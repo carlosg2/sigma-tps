@@ -5,7 +5,7 @@
 	import * as InputGroup from "$lib/components/ui/input-group/index.js";
 	import * as Select from "$lib/components/ui/select/index.js";
 	import { Separator } from "$lib/components/ui/separator/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 
 	const roles = [
 		{ value: "admin", label: "Admin" },

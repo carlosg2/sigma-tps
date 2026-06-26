@@ -3,7 +3,7 @@
 	import * as Card from "$lib/components/ui/card/index.js";
 	import * as Item from "$lib/components/ui/item/index.js";
 	import { Label } from "$lib/components/ui/label/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 
 	let fileInput: HTMLInputElement | undefined = $state();
 

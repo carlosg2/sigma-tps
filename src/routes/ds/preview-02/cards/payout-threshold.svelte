@@ -5,7 +5,7 @@
 	import * as Select from "$lib/components/ui/select/index.js";
 	import { Slider } from "$lib/components/ui/slider/index.js";
 	import { Textarea } from "$lib/components/ui/textarea/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 
 	const CURRENCIES = [
 		{ label: "MXN — Pesos mexicanos", value: "mxn" },

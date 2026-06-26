@@ -9,7 +9,7 @@
 	import { Alert, AlertDescription } from "$lib/components/ui/alert/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
 	import * as Item from "$lib/components/ui/item/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 	import { cn } from "$lib/utils.js";
 
 	const categories = [

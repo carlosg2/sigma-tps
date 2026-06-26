@@ -5,7 +5,7 @@
 	import { curveMonotoneX } from "d3-shape";
 	import * as Chart from "$lib/components/ui/chart/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 
 	const lineChartData = [
 		{ month: "January", desktop: 186, mobile: 80 },

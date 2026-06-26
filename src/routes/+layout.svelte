@@ -6,7 +6,7 @@
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { DesignSystemProvider } from '$lib/ds/index.js';
-	import { Customizer } from '$lib/components/customizer/index.js';
+	import { Customizer } from '$lib/components/custom/customizer/index.js';
 
 	let { children, data } = $props();
 

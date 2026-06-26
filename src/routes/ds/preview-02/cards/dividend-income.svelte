@@ -5,7 +5,7 @@
 	import * as Item from "$lib/components/ui/item/index.js";
 	import { scaleBand } from "d3-scale";
 	import { BarChart } from "layerchart";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 
 	const HOLDINGS = [
 		{

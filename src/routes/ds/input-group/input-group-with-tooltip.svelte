@@ -6,7 +6,7 @@
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import * as Popover from "$lib/components/ui/popover/index.js";
 	import * as ButtonGroup from "$lib/components/ui/button-group/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 
 	let country = $state("+1");
 </script>

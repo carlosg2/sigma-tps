@@ -3,11 +3,11 @@
 	import * as Empty from "$lib/components/ui/empty/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { Spinner } from "$lib/components/ui/spinner/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 </script>
 
 <Example title="In Empty State" containerClass="lg:col-span-full">
-	<Empty.Root class="min-h-[300px]">
+	<Empty.Root class="min-h-75">
 		<Empty.Header>
 			<Empty.Media variant="icon">
 				<Spinner />

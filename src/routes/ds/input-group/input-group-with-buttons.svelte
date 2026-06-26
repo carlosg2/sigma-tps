@@ -2,7 +2,7 @@
 	import Example from "../example.svelte";
 	import * as InputGroup from "$lib/components/ui/input-group/index.js";
 	import * as Field from "$lib/components/ui/field/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 </script>
 
 <Example title="With Buttons">

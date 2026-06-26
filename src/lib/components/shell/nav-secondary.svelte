@@ -14,6 +14,7 @@
 
 <Sidebar.Group {...restProps}>
 	<Sidebar.GroupContent>
+	
 		<Sidebar.Menu>
 			{#each items as item (item.title)}
 				<Sidebar.MenuItem>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Example from "../example.svelte";
 	import * as Menubar from "$lib/components/ui/menubar/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 </script>
 
 <Example title="Format">

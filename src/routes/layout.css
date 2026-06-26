@@ -224,17 +224,131 @@
    no need for a separate .dark block here.
    ──────────────────────────────────────────────────────────────────────────── */
 :root {
-	--sg-bg:            var(--card);
-	--sg-fg:            var(--card-foreground);
-	--sg-muted:         var(--muted-foreground);
-	--sg-border:        var(--border);
-	--sg-header-bg:     var(--muted);
-	--sg-header-fg:     var(--foreground);
-	--sg-row-alt-bg:    transparent;
-	--sg-row-hover-bg:  var(--accent);
-	--sg-selection-bg:  color-mix(in oklch, var(--primary) 12%, transparent);
-	--sg-accent:        var(--primary);
-	--sg-focus-ring:    var(--ring);
-	--sg-input-bg:      var(--background);
-	--sg-input-border:  var(--input);
+	--sg-bg:               var(--card);
+	--sg-fg:               var(--card-foreground);
+	--sg-muted:            var(--muted-foreground);
+	--sg-border:           var(--border);
+	--sg-header-bg:        var(--muted);
+	--sg-header-fg:        var(--foreground);
+	--sg-row-alt-bg:       transparent;
+	--sg-row-hover-bg:     var(--accent);
+	--sg-selection-bg:     color-mix(in oklch, var(--primary) 12%, transparent);
+	--sg-accent:           var(--primary);
+	--sg-focus-ring:       var(--ring);
+	--sg-input-bg:         var(--background);
+	--sg-input-border:     var(--input);
+	/* Pinned columns */
+	--sg-pinned-bg:        color-mix(in oklch, var(--primary) 4%, var(--card));
+	--sg-pinned-border:    color-mix(in oklch, var(--primary) 30%, var(--border));
+	--sg-pinned-divider:   color-mix(in oklch, var(--primary) 20%, var(--border));
+	--sg-pinned-header-bg: color-mix(in oklch, var(--primary) 8%, var(--muted));
+	--sg-pinned-row-h:     44px;
+	--sg-pinned-top-h:     44px;
+	/* Header & layout */
+	--sg-thead-h:          38px;
+	--sg-radius:           var(--radius-sm);
+	/* Note corner indicator */
+	--sg-note-corner:      oklch(0.769 0.188 70.08);
+	/* Rating stars */
+	--sg-rating-empty:     var(--muted-foreground);
+	--sg-rating-hover:     oklch(0.769 0.188 70.08);
+	--sg-rating-on:        oklch(0.769 0.188 70.08);
+	/* Scrollbar — track matches cell background so it doesn't create a visible
+	   "line" at the bottom; thumb/arrows remain visible via border/muted-fg tokens */
+	--sg-scrollbar-bg:              var(--card);
+	--sg-scrollbar-border:          color-mix(in oklch, var(--border) 40%, transparent);
+	--sg-scrollbar-arrow:           var(--muted-foreground);
+	--sg-scrollbar-arrow-hover-bg:  var(--accent);
+	--sg-scrollbar-arrow-hover:     var(--accent-foreground);
+	--sg-scrollbar-arrow-active-bg: var(--primary);
+	--sg-scrollbar-arrow-active:    var(--primary-foreground);
+	--sg-scrollbar-arrow-disabled:  var(--border);
+	--sg-scrollbar-thumb:           var(--border);
+	--sg-scrollbar-thumb-hover:     var(--muted-foreground);
+	--sg-scrollbar-thumb-active:    var(--foreground);
+	--sg-scrollbar-thumb-radius:    4px;
 }
+
+/* html.dark tiene especificidad 0-1-1 (elemento + clase), mayor que :root y .dark (0-1-0),
+   garantizando que estos tokens ganen sin importar el orden de los bloques .dark de shadcn. */
+html.dark {
+	--sg-bg:               var(--card);
+	--sg-fg:               var(--card-foreground);
+	--sg-muted:            var(--muted-foreground);
+	--sg-border:           var(--border);
+	--sg-header-bg:        var(--muted);
+	--sg-header-fg:        var(--foreground);
+	--sg-row-alt-bg:       transparent;
+	--sg-row-hover-bg:     var(--accent);
+	--sg-selection-bg:     color-mix(in oklch, var(--primary) 12%, transparent);
+	--sg-accent:           var(--primary);
+	--sg-focus-ring:       var(--ring);
+	--sg-input-bg:         var(--background);
+	--sg-input-border:     var(--input);
+	/* Pinned columns */
+	--sg-pinned-bg:        color-mix(in oklch, var(--primary) 4%, var(--card));
+	--sg-pinned-border:    color-mix(in oklch, var(--primary) 30%, var(--border));
+	--sg-pinned-divider:   color-mix(in oklch, var(--primary) 20%, var(--border));
+	--sg-pinned-header-bg: color-mix(in oklch, var(--primary) 8%, var(--muted));
+	--sg-pinned-row-h:     44px;
+	--sg-pinned-top-h:     44px;
+	/* Header & layout */
+	--sg-thead-h:          38px;
+	--sg-radius:           var(--radius-sm);
+	/* Note corner indicator */
+	--sg-note-corner:      oklch(0.769 0.188 70.08);
+	/* Rating stars */
+	--sg-rating-empty:     var(--muted-foreground);
+	--sg-rating-hover:     oklch(0.769 0.188 70.08);
+	--sg-rating-on:        oklch(0.769 0.188 70.08);
+	/* Scrollbar — dark mode: track = card para que no contraste con las celdas */
+	--sg-scrollbar-bg:              var(--card);
+	--sg-scrollbar-border:          color-mix(in oklch, var(--border) 40%, transparent);
+	--sg-scrollbar-arrow:           var(--muted-foreground);
+	--sg-scrollbar-arrow-hover-bg:  var(--accent);
+	--sg-scrollbar-arrow-hover:     var(--accent-foreground);
+	--sg-scrollbar-arrow-active-bg: var(--primary);
+	--sg-scrollbar-arrow-active:    var(--primary-foreground);
+	--sg-scrollbar-arrow-disabled:  var(--border);
+	--sg-scrollbar-thumb:           var(--border);
+	--sg-scrollbar-thumb-hover:     var(--muted-foreground);
+	--sg-scrollbar-thumb-active:    var(--foreground);
+	--sg-scrollbar-thumb-radius:    4px;
+	color-scheme: dark;
+}
+
+/* ── SvGrid hardcode overrides ───────────────────────────────────────────────
+   SvGrid ships light-only colours. All selectors use html / html.dark prefix
+   (specificity 0,1,1 / 0,2,1) to beat the Svelte-scoped hash (0,2,0).      */
+
+/* Shell background fills the 1px rounding gap at the bottom of the container */
+html .sv-grid-shell,
+html .sv-grid-root                              { background: var(--sg-bg); }
+html.dark .sv-grid-shell                        { border-bottom: none; }
+
+/* Cell & header backgrounds */
+html.dark .sv-grid-column,
+html.dark .sv-grid-cell                         { background: var(--card); }
+html.dark .sv-grid-head                         { background: var(--muted); }
+
+/* Footer + scrollbar corners (#f5f7fb / #eef2f8 → theme colours) */
+html      .sv-grid-foot,
+html      .sv-grid-scrollbar-corner,
+html      .sv-grid-scrollbar-corner-br          { background: var(--muted) !important; }
+html.dark .sv-grid-foot,
+html.dark .sv-grid-scrollbar-corner,
+html.dark .sv-grid-scrollbar-corner-br          { background: var(--card)  !important; }
+
+/* Active / editing cell */
+html .sv-grid-cell.sv-grid-cell-active,
+html .sv-grid-cell.sv-grid-cell-editing {
+	box-shadow: inset 0 0 0 1px var(--ring) !important;
+	background: color-mix(in oklch, var(--primary) 10%, var(--card)) !important;
+}
+
+/* Cell range selection (#eef4ff hardcoded → theme tint) */
+     .sv-grid-cell[data-selected-range="true"]  { background: var(--sg-selection-bg) !important; color: var(--sg-fg); }
+html.dark .sv-grid-cell[data-selected-range="true"] { background: color-mix(in oklch, var(--primary) 8%, var(--card)) !important; }
+
+/* Fill handle */
+html .sv-grid-fill-handle                       { background: var(--ring); }

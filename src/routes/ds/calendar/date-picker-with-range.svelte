@@ -3,7 +3,7 @@
 	import { Button } from "$lib/components/ui/button/index.js";
 	import * as Popover from "$lib/components/ui/popover/index.js";
 	import * as Field from "$lib/components/ui/field/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 	import { CalendarDate, DateFormatter, getLocalTimeZone } from "@internationalized/date";
 	import { RangeCalendar } from "$lib/components/ui/range-calendar/index.js";
 	import type { DateRange } from "bits-ui";

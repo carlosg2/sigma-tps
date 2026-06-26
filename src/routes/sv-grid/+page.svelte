@@ -26,7 +26,7 @@
   import { Separator } from '$lib/components/ui/separator/index.js'
   import AppSidebar from '../dashboard-01/components/app-sidebar.svelte'
   import TrendingUpIcon from '@tabler/icons-svelte/icons/trending-up'
-  import IconPlaceholder from '$lib/components/icon-placeholder/icon-placeholder.svelte'
+  import IconPlaceholder from '$lib/components/custom/icon-placeholder/icon-placeholder.svelte'
 
   type Part = {
     id: string
@@ -152,20 +152,32 @@
   })
 
   // Keyboard navigation: Right Arrow expands, Left Arrow collapses,
-  // Enter / Space toggle - only on the name column.
+  // Enter / Space toggle expand-collapse (Space always prevented to avoid row-selection tint).
   let activeCol = $state<string>('')
   let activeRowIndex = $state<number>(0)
   $effect(() => {
     function onKey(e: KeyboardEvent) {
-      if (activeCol !== 'name') return
+      // Don't intercept while the inline editor (input/textarea) is active
+      const target = e.target as HTMLElement
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) return
       const node = visibleParts[activeRowIndex]
-      if (!node || node.childIds.length === 0) return
+      if (!node) return
+      // Space: stopPropagation (capture phase) so SvGrid's cell-range handler never fires.
+      // preventDefault prevents page scroll.
+      if (e.key === ' ') {
+        e.preventDefault()
+        e.stopPropagation()
+        if (node.childIds.length > 0) toggle(node.id)
+        return
+      }
+      if (activeCol !== 'name') return
+      if (node.childIds.length === 0) return
       const isOpen = !!expanded[node.id]
       if (e.key === 'ArrowRight' && !isOpen) {
         e.preventDefault(); toggle(node.id)
       } else if (e.key === 'ArrowLeft' && isOpen) {
         e.preventDefault(); toggle(node.id)
-      } else if (e.key === 'Enter' || e.key === ' ') {
+      } else if (e.key === 'Enter') {
         e.preventDefault(); toggle(node.id)
       }
     }
@@ -252,7 +264,7 @@
         variant="ghost"
         size="icon-sm"
         class="size-4.5 shrink-0 text-muted-foreground hover:bg-muted hover:text-foreground"
-        onclick={() => toggle(props.node.id)}
+        onclick={(e) => { e.stopPropagation(); toggle(props.node.id); }}
         aria-label={isOpen ? 'Collapse' : 'Expand'}
         aria-expanded={isOpen}
       >
@@ -409,7 +421,10 @@
 
           <!-- BOM grid -->
           <div class="px-4 lg:px-6">
-            <div class="overflow-hidden rounded-xl border">
+            <div
+              class="overflow-hidden rounded-xl border"
+              style="--sg-selection-bg: oklch(0.6 0.18 260 / 0.12);"
+            >
               <SvGrid
                 data={visibleParts}
                 columns={columns}

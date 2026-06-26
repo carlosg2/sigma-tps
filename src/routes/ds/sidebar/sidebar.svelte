@@ -3,7 +3,7 @@
 	import * as Item from "$lib/components/ui/item/index.js";
 	import { Label } from "$lib/components/ui/label/index.js";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 
 	const data = {
 		versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],

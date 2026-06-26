@@ -4,7 +4,7 @@
 	import * as Field from "$lib/components/ui/field/index.js";
 	import * as Kbd from "$lib/components/ui/kbd/index.js";
 	import { Spinner } from "$lib/components/ui/spinner/index.js";
-	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import IconPlaceholder from "$lib/components/custom/icon-placeholder/icon-placeholder.svelte";
 </script>
 
 <Example title="With Kbd">
