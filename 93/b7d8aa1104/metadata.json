@@ -3,7 +3,7 @@
   "checkpoint_id": "93b7d8aa1104",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 4,
+  "checkpoints_count": 5,
   "files_touched": [
     "src/routes/layout.css",
     "src/routes/sv-grid/+page.svelte"
@@ -14,6 +14,12 @@
       "transcript": "/93/b7d8aa1104/0/full.jsonl",
       "content_hash": "/93/b7d8aa1104/0/content_hash.txt",
       "prompt": "/93/b7d8aa1104/0/prompt.txt"
+    },
+    {
+      "metadata": "/93/b7d8aa1104/1/metadata.json",
+      "transcript": "/93/b7d8aa1104/1/full.jsonl",
+      "content_hash": "/93/b7d8aa1104/1/content_hash.txt",
+      "prompt": "/93/b7d8aa1104/1/prompt.txt"
     }
   ],
   "token_usage": {
