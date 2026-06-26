@@ -1,0 +1,110 @@
+el entorno de vscode me muestra como problemas muchos custom tags de tailwind, ej. h-[200px] y me suguiere "Replace with h-50" , esto no es relevante para mi, como puedo deshabilitar esto?
+
+---
+
+no veo ningun cambio, sigo teniendo 179 problemas en vscode
+
+---
+
+en este ejemplo debes al hacer click para brir y cerrar un part del bom, se comienza a editar, y no deberia permitirte editar al menos que se le de doble click al texto. no a la flecha. analiza el ux y corrigelo
+
+---
+
+en este ejemplo debes al hacer click para brir y cerrar un part del bom, se comienza a editar, y no deberia permitirte editar al menos que se le de doble click al texto. no a la flecha. analiza el ux y corrigelo
+
+---
+
+falta el dark mode, usa este ejemplo como referencia pero manten los tokens actuales:
+## Dark mode
+The grid is dark-mode-aware by re-declaring the same tokens under a selector for "dark":
+
+```
+html[data-theme='dark'] {
+  --sg-bg:          theme(colors.slate.900);
+  --sg-fg:          theme(colors.slate.100);
+  --sg-border:      theme(colors.slate.700);
+  --sg-header-bg:   theme(colors.slate.800);
+  --sg-row-alt-bg:  theme(colors.slate.800);
+  --sg-row-hover-bg: theme(colors.slate.700);
+  --sg-accent:      theme(colors.blue.400);
+  color-scheme: dark;
+}
+```
+
+---
+
+no se ven bien los colores en darkmode. porque?
+
+documentacion de referencia: https://svgrid.com/docs/help/tailwind
+
+---
+
+no veo ningun cambio, revisalo y corrigelo
+
+---
+
+no veo ningun cambio, revisalo y corrigelo
+
+---
+
+la celda actualmente seleccionada no se ve bien, se deberia de ver como seleccion, inspirate del componente data-grid para igualar el diseño general de sv-table con data-grid
+
+---
+
+cre que le faltan muchos colores por definir.
+
+este es un ejemplo completo de referencia extraido del website de sv-grid:
+
+/* SvGrid theme - paste into your global stylesheet */
+[data-theme='light'] .my-grid-themed {
+  --sg-bg:               #ffffff;
+  --sg-fg:               #181925;
+  --sg-muted:            #656581;
+  --sg-border:           #e3e3e8;
+  --sg-header-bg:        #f3f3fc;
+  --sg-header-fg:        #252537;
+  --sg-accent:           #6366f1;
+  --sg-row-alt-bg:       #fafafd;
+  --sg-row-hover-bg:     rgba(99, 102, 241, 0.07);
+  --sg-selection-bg:     #ff0000;
+  --sg-focus-ring:       #6366f1;
+  --sg-pinned-bg:        #fcfcfd;
+  --sg-pinned-border:    #adaeeb;
+  --sg-pinned-header-bg: #ebebfa;
+  --sg-thead-h:          38px;
+  --sg-radius:           6px;
+  font-family:           Inter, ui-sans-serif, system-ui;
+  font-size:             13px;
+  font-weight:           400;
+}
+
+[data-theme='dark'] .my-grid-themed {
+  --sg-bg:               #030426;
+  --sg-fg:               #e8e8ed;
+  --sg-muted:            #4346ef;
+  --sg-border:           #070954;
+  --sg-header-bg:        #050638;
+  --sg-header-fg:        #e8e8fd;
+  --sg-accent:           #7274f3;
+  --sg-row-alt-bg:       #040534;
+  --sg-row-hover-bg:     rgba(99, 102, 241, 0.2);
+  --sg-selection-bg:     #ff0000;
+  --sg-focus-ring:       #7c7ef4;
+  --sg-pinned-bg:        #04052f;
+  --sg-pinned-border:    #0a0c71;
+  --sg-pinned-header-bg: #060742;
+  --sg-thead-h:          38px;
+  --sg-radius:           6px;
+  font-family:           Inter, ui-sans-serif, system-ui;
+  font-size:             13px;
+  font-weight:           400;
+}
+
+.my-grid-themed .sv-grid-header-cell {
+  font-weight:     700;
+  text-transform:  none;
+  letter-spacing:  0.00em;
+}
+.my-grid-themed .sv-grid-cell {
+  padding:         0px 12px;
+}
