@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import {
 		DropdownMenu,
@@ -10,34 +9,7 @@
 	import Sun from '@lucide/svelte/icons/sun';
 	import Moon from '@lucide/svelte/icons/moon';
 	import Laptop from '@lucide/svelte/icons/laptop';
-
-	type Theme = 'light' | 'dark' | 'system';
-	let theme = $state<Theme>('system');
-
-	onMount(() => {
-		const stored = localStorage.getItem('theme') as Theme | null;
-		if (stored) {
-			theme = stored;
-		}
-		applyTheme(theme);
-	});
-
-	function applyTheme(newTheme: Theme) {
-		const root = document.documentElement;
-
-		if (newTheme === 'system') {
-			const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-			root.classList.toggle('dark', systemPrefersDark);
-		} else {
-			root.classList.toggle('dark', newTheme === 'dark');
-		}
-	}
-
-	function setTheme(newTheme: Theme) {
-		theme = newTheme;
-		localStorage.setItem('theme', newTheme);
-		applyTheme(newTheme);
-	}
+	import { setMode } from 'mode-watcher';
 </script>
 
 <DropdownMenu>
@@ -53,15 +25,15 @@
 		{/snippet}
 	</DropdownMenuTrigger>
 	<DropdownMenuContent align="end">
-		<DropdownMenuItem onclick={() => setTheme('light')}>
+		<DropdownMenuItem onclick={() => setMode('light')}>
 			<Sun class="mr-2 size-4" />
 			<span>Light</span>
 		</DropdownMenuItem>
-		<DropdownMenuItem onclick={() => setTheme('dark')}>
+		<DropdownMenuItem onclick={() => setMode('dark')}>
 			<Moon class="mr-2 size-4" />
 			<span>Dark</span>
 		</DropdownMenuItem>
-		<DropdownMenuItem onclick={() => setTheme('system')}>
+		<DropdownMenuItem onclick={() => setMode('system')}>
 			<Laptop class="mr-2 size-4" />
 			<span>System</span>
 		</DropdownMenuItem>
