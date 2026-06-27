@@ -1,0 +1,103 @@
+implementa toda la aplicacion del proyecto tps-alpha (next js y shadcn) en sigma-tps (sveltekit shadcn-svelte)
+
+solo la seccion de implementacion del proyecto tps-alpha no se requiere implementar. todo los demas si.
+
+ambos proyectos usan shadcn por lo qu tendras todos los components equivalentes. 
+
+toda a aplicacion quedara colocalizada dentro del folder (tps) del proyecto sigma-tps
+
+puedes hacer todas las preguntas que se reuquieran
+
+---
+
+Explore the Next.js project at /Users/carlosgarzagarza/Documents/GitHub/tps-alpha thoroughly (medium-thorough). I need a complete map of the application to port it to SvelteKit.
+
+Please report:
+1. Full route/page structure under `app/` (every page.tsx, layout.tsx, route folders). Exclude the `app/implementacion/` section — but still mention it exists. For each route, note its path and a one-line description of what it renders.
+2. All components under `components/` (excluding `components/ui/` shadcn primitives — just list which ui primitives exist by filename). For non-ui components (layout/, bom/, shared/, theme-provider), give file path and a short description of purpose and key props.
+3. The `lib/` folder: especially `types.ts`, `constants.ts`, `seed-data.ts`, `store.ts`, `store-provider.tsx`, `utils.ts`. Summarize the data model (types/interfaces), the store API (state shape, actions/methods), and how seed data is structured.
+4. The `hooks/` folder contents.
+5. Global layout: app/layout.tsx and components/layout/* (sidebar nav items, header). List all navigation items and their routes.
+6. Any state management approach (zustand? context?), and how pages consume the store.
+
+Do NOT write any code. Just return a detailed structured report with file paths and descriptions. Include the list of all route paths so I can recreate them.
+
+---
+
+You are porting Next.js pages to SvelteKit. This is a WRITING task — you must create Svelte files.
+
+FIRST: read the porting guide fully: /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/lib/tps/PORTING-GUIDE.md
+ALSO read these reference files to match style EXACTLY:
+- /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/articulos/+page.svelte
+- /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/lmat/where-used/+page.svelte
+- /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/lib/tps/types.ts (for AppAction types and entity shapes)
+
+Port each page — read the Next.js source FULLY first, then create the Svelte destination with full functional + visual parity per the guide:
+
+1. SOURCE: /Users/carlosgarzagarza/Documents/GitHub/tps-alpha/app/lmat/kits/[id]/page.tsx  (DETAIL page, dynamic [id]: use `import { page } from '$app/state'; const id = $derived(page.params.id);`. Has item scanning via store.dispatch({type:'SCAN_KIT_ITEM',...}).)
+   DEST: /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/lmat/kits/[id]/+page.svelte
+2. SOURCE: /Users/carlosgarzagarza/Documents/GitHub/tps-alpha/app/lmat/validacion/page.tsx  (463 lines — multi-department validation board, uses store.dispatch({type:'UPDATE_BOM_VALIDATION',...}).)
+   DEST: /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/lmat/validacion/+page.svelte
+
+Use $state for local UI state, $derived for store-derived values, store.dispatch for mutations. Do not run builds. After creating both files, report which files you created and any action types you were unsure about. Keep Spanish text exactly as-is.-tps/src/routes/(tps)/lmat/ecn/[id]/+page.svelte
+
+For local component state (expanded tabs, edit mode, form fields) use $state. For derived from store use $derived. For mutations use store.dispatch with the correct action type (see /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/lib/tps/types.ts AppAction union). Do not run builds. After creating all 3 files, report which files you created and note any action types / props you were unsure about. Keep Spanish text exactly as-is.
+
+---
+
+WRITING TASK: create 3 SvelteKit detail pages (write files with create_file). FIRST read the porting guide FULLY: /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/lib/tps/PORTING-GUIDE.md (especially "GOTCHAS de Svelte 5"). Read references:
+- /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/lmat/where-used/+page.svelte
+- /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/lib/tps/components/bom-tree.svelte
+- /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/lib/tps/types.ts (AppAction union + entity shapes)
+
+These are DETAIL pages with dynamic [id]: use `import { page } from '$app/state'; const id = $derived(page.params.id);` and find the entity in store state by id. For navigation use `import { goto } from '$app/navigation'`.
+
+For EACH: read the Next.js source FULLY, then create the Svelte file with full parity.
+1. SOURCE /Users/carlosgarzagarza/Documents/GitHub/tps-alpha/app/lmat/boms/[id]/page.tsx (781 lines, uses <BomTree components={bom.components} onReorder={(c)=>store.dispatch({type:'REORDER_BOM_COMPONENTS',payload:{bomId,components:c}})} />, tabs, revisions). Import: `import BomTree from '$lib/tps/components/bom-tree.svelte';`
+   DEST /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/lmat/boms/[id]/+page.svelte
+2. SOURCE /Users/carlosgarzagarza/Documents/GitHub/tps-alpha/app/lmat/especificaciones/[id]/page.tsx
+   DEST /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/lmat/especificaciones/[id]/+page.svelte
+3. SOURCE /Users/carlosgarzagarza/Documents/GitHub/tps-alpha/app/lmat/ecn/[id]/page.tsx
+   DEST /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/lmat/ecn/[id]/+page.svelte
+
+Gotchas: NO self-closing <div/> (use </div>), NO <svelte:component> (use {@const Icon=x}<Icon/>), single <script> block, real lucide icon names only, cast Record indexing. Keep Spanish text exactly. Report the 3 file paths created.
+
+---
+
+WRITING TASK: create 3 SvelteKit pages (write files with create_file). FIRST read the porting guide FULLY: /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/lib/tps/PORTING-GUIDE.md (especially "GOTCHAS de Svelte 5"). Read references:
+- /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/proyectos/+page.svelte
+- /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/lib/tps/types.ts (BOM, Project shapes + AppAction)
+- /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/lib/tps/components/bom-tree.svelte
+
+For EACH: read the Next.js source FULLY, then create the Svelte file with full parity. Use useStore() from $lib/tps/store.svelte.js, $state for form fields, store.dispatch for mutations, generateId from $lib/tps/utils.js, `import { goto } from '$app/navigation'`.
+1. SOURCE /Users/carlosgarzagarza/Documents/GitHub/tps-alpha/app/lmat/boms/nuevo/page.tsx (FORM/builder; on save dispatch ADD_BOM then goto('/lmat/boms')). DEST /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/lmat/boms/nuevo/+page.svelte
+2. SOURCE /Users/carlosgarzagarza/Documents/GitHub/tps-alpha/app/proyectos/nuevo/page.tsx (FORM; dispatch ADD_PROJECT then goto('/proyectos')). DEST /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/proyectos/nuevo/+page.svelte
+3. SOURCE /Users/carlosgarzagarza/Documents/GitHub/tps-alpha/app/proyectos/[id]/page.tsx (DETAIL, dynamic [id]: `import { page } from '$app/state'; const id = $derived(page.params.id);`. UPDATE_PROJECT / ADD_PROJECT_COST / UPDATE_PROJECT_STAGE). DEST /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/proyectos/[id]/+page.svelte
+
+Gotchas: NO self-closing <div/> (use </div>), NO <svelte:component>, single <script> block, real lucide icon names only, cast Record indexing, bind:value on inputs, StatusBadge/StatCard from $lib/tps/components/. Keep Spanish text exactly. Report the 3 file paths created.
+
+---
+
+WRITING TASK: create a SvelteKit page file. First read the porting guide: /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/lib/tps/PORTING-GUIDE.md (pay special attention to the "GOTCHAS de Svelte 5" section). Also read reference: /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/lmat/ecn/+page.svelte
+
+Then read the full Next.js source: /Users/carlosgarzagarza/Documents/GitHub/tps-alpha/app/lmat/kits/page.tsx
+And CREATE (write to disk with create_file): /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/lmat/kits/+page.svelte
+
+Full functional + visual parity. Use useStore() from $lib/tps/store.svelte.js, $state/$derived, StatusBadge from $lib/tps/components/status-badge.svelte. Icons from @lucide/svelte/icons (real kebab names only). NO self-closing <div/>, NO <svelte:component>. Keep Spanish text exactly. Report the file path created when done.
+
+---
+
+WRITING TASK: create 3 SvelteKit pages (write files with create_file). FIRST read the porting guide FULLY: /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/lib/tps/PORTING-GUIDE.md (especially "GOTCHAS de Svelte 5"). Read references:
+- /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/articulos/+page.svelte
+- /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/lib/tps/types.ts (Article shape + AppAction)
+
+For EACH: read the Next.js source FULLY, then create the Svelte file with full parity. Use useStore() from $lib/tps/store.svelte.js, $state for form fields, store.dispatch for mutations, generateId from $lib/tps/utils.js, `import { goto } from '$app/navigation'` for redirects.
+1. SOURCE /Users/carlosgarzagarza/Documents/GitHub/tps-alpha/app/articulos/nuevo/page.tsx (FORM. On submit build Article, dispatch ADD_ARTICLE, goto('/articulos')). DEST /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/articulos/nuevo/+page.svelte
+2. SOURCE /Users/carlosgarzagarza/Documents/GitHub/tps-alpha/app/articulos/importar/page.tsx (CSV importer, FileReader, dispatch IMPORT_ARTICLES). DEST /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/articulos/importar/+page.svelte
+3. SOURCE /Users/carlosgarzagarza/Documents/GitHub/tps-alpha/app/articulos/[id]/page.tsx (560 lines, DETAIL with edit mode/tabs. Dynamic [id]: `import { page } from '$app/state'; const id = $derived(page.params.id);`. Edit via UPDATE_ARTICLE). DEST /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/articulos/[id]/+page.svelte
+
+Gotchas: NO self-closing <div/> (use </div>), NO <svelte:component>, single <script> block, real lucide icon names only, cast Record indexing, use bind:value/bind:checked on form inputs, StatusBadge from $lib/tps/components/status-badge.svelte. Keep Spanish text exactly. Report the 3 file paths created.
+
+---
+
+arregla el vite build
