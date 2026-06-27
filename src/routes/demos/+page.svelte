@@ -3,7 +3,7 @@
 </script>
 
 <div class="mx-auto flex w-full max-w-350 flex-col gap-4 px-6 py-6">
-	<h1 class="text-2xl font-bold tracking-tight">s-mail</h1>
+	<h1 class="text-2xl font-bold tracking-tight">s-mail · demos</h1>
 	<Button href="/tablecn" variant="outline">svelte-tablecn (Data Grid) →</Button>
 	<Button href="/grid" variant="outline">Grid demo →</Button>
 	<Button href="/grid-b" variant="outline">Grid · Undo nativo (Opción B) →</Button>
