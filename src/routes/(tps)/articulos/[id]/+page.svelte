@@ -31,6 +31,15 @@
 	import ExternalLink from '@lucide/svelte/icons/external-link';
 	import Truck from '@lucide/svelte/icons/truck';
 	import BadgeCheck from '@lucide/svelte/icons/badge-check';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
+	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
+	import { Progress } from '$lib/components/ui/progress/index.js';
 
 	const store = useStore();
 	const app = $derived(store.state);
@@ -97,123 +106,115 @@
 </script>
 
 {#if !article}
-	<div class="flex flex-col items-center justify-center gap-4 py-20">
-		<p class="text-muted-foreground">Articulo no encontrado</p>
-		<a href="/articulos" class="text-primary text-sm hover:underline">Volver al catalogo</a>
-	</div>
+	<Empty.Root>
+		<Empty.Header>
+			<Empty.Title>Articulo no encontrado</Empty.Title>
+			<Empty.Description>El articulo solicitado no existe o fue eliminado.</Empty.Description>
+		</Empty.Header>
+		<Empty.Content>
+			<Button href="/articulos" variant="outline">Volver al catalogo</Button>
+		</Empty.Content>
+	</Empty.Root>
 {:else}
-	<div class="flex flex-col gap-6">
-		<!-- Header -->
-		<div class="flex items-center justify-between">
-			<div class="flex items-center gap-3">
-				<a
-					href="/articulos"
-					class="border-border hover:bg-secondary flex h-8 w-8 items-center justify-center rounded-md border transition-colors"
-				>
-					<ArrowLeft class="text-foreground h-4 w-4" />
-				</a>
-				<div>
-					<div class="flex items-center gap-2">
-						<h1 class="text-foreground font-mono text-xl font-bold">{article.code}</h1>
-						<StatusBadge label={ARTICLE_STATUS_LABELS[article.status]} colorClass={ARTICLE_STATUS_COLORS[article.status]} />
-						<StatusBadge
-							label={article.abcClass === 'sin_clasificar' ? 'Sin ABC' : `Clase ${article.abcClass}`}
-							colorClass={ABC_COLORS[article.abcClass]}
-						/>
-					</div>
-					<p class="text-muted-foreground text-sm">{article.description}</p>
+	<!-- Header -->
+	<div class="flex flex-wrap items-center justify-between gap-3">
+		<div class="flex items-center gap-3">
+			<Button href="/articulos" variant="outline" size="icon" class="size-8">
+				<ArrowLeft />
+			</Button>
+			<div>
+				<div class="flex items-center gap-2">
+					<h1 class="text-foreground font-mono text-xl font-bold">{article.code}</h1>
+					<StatusBadge label={ARTICLE_STATUS_LABELS[article.status]} colorClass={ARTICLE_STATUS_COLORS[article.status]} />
+					<StatusBadge
+						label={article.abcClass === 'sin_clasificar' ? 'Sin ABC' : `Clase ${article.abcClass}`}
+						colorClass={ABC_COLORS[article.abcClass]}
+					/>
 				</div>
-			</div>
-			<div class="flex items-center gap-2">
-				{#if editing}
-					<button
-						onclick={cancelEdit}
-						class="border-border text-foreground hover:bg-secondary rounded-md border px-3 py-1.5 text-xs transition-colors"
-						>Cancelar</button
-					>
-					<button
-						onclick={saveEdit}
-						class="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors"
-					>
-						<Save class="h-3.5 w-3.5" /> Guardar
-					</button>
-				{:else}
-					<button
-						onclick={startEdit}
-						class="border-border text-foreground hover:bg-secondary rounded-md border px-3 py-1.5 text-xs transition-colors"
-						>Editar</button
-					>
-					<button
-						onclick={deleteArticle}
-						class="border-destructive/30 text-destructive-foreground hover:bg-destructive/10 flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs transition-colors"
-					>
-						<Trash2 class="h-3.5 w-3.5" /> Eliminar
-					</button>
-				{/if}
+				<p class="text-muted-foreground text-sm">{article.description}</p>
 			</div>
 		</div>
+		<div class="flex items-center gap-2">
+			{#if editing}
+				<Button variant="outline" size="sm" onclick={cancelEdit}>Cancelar</Button>
+				<Button size="sm" onclick={saveEdit}>
+					<Save data-icon="inline-start" /> Guardar
+				</Button>
+			{:else}
+				<Button variant="outline" size="sm" onclick={startEdit}>Editar</Button>
+				<Button variant="outline" size="sm" class="text-destructive hover:text-destructive" onclick={deleteArticle}>
+					<Trash2 data-icon="inline-start" /> Eliminar
+				</Button>
+			{/if}
+		</div>
+	</div>
 
-		<!-- Completeness bar -->
-		<div class="border-border bg-card rounded-lg border p-4">
-			<div class="mb-2 flex items-center justify-between">
-				<span class="text-card-foreground text-sm font-medium">Completitud del Articulo</span>
-				<span class="text-card-foreground font-mono text-lg font-bold">{article.completeness}%</span>
-			</div>
-			<div class="bg-secondary h-3 rounded-full">
-				<div
-					class="h-3 rounded-full transition-all {article.completeness >= 80
-						? 'bg-primary'
-						: article.completeness >= 50
-							? 'bg-chart-4'
-							: 'bg-destructive'}"
-					style="width: {article.completeness}%"
-				></div>
-			</div>
+	<!-- Completeness -->
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>Completitud del Articulo</Card.Title>
+			<Card.Action>
+				<span class="font-mono text-lg font-bold tabular-nums">{article.completeness}%</span>
+			</Card.Action>
+		</Card.Header>
+		<Card.Content class="flex flex-col gap-3">
+			<Progress
+				value={article.completeness}
+				max={100}
+				class={article.completeness >= 80
+					? ''
+					: article.completeness >= 50
+						? '*:data-[slot=progress-indicator]:bg-chart-4'
+						: '*:data-[slot=progress-indicator]:bg-destructive'}
+			/>
 			{#if missingFields.length > 0}
-				<div class="mt-3 flex flex-col gap-1">
+				<div class="flex flex-col gap-1">
 					{#each missingFields as mf (mf.area)}
 						<div class="flex items-center gap-2 text-xs">
-							<AlertTriangle class="text-chart-4 h-3 w-3" />
+							<AlertTriangle class="text-chart-4 size-3" />
 							<span class="text-chart-4 font-medium">{mf.area}:</span>
 							<span class="text-muted-foreground">{mf.fields.join(', ')}</span>
 						</div>
 					{/each}
 				</div>
 			{/if}
-		</div>
+		</Card.Content>
+	</Card.Root>
 
-		<!-- LMAT 2.0: Image + Article Type -->
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-4">
-			<!-- Reference Image -->
-			<div class="border-border bg-card flex min-h-[160px] flex-col items-center justify-center rounded-lg border p-4">
+	<!-- LMAT 2.0: Image + Article Type -->
+	<div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+		<Card.Root class="md:col-span-1">
+			<Card.Content class="flex min-h-40 flex-col items-center justify-center">
 				{#if article.imageUrl}
 					<img src={article.imageUrl} alt={article.description} class="max-h-32 rounded object-contain" />
 				{:else}
 					<div class="flex flex-col items-center text-center">
-						<ImageIcon class="text-muted-foreground/30 mb-2 h-10 w-10" />
+						<ImageIcon class="text-muted-foreground/30 mb-2 size-10" />
 						<span class="text-muted-foreground text-xs">Sin imagen de referencia</span>
 						{#if editing}
-							<button class="text-primary mt-2 flex items-center gap-1 text-xs hover:underline">
-								<Upload class="h-3 w-3" /> Subir imagen
-							</button>
+							<Button variant="link" size="sm" class="mt-2">
+								<Upload data-icon="inline-start" /> Subir imagen
+							</Button>
 						{/if}
 					</div>
 				{/if}
-			</div>
-			<!-- Type + Quality + Supply badges -->
-			<div class="border-border bg-card flex items-center gap-4 rounded-lg border p-4 md:col-span-3">
+			</Card.Content>
+		</Card.Root>
+		<Card.Root class="md:col-span-3">
+			<Card.Content class="flex flex-wrap items-center gap-4">
 				<div class="flex items-center gap-2">
 					<span class="text-muted-foreground text-sm">Tipo de Articulo:</span>
-					<span class="rounded-full px-3 py-1 text-xs font-medium {ARTICLE_TYPE_COLORS[(article.articleType || 'compra') as ArticleType]}">
-						{ARTICLE_TYPE_LABELS[(article.articleType || 'compra') as ArticleType]}
-					</span>
+					<StatusBadge
+						label={ARTICLE_TYPE_LABELS[(article.articleType || 'compra') as ArticleType]}
+						colorClass={ARTICLE_TYPE_COLORS[(article.articleType || 'compra') as ArticleType]}
+					/>
 				</div>
 				<div class="flex items-center gap-2">
 					<span class="text-muted-foreground text-sm">Calidad:</span>
 					{#if article.qualityApproved}
-						<span class="flex items-center gap-1 text-xs text-emerald-400"><BadgeCheck class="h-3.5 w-3.5" /> Aprobado</span>
+						<span class="flex items-center gap-1 text-xs text-emerald-400"><BadgeCheck class="size-3.5" /> Aprobado</span>
 					{:else}
-						<span class="text-chart-4 flex items-center gap-1 text-xs"><AlertTriangle class="h-3.5 w-3.5" /> Pendiente</span>
+						<span class="text-chart-4 flex items-center gap-1 text-xs"><AlertTriangle class="size-3.5" /> Pendiente</span>
 					{/if}
 				</div>
 				<div class="flex items-center gap-2">
@@ -221,583 +222,630 @@
 					<span class="text-foreground text-xs">{SUPPLY_METHODS[article.supplyMethod || 'bom_kit']}</span>
 				</div>
 				{#if article.requiresLotSerial}
-					<span class="bg-chart-1/15 text-chart-1 rounded-full px-2 py-0.5 text-xs">Requiere Lote/Serie</span>
+					<StatusBadge label="Requiere Lote/Serie" colorClass="bg-chart-1/15 text-chart-1" />
 				{/if}
-			</div>
-		</div>
+			</Card.Content>
+		</Card.Root>
+	</div>
 
-		<!-- Fields Grid -->
-		<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-			<!-- Ingenieria -->
-			<div class="border-border bg-card rounded-lg border">
-				<div class="border-border border-b px-4 py-2.5">
-					<h3 class="text-card-foreground text-sm font-semibold">Ingenieria</h3>
-				</div>
-				<div class="divide-border/30 flex flex-col divide-y px-4">
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Codigo</span>
-						<span class="text-card-foreground text-right text-sm">{article.code}</span>
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Descripcion</span>
-						{#if editing}
-							<input class="field-input" bind:value={form.description} />
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.description}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Descripcion Generica</span>
-						{#if editing}
-							<input class="field-input" bind:value={form.descriptionGeneric} placeholder="Para articulos con alta rotacion de proveedor" />
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.descriptionGeneric || '---'}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Tipo Articulo</span>
-						{#if editing}
-							<select class="field-input" bind:value={form.articleType}>
-								{#each Object.entries(ARTICLE_TYPE_LABELS) as [k, v] (k)}
-									<option value={k}>{v}</option>
-								{/each}
-							</select>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{ARTICLE_TYPE_LABELS[(article.articleType || 'compra') as ArticleType]}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Grupo</span>
-						{#if editing}
-							<select class="field-input" bind:value={form.group}>
-								{#each ARTICLE_GROUPS as g (g)}
-									<option value={g}>{g}</option>
-								{/each}
-							</select>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.group}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Familia</span>
-						{#if editing}
-							<input class="field-input" bind:value={form.family} />
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.family || '---'}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">UdM Base</span>
-						{#if editing}
-							<select class="field-input" bind:value={form.udmBase}>
-								{#each Object.entries(UDM_LABELS) as [k, v] (k)}
-									<option value={k}>{v}</option>
-								{/each}
-							</select>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{UDM_LABELS[article.udmBase]}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">UdM BOM</span>
-						{#if editing}
-							<select class="field-input" bind:value={form.udmBOM}>
-								{#each Object.entries(UDM_LABELS) as [k, v] (k)}
-									<option value={k}>{v}</option>
-								{/each}
-							</select>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{UDM_LABELS[article.udmBOM || article.udmBase]}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Dibujo/Plano</span>
-						{#if editing}
-							<input class="field-input" bind:value={form.drawingRef} />
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.drawingRef || '---'}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Codigo P5</span>
-						{#if editing}
-							<input class="field-input" bind:value={form.p5Code} />
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.p5Code || '---'}</span>
-						{/if}
-					</div>
-				</div>
+	<!-- Detail Tabs -->
+	<Tabs.Root value="datos">
+		<Tabs.List>
+			<Tabs.Trigger value="datos">Datos Maestros</Tabs.Trigger>
+			<Tabs.Trigger value="proveedores">Proveedores</Tabs.Trigger>
+			<Tabs.Trigger value="documentos">Documentos</Tabs.Trigger>
+			<Tabs.Trigger value="whereused">Where-Used</Tabs.Trigger>
+		</Tabs.List>
+
+		<Tabs.Content value="datos" class="flex flex-col gap-6">
+			<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+				<!-- Ingenieria -->
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>Ingenieria</Card.Title>
+					</Card.Header>
+					<Card.Content class="divide-border/30 flex flex-col divide-y">
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Codigo</span>
+							<span class="text-card-foreground text-right text-sm">{article.code}</span>
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Descripcion</span>
+							{#if editing}
+								<Input class="h-8 w-56" bind:value={form.description} />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.description}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Descripcion Generica</span>
+							{#if editing}
+								<Input class="h-8 w-56" bind:value={form.descriptionGeneric} placeholder="Para articulos con alta rotacion de proveedor" />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.descriptionGeneric || '---'}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Tipo Articulo</span>
+							{#if editing}
+								<Select.Root type="single" bind:value={form.articleType}>
+									<Select.Trigger size="sm" class="w-44">{ARTICLE_TYPE_LABELS[form.articleType as ArticleType]}</Select.Trigger>
+									<Select.Content>
+										{#each Object.entries(ARTICLE_TYPE_LABELS) as [k, v] (k)}
+											<Select.Item value={k}>{v}</Select.Item>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{ARTICLE_TYPE_LABELS[(article.articleType || 'compra') as ArticleType]}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Grupo</span>
+							{#if editing}
+								<Select.Root type="single" bind:value={form.group}>
+									<Select.Trigger size="sm" class="w-44">{form.group}</Select.Trigger>
+									<Select.Content>
+										{#each ARTICLE_GROUPS as g (g)}
+											<Select.Item value={g}>{g}</Select.Item>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.group}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Familia</span>
+							{#if editing}
+								<Input class="h-8 w-56" bind:value={form.family} />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.family || '---'}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">UdM Base</span>
+							{#if editing}
+								<Select.Root type="single" bind:value={form.udmBase}>
+									<Select.Trigger size="sm" class="w-44">{UDM_LABELS[form.udmBase as keyof typeof UDM_LABELS]}</Select.Trigger>
+									<Select.Content>
+										{#each Object.entries(UDM_LABELS) as [k, v] (k)}
+											<Select.Item value={k}>{v}</Select.Item>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{UDM_LABELS[article.udmBase]}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">UdM BOM</span>
+							{#if editing}
+								<Select.Root type="single" bind:value={form.udmBOM}>
+									<Select.Trigger size="sm" class="w-44">{UDM_LABELS[form.udmBOM as keyof typeof UDM_LABELS]}</Select.Trigger>
+									<Select.Content>
+										{#each Object.entries(UDM_LABELS) as [k, v] (k)}
+											<Select.Item value={k}>{v}</Select.Item>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{UDM_LABELS[article.udmBOM || article.udmBase]}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Dibujo/Plano</span>
+							{#if editing}
+								<Input class="h-8 w-56" bind:value={form.drawingRef} />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.drawingRef || '---'}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Codigo P5</span>
+							{#if editing}
+								<Input class="h-8 w-56" bind:value={form.p5Code} />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.p5Code || '---'}</span>
+							{/if}
+						</div>
+					</Card.Content>
+				</Card.Root>
+
+				<!-- Compras -->
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>Compras</Card.Title>
+					</Card.Header>
+					<Card.Content class="divide-border/30 flex flex-col divide-y">
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground flex items-center gap-1 text-xs">
+								{#if !article.supplierId}<AlertTriangle class="text-chart-4 size-3" />{/if}Proveedor
+							</span>
+							{#if editing}
+								<Select.Root
+									type="single"
+									bind:value={form.supplierId}
+									onValueChange={(v) => {
+										const sup = app.suppliers.find((s) => s.id === v);
+										form.supplierName = sup?.name || '';
+									}}
+								>
+									<Select.Trigger size="sm" class="w-44">{app.suppliers.find((s) => s.id === form.supplierId)?.name ?? 'Sin asignar'}</Select.Trigger>
+									<Select.Content>
+										<Select.Item value="">Sin asignar</Select.Item>
+										{#each app.suppliers as s (s.id)}
+											<Select.Item value={s.id}>{s.name}</Select.Item>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.supplierName || 'Sin asignar'}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground flex items-center gap-1 text-xs">
+								{#if article.price === 0}<AlertTriangle class="text-chart-4 size-3" />{/if}Precio
+							</span>
+							{#if editing}
+								<div class="flex items-center gap-1">
+									<Input type="number" class="h-8 w-32" bind:value={form.price} />
+									<Select.Root type="single" bind:value={form.currency}>
+										<Select.Trigger size="sm" class="w-20">{form.currency}</Select.Trigger>
+										<Select.Content>
+											<Select.Item value="MXN">MXN</Select.Item>
+											<Select.Item value="USD">USD</Select.Item>
+										</Select.Content>
+									</Select.Root>
+								</div>
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.price > 0 ? formatCurrency(article.price, article.currency) : '---'}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">UdM Compra</span>
+							{#if editing}
+								<Select.Root type="single" bind:value={form.udmPurchase}>
+									<Select.Trigger size="sm" class="w-44">{UDM_LABELS[form.udmPurchase as keyof typeof UDM_LABELS]}</Select.Trigger>
+									<Select.Content>
+										{#each Object.entries(UDM_LABELS) as [k, v] (k)}
+											<Select.Item value={k}>{v}</Select.Item>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{UDM_LABELS[article.udmPurchase]}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground flex items-center gap-1 text-xs">
+								{#if article.leadTimeDays === 0}<AlertTriangle class="text-chart-4 size-3" />{/if}Lead Time
+							</span>
+							{#if editing}
+								<Input type="number" class="h-8 w-56" bind:value={form.leadTimeDays} />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.leadTimeDays > 0 ? `${article.leadTimeDays} dias` : '---'}</span>
+							{/if}
+						</div>
+					</Card.Content>
+				</Card.Root>
+
+				<!-- Almacen -->
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>Almacen</Card.Title>
+					</Card.Header>
+					<Card.Content class="divide-border/30 flex flex-col divide-y">
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Almacen</span>
+							{#if editing}
+								<Select.Root type="single" bind:value={form.warehouse}>
+									<Select.Trigger size="sm" class="w-44">{form.warehouse}</Select.Trigger>
+									<Select.Content>
+										{#each WAREHOUSES as w (w)}
+											<Select.Item value={w}>{w}</Select.Item>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.warehouse || 'MP - Materia Prima'}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground flex items-center gap-1 text-xs">
+								{#if !article.location}<AlertTriangle class="text-chart-4 size-3" />{/if}Ubicacion
+							</span>
+							{#if editing}
+								<Input class="h-8 w-56" bind:value={form.location} placeholder="Rack, pasillo, nivel" />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.location || '---'}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">UdM Almacenamiento</span>
+							{#if editing}
+								<Select.Root type="single" bind:value={form.udmStorage}>
+									<Select.Trigger size="sm" class="w-44">{UDM_LABELS[form.udmStorage as keyof typeof UDM_LABELS]}</Select.Trigger>
+									<Select.Content>
+										{#each Object.entries(UDM_LABELS) as [k, v] (k)}
+											<Select.Item value={k}>{v}</Select.Item>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{UDM_LABELS[article.udmStorage]}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Metodo Surtimiento</span>
+							{#if editing}
+								<Select.Root type="single" bind:value={form.supplyMethod}>
+									<Select.Trigger size="sm" class="w-44">{SUPPLY_METHODS[form.supplyMethod as keyof typeof SUPPLY_METHODS]}</Select.Trigger>
+									<Select.Content>
+										{#each Object.entries(SUPPLY_METHODS) as [k, v] (k)}
+											<Select.Item value={k}>{v}</Select.Item>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{SUPPLY_METHODS[article.supplyMethod || 'bom_kit']}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Stock Minimo</span>
+							{#if editing}
+								<Input type="number" class="h-8 w-56" bind:value={form.minStock} />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.minStock}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Stock Maximo</span>
+							{#if editing}
+								<Input type="number" class="h-8 w-56" bind:value={form.maxStock} />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.maxStock}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Punto de Reorden</span>
+							{#if editing}
+								<Input type="number" class="h-8 w-56" bind:value={form.reorderPoint} />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.reorderPoint || 0}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Requiere Lote/Serie</span>
+							{#if editing}
+								<Checkbox bind:checked={form.requiresLotSerial} />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.requiresLotSerial ? 'Si' : 'No'}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Clasificacion ABC</span>
+							{#if editing}
+								<Select.Root type="single" bind:value={form.abcClass}>
+									<Select.Trigger size="sm" class="w-44">{ABC_LABELS[form.abcClass as keyof typeof ABC_LABELS]}</Select.Trigger>
+									<Select.Content>
+										{#each Object.entries(ABC_LABELS) as [k, v] (k)}
+											<Select.Item value={k}>{v}</Select.Item>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{ABC_LABELS[article.abcClass]}</span>
+							{/if}
+						</div>
+					</Card.Content>
+				</Card.Root>
+
+				<!-- Produccion + Calidad -->
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>Produccion / Calidad</Card.Title>
+					</Card.Header>
+					<Card.Content class="divide-border/30 flex flex-col divide-y">
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">UdM Produccion</span>
+							{#if editing}
+								<Select.Root type="single" bind:value={form.udmProduction}>
+									<Select.Trigger size="sm" class="w-44">{UDM_LABELS[form.udmProduction as keyof typeof UDM_LABELS]}</Select.Trigger>
+									<Select.Content>
+										{#each Object.entries(UDM_LABELS) as [k, v] (k)}
+											<Select.Item value={k}>{v}</Select.Item>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{UDM_LABELS[article.udmProduction]}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Ruta</span>
+							{#if editing}
+								<Input class="h-8 w-56" bind:value={form.route} />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.route || '---'}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Centro de Trabajo</span>
+							{#if editing}
+								<Input class="h-8 w-56" bind:value={form.workCenter} />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.workCenter || '---'}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Grupo Calidad</span>
+							{#if editing}
+								<Input class="h-8 w-56" bind:value={form.qualityGroup} />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.qualityGroup || '---'}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Inspeccion Requerida</span>
+							{#if editing}
+								<Checkbox bind:checked={form.inspectionRequired} />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.inspectionRequired ? 'Si' : 'No'}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground flex items-center gap-1 text-xs">
+								{#if !article.qualityApproved}<AlertTriangle class="text-chart-4 size-3" />{/if}Aprobado por Calidad
+							</span>
+							{#if editing}
+								<Checkbox bind:checked={form.qualityApproved} />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.qualityApproved ? 'Si' : 'Pendiente'}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Centro de Costo</span>
+							{#if editing}
+								<Input class="h-8 w-56" bind:value={form.costCenter} />
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.costCenter || '---'}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Metodo Costeo</span>
+							{#if editing}
+								<Select.Root type="single" bind:value={form.costMethod}>
+									<Select.Trigger size="sm" class="w-44">{form.costMethod === 'especifico' ? 'Costo Especifico' : 'Costo Promedio'}</Select.Trigger>
+									<Select.Content>
+										<Select.Item value="promedio">Costo Promedio</Select.Item>
+										<Select.Item value="especifico">Costo Especifico</Select.Item>
+									</Select.Content>
+								</Select.Root>
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{article.costMethod === 'especifico' ? 'Costo Especifico' : 'Costo Promedio'}</span>
+							{/if}
+						</div>
+						<div class="flex items-center justify-between gap-4 py-2.5">
+							<span class="text-muted-foreground text-xs">Estatus</span>
+							{#if editing}
+								<Select.Root type="single" bind:value={form.status}>
+									<Select.Trigger size="sm" class="w-44">{ARTICLE_STATUS_LABELS[form.status as keyof typeof ARTICLE_STATUS_LABELS]}</Select.Trigger>
+									<Select.Content>
+										{#each Object.entries(ARTICLE_STATUS_LABELS) as [k, v] (k)}
+											<Select.Item value={k}>{v}</Select.Item>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							{:else}
+								<span class="text-card-foreground text-right text-sm">{ARTICLE_STATUS_LABELS[article.status]}</span>
+							{/if}
+						</div>
+					</Card.Content>
+				</Card.Root>
 			</div>
 
-			<!-- Compras -->
-			<div class="border-border bg-card rounded-lg border">
-				<div class="border-border border-b px-4 py-2.5">
-					<h3 class="text-card-foreground text-sm font-semibold">Compras</h3>
-				</div>
-				<div class="divide-border/30 flex flex-col divide-y px-4">
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">
-							{#if !article.supplierId}<AlertTriangle class="text-chart-4 h-3 w-3" />{/if}Proveedor
-						</span>
-						{#if editing}
-							<select
-								class="field-input"
-								bind:value={form.supplierId}
-								onchange={(e) => {
-									const sup = app.suppliers.find((s) => s.id === e.currentTarget.value);
-									form.supplierName = sup?.name || '';
-								}}
-							>
-								<option value="">Sin asignar</option>
-								{#each app.suppliers as s (s.id)}
-									<option value={s.id}>{s.name}</option>
+			<!-- UdM Conversions -->
+			{#if article.conversions.length > 0}
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>Conversiones de Unidades</Card.Title>
+					</Card.Header>
+					<Card.Content>
+						<Table.Root>
+							<Table.Header>
+								<Table.Row>
+									<Table.Head>De</Table.Head>
+									<Table.Head>A</Table.Head>
+									<Table.Head class="text-right">Factor</Table.Head>
+								</Table.Row>
+							</Table.Header>
+							<Table.Body>
+								{#each article.conversions as c, i (i)}
+									<Table.Row>
+										<Table.Cell>{UDM_LABELS[c.from]}</Table.Cell>
+										<Table.Cell>{UDM_LABELS[c.to]}</Table.Cell>
+										<Table.Cell class="text-right font-mono tabular-nums">{c.factor}</Table.Cell>
+									</Table.Row>
 								{/each}
-							</select>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.supplierName || 'Sin asignar'}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">
-							{#if article.price === 0}<AlertTriangle class="text-chart-4 h-3 w-3" />{/if}Precio
-						</span>
-						{#if editing}
-							<div class="flex gap-1">
-								<input type="number" class="field-input flex-1" bind:value={form.price} />
-								<select class="field-input w-20" bind:value={form.currency}>
-									<option value="MXN">MXN</option>
-									<option value="USD">USD</option>
-								</select>
-							</div>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.price > 0 ? formatCurrency(article.price, article.currency) : '---'}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">UdM Compra</span>
-						{#if editing}
-							<select class="field-input" bind:value={form.udmPurchase}>
-								{#each Object.entries(UDM_LABELS) as [k, v] (k)}
-									<option value={k}>{v}</option>
-								{/each}
-							</select>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{UDM_LABELS[article.udmPurchase]}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">
-							{#if article.leadTimeDays === 0}<AlertTriangle class="text-chart-4 h-3 w-3" />{/if}Lead Time
-						</span>
-						{#if editing}
-							<input type="number" class="field-input" bind:value={form.leadTimeDays} />
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.leadTimeDays > 0 ? `${article.leadTimeDays} dias` : '---'}</span>
-						{/if}
-					</div>
-				</div>
-			</div>
-
-			<!-- Almacen -->
-			<div class="border-border bg-card rounded-lg border">
-				<div class="border-border border-b px-4 py-2.5">
-					<h3 class="text-card-foreground text-sm font-semibold">Almacen</h3>
-				</div>
-				<div class="divide-border/30 flex flex-col divide-y px-4">
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Almacen</span>
-						{#if editing}
-							<select class="field-input" bind:value={form.warehouse}>
-								{#each WAREHOUSES as w (w)}
-									<option value={w}>{w}</option>
-								{/each}
-							</select>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.warehouse || 'MP - Materia Prima'}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">
-							{#if !article.location}<AlertTriangle class="text-chart-4 h-3 w-3" />{/if}Ubicacion
-						</span>
-						{#if editing}
-							<input class="field-input" bind:value={form.location} placeholder="Rack, pasillo, nivel" />
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.location || '---'}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">UdM Almacenamiento</span>
-						{#if editing}
-							<select class="field-input" bind:value={form.udmStorage}>
-								{#each Object.entries(UDM_LABELS) as [k, v] (k)}
-									<option value={k}>{v}</option>
-								{/each}
-							</select>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{UDM_LABELS[article.udmStorage]}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Metodo Surtimiento</span>
-						{#if editing}
-							<select class="field-input" bind:value={form.supplyMethod}>
-								{#each Object.entries(SUPPLY_METHODS) as [k, v] (k)}
-									<option value={k}>{v}</option>
-								{/each}
-							</select>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{SUPPLY_METHODS[article.supplyMethod || 'bom_kit']}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Stock Minimo</span>
-						{#if editing}
-							<input type="number" class="field-input" bind:value={form.minStock} />
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.minStock}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Stock Maximo</span>
-						{#if editing}
-							<input type="number" class="field-input" bind:value={form.maxStock} />
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.maxStock}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Punto de Reorden</span>
-						{#if editing}
-							<input type="number" class="field-input" bind:value={form.reorderPoint} />
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.reorderPoint || 0}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Requiere Lote/Serie</span>
-						{#if editing}
-							<select
-								class="field-input"
-								onchange={(e) => (form.requiresLotSerial = e.currentTarget.value === 'true')}
-							>
-								<option value="false" selected={!form.requiresLotSerial}>No</option>
-								<option value="true" selected={form.requiresLotSerial}>Si</option>
-							</select>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.requiresLotSerial ? 'Si' : 'No'}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Clasificacion ABC</span>
-						{#if editing}
-							<select class="field-input" bind:value={form.abcClass}>
-								{#each Object.entries(ABC_LABELS) as [k, v] (k)}
-									<option value={k}>{v}</option>
-								{/each}
-							</select>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{ABC_LABELS[article.abcClass]}</span>
-						{/if}
-					</div>
-				</div>
-			</div>
-
-			<!-- Produccion + Calidad -->
-			<div class="border-border bg-card rounded-lg border">
-				<div class="border-border border-b px-4 py-2.5">
-					<h3 class="text-card-foreground text-sm font-semibold">Produccion / Calidad</h3>
-				</div>
-				<div class="divide-border/30 flex flex-col divide-y px-4">
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">UdM Produccion</span>
-						{#if editing}
-							<select class="field-input" bind:value={form.udmProduction}>
-								{#each Object.entries(UDM_LABELS) as [k, v] (k)}
-									<option value={k}>{v}</option>
-								{/each}
-							</select>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{UDM_LABELS[article.udmProduction]}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Ruta</span>
-						{#if editing}
-							<input class="field-input" bind:value={form.route} />
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.route || '---'}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Centro de Trabajo</span>
-						{#if editing}
-							<input class="field-input" bind:value={form.workCenter} />
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.workCenter || '---'}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Grupo Calidad</span>
-						{#if editing}
-							<input class="field-input" bind:value={form.qualityGroup} />
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.qualityGroup || '---'}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Inspeccion Requerida</span>
-						{#if editing}
-							<select
-								class="field-input"
-								onchange={(e) => (form.inspectionRequired = e.currentTarget.value === 'true')}
-							>
-								<option value="true" selected={form.inspectionRequired}>Si</option>
-								<option value="false" selected={!form.inspectionRequired}>No</option>
-							</select>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.inspectionRequired ? 'Si' : 'No'}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">
-							{#if !article.qualityApproved}<AlertTriangle class="text-chart-4 h-3 w-3" />{/if}Aprobado por Calidad
-						</span>
-						{#if editing}
-							<select
-								class="field-input"
-								onchange={(e) => (form.qualityApproved = e.currentTarget.value === 'true')}
-							>
-								<option value="false" selected={!form.qualityApproved}>Pendiente</option>
-								<option value="true" selected={form.qualityApproved}>Si</option>
-							</select>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.qualityApproved ? 'Si' : 'Pendiente'}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Centro de Costo</span>
-						{#if editing}
-							<input class="field-input" bind:value={form.costCenter} />
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.costCenter || '---'}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Metodo Costeo</span>
-						{#if editing}
-							<select class="field-input" bind:value={form.costMethod}>
-								<option value="promedio">Costo Promedio</option>
-								<option value="especifico">Costo Especifico</option>
-							</select>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{article.costMethod === 'especifico' ? 'Costo Especifico' : 'Costo Promedio'}</span>
-						{/if}
-					</div>
-					<div class="flex items-center justify-between gap-4 py-2.5">
-						<span class="text-muted-foreground flex items-center gap-1 text-xs whitespace-nowrap">Estatus</span>
-						{#if editing}
-							<select class="field-input" bind:value={form.status}>
-								{#each Object.entries(ARTICLE_STATUS_LABELS) as [k, v] (k)}
-									<option value={k}>{v}</option>
-								{/each}
-							</select>
-						{:else}
-							<span class="text-card-foreground text-right text-sm">{ARTICLE_STATUS_LABELS[article.status]}</span>
-						{/if}
-					</div>
-				</div>
-			</div>
-		</div>
+							</Table.Body>
+						</Table.Root>
+					</Card.Content>
+				</Card.Root>
+			{/if}
+		</Tabs.Content>
 
 		<!-- LMAT 2.0: Multi-Proveedores -->
-		{#if (article.suppliers || []).length > 0}
-			<div class="border-border bg-card rounded-lg border">
-				<div class="border-border flex items-center justify-between border-b px-4 py-3">
-					<div class="flex items-center gap-2">
-						<Truck class="text-muted-foreground h-4 w-4" />
-						<h3 class="text-card-foreground text-sm font-semibold">Proveedores Alternativos</h3>
-					</div>
+		<Tabs.Content value="proveedores">
+			<Card.Root>
+				<Card.Header>
+					<Card.Title class="flex items-center gap-2">
+						<Truck class="text-muted-foreground size-4" /> Proveedores Alternativos
+					</Card.Title>
 					{#if editing}
-						<button class="border-border hover:bg-secondary flex items-center gap-1 rounded-md border px-2 py-1 text-xs">
-							<Plus class="h-3 w-3" /> Agregar
-						</button>
+						<Card.Action>
+							<Button variant="outline" size="sm">
+								<Plus data-icon="inline-start" /> Agregar
+							</Button>
+						</Card.Action>
 					{/if}
-				</div>
-				<div class="overflow-x-auto">
-					<table class="w-full text-sm">
-						<thead>
-							<tr class="border-border border-b text-left">
-								<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Proveedor</th>
-								<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Codigo Alterno</th>
-								<th class="text-muted-foreground px-4 py-2 text-right text-xs font-medium">Precio</th>
-								<th class="text-muted-foreground px-4 py-2 text-right text-xs font-medium">Lead Time</th>
-								<th class="text-muted-foreground px-4 py-2 text-center text-xs font-medium">Principal</th>
-								<th class="text-muted-foreground px-4 py-2 text-center text-xs font-medium">Aprobado</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each article.suppliers || [] as sup (sup.id)}
-								<tr class="border-border/50 border-b">
-									<td class="text-card-foreground px-4 py-2">{sup.supplierName}</td>
-									<td class="text-muted-foreground px-4 py-2 font-mono text-xs">{sup.supplierCode || '---'}</td>
-									<td class="text-card-foreground px-4 py-2 text-right font-mono">{formatCurrency(sup.price, sup.currency === 'EUR' ? 'MXN' : sup.currency)}</td>
-									<td class="text-muted-foreground px-4 py-2 text-right">{sup.leadTimeDays} dias</td>
-									<td class="px-4 py-2 text-center">
-										{#if sup.isPrimary}<CheckCircle2 class="text-primary mx-auto h-4 w-4" />{:else}-{/if}
-									</td>
-									<td class="px-4 py-2 text-center">
-										{#if sup.isApproved}<BadgeCheck class="mx-auto h-4 w-4 text-emerald-400" />{:else}<AlertTriangle class="text-chart-4 mx-auto h-4 w-4" />{/if}
-									</td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				</div>
-			</div>
-		{/if}
+				</Card.Header>
+				<Card.Content>
+					{#if (article.suppliers || []).length > 0}
+						<Table.Root>
+							<Table.Header>
+								<Table.Row>
+									<Table.Head>Proveedor</Table.Head>
+									<Table.Head>Codigo Alterno</Table.Head>
+									<Table.Head class="text-right">Precio</Table.Head>
+									<Table.Head class="text-right">Lead Time</Table.Head>
+									<Table.Head class="text-center">Principal</Table.Head>
+									<Table.Head class="text-center">Aprobado</Table.Head>
+								</Table.Row>
+							</Table.Header>
+							<Table.Body>
+								{#each article.suppliers || [] as sup (sup.id)}
+									<Table.Row>
+										<Table.Cell>{sup.supplierName}</Table.Cell>
+										<Table.Cell class="text-muted-foreground font-mono text-xs">{sup.supplierCode || '---'}</Table.Cell>
+										<Table.Cell class="text-right font-mono tabular-nums">{formatCurrency(sup.price, sup.currency === 'EUR' ? 'MXN' : sup.currency)}</Table.Cell>
+										<Table.Cell class="text-muted-foreground text-right">{sup.leadTimeDays} dias</Table.Cell>
+										<Table.Cell class="text-center">
+											{#if sup.isPrimary}<CheckCircle2 class="text-primary mx-auto size-4" />{:else}-{/if}
+										</Table.Cell>
+										<Table.Cell class="text-center">
+											{#if sup.isApproved}<BadgeCheck class="mx-auto size-4 text-emerald-400" />{:else}<AlertTriangle class="text-chart-4 mx-auto size-4" />{/if}
+										</Table.Cell>
+									</Table.Row>
+								{/each}
+							</Table.Body>
+						</Table.Root>
+					{:else}
+						<Empty.Root class="border-0">
+							<Empty.Header>
+								<Empty.Media variant="icon">
+									<Truck />
+								</Empty.Media>
+								<Empty.Title>Sin proveedores alternativos</Empty.Title>
+							</Empty.Header>
+						</Empty.Root>
+					{/if}
+				</Card.Content>
+			</Card.Root>
+		</Tabs.Content>
 
 		<!-- LMAT 2.0: Documentos Vinculados -->
-		<div class="border-border bg-card rounded-lg border">
-			<div class="border-border flex items-center justify-between border-b px-4 py-3">
-				<div class="flex items-center gap-2">
-					<FileText class="text-muted-foreground h-4 w-4" />
-					<h3 class="text-card-foreground text-sm font-semibold">Documentos Vinculados</h3>
-				</div>
-				{#if editing}
-					<button class="border-border hover:bg-secondary flex items-center gap-1 rounded-md border px-2 py-1 text-xs">
-						<Upload class="h-3 w-3" /> Subir Documento
-					</button>
-				{/if}
-			</div>
-			{#if (article.documents || []).length > 0}
-				<div class="overflow-x-auto">
-					<table class="w-full text-sm">
-						<thead>
-							<tr class="border-border border-b text-left">
-								<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Tipo</th>
-								<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Archivo</th>
-								<th class="text-muted-foreground px-4 py-2 text-center text-xs font-medium">Version</th>
-								<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Subido por</th>
-								<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Fecha</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each article.documents || [] as doc (doc.id)}
-								<tr class="border-border/50 border-b">
-									<td class="px-4 py-2">
-										<span class="bg-secondary rounded px-2 py-0.5 text-xs">{DOCUMENT_TYPE_LABELS[doc.type as DocumentType]}</span>
-									</td>
-									<td class="text-card-foreground px-4 py-2">
-										<a href={doc.fileUrl} target="_blank" rel="noreferrer" class="text-primary flex items-center gap-1 hover:underline">
-											{doc.fileName} <ExternalLink class="h-3 w-3" />
-										</a>
-									</td>
-									<td class="text-muted-foreground px-4 py-2 text-center font-mono text-xs">v{doc.version}</td>
-									<td class="text-muted-foreground px-4 py-2">{doc.uploadedBy}</td>
-									<td class="text-muted-foreground px-4 py-2">{formatDate(doc.uploadedAt)}</td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				</div>
-			{:else}
-				<div class="flex flex-col items-center justify-center py-8 text-center">
-					<FileText class="text-muted-foreground/30 mb-2 h-8 w-8" />
-					<p class="text-muted-foreground text-sm">No hay documentos vinculados</p>
-					<p class="text-muted-foreground mt-1 text-xs">Dibujos tecnicos, programas CNC, fichas tecnicas, imagenes de referencia</p>
-				</div>
-			{/if}
-		</div>
-
-		<!-- UdM Conversions -->
-		{#if article.conversions.length > 0}
-			<div class="border-border bg-card rounded-lg border">
-				<div class="border-border border-b px-4 py-3">
-					<h3 class="text-card-foreground text-sm font-semibold">Conversiones de Unidades</h3>
-				</div>
-				<div class="p-4">
-					<table class="w-full text-sm">
-						<thead>
-							<tr class="border-border border-b text-left">
-								<th class="text-muted-foreground pb-2 text-xs font-medium">De</th>
-								<th class="text-muted-foreground pb-2 text-xs font-medium">A</th>
-								<th class="text-muted-foreground pb-2 text-right text-xs font-medium">Factor</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each article.conversions as c, i (i)}
-								<tr class="border-border/30 border-b">
-									<td class="text-card-foreground py-1.5">{UDM_LABELS[c.from]}</td>
-									<td class="text-card-foreground py-1.5">{UDM_LABELS[c.to]}</td>
-									<td class="text-card-foreground py-1.5 text-right font-mono">{c.factor}</td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				</div>
-			</div>
-		{/if}
+		<Tabs.Content value="documentos">
+			<Card.Root>
+				<Card.Header>
+					<Card.Title class="flex items-center gap-2">
+						<FileText class="text-muted-foreground size-4" /> Documentos Vinculados
+					</Card.Title>
+					{#if editing}
+						<Card.Action>
+							<Button variant="outline" size="sm">
+								<Upload data-icon="inline-start" /> Subir Documento
+							</Button>
+						</Card.Action>
+					{/if}
+				</Card.Header>
+				<Card.Content>
+					{#if (article.documents || []).length > 0}
+						<Table.Root>
+							<Table.Header>
+								<Table.Row>
+									<Table.Head>Tipo</Table.Head>
+									<Table.Head>Archivo</Table.Head>
+									<Table.Head class="text-center">Version</Table.Head>
+									<Table.Head>Subido por</Table.Head>
+									<Table.Head>Fecha</Table.Head>
+								</Table.Row>
+							</Table.Header>
+							<Table.Body>
+								{#each article.documents || [] as doc (doc.id)}
+									<Table.Row>
+										<Table.Cell>
+											<StatusBadge label={DOCUMENT_TYPE_LABELS[doc.type as DocumentType]} colorClass="bg-secondary text-foreground" />
+										</Table.Cell>
+										<Table.Cell>
+											<a href={doc.fileUrl} target="_blank" rel="noreferrer" class="text-primary flex items-center gap-1 hover:underline">
+												{doc.fileName} <ExternalLink class="size-3" />
+											</a>
+										</Table.Cell>
+										<Table.Cell class="text-muted-foreground text-center font-mono text-xs">v{doc.version}</Table.Cell>
+										<Table.Cell class="text-muted-foreground">{doc.uploadedBy}</Table.Cell>
+										<Table.Cell class="text-muted-foreground">{formatDate(doc.uploadedAt)}</Table.Cell>
+									</Table.Row>
+								{/each}
+							</Table.Body>
+						</Table.Root>
+					{:else}
+						<Empty.Root class="border-0">
+							<Empty.Header>
+								<Empty.Media variant="icon">
+									<FileText />
+								</Empty.Media>
+								<Empty.Title>No hay documentos vinculados</Empty.Title>
+								<Empty.Description>Dibujos tecnicos, programas CNC, fichas tecnicas, imagenes de referencia</Empty.Description>
+							</Empty.Header>
+						</Empty.Root>
+					{/if}
+				</Card.Content>
+			</Card.Root>
+		</Tabs.Content>
 
 		<!-- Where-Used -->
-		<div class="border-border bg-card rounded-lg border">
-			<div class="border-border border-b px-4 py-3">
-				<h3 class="text-card-foreground text-sm font-semibold">Where-Used (BOMs que usan este articulo)</h3>
-			</div>
-			{#if whereUsed.length > 0}
-				<div class="overflow-x-auto">
-					<table class="w-full text-sm">
-						<thead>
-							<tr class="border-border border-b text-left">
-								<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Especificacion</th>
-								<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Modelo</th>
-								<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Nivel</th>
-								<th class="text-muted-foreground px-4 py-2 text-right text-xs font-medium">Cantidad</th>
-								<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Celda</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each whereUsed as bom (bom.id)}
-								{@const comp = bom.components.find((c) => c.articleId === article.id)}
-								<tr class="border-border/50 hover:bg-secondary/30 border-b transition-colors">
-									<td class="px-4 py-2">
-										<a href="/lmat/boms/{bom.id}" class="text-primary font-mono text-xs hover:underline">{bom.specificationCode}</a>
-									</td>
-									<td class="text-card-foreground px-4 py-2">{bom.vehicleModel}</td>
-									<td class="text-card-foreground px-4 py-2">{bom.armorLevel}</td>
-									<td class="text-card-foreground px-4 py-2 text-right font-mono">{comp?.quantity} {comp ? UDM_LABELS[comp.udm] : ''}</td>
-									<td class="text-muted-foreground px-4 py-2">{comp?.cell}</td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				</div>
-			{:else}
-				<div class="text-muted-foreground px-4 py-8 text-center text-sm">Este articulo no aparece en ningun BOM.</div>
-			{/if}
-		</div>
+		<Tabs.Content value="whereused">
+			<Card.Root>
+				<Card.Header>
+					<Card.Title>Where-Used (BOMs que usan este articulo)</Card.Title>
+				</Card.Header>
+				<Card.Content>
+					{#if whereUsed.length > 0}
+						<Table.Root>
+							<Table.Header>
+								<Table.Row>
+									<Table.Head>Especificacion</Table.Head>
+									<Table.Head>Modelo</Table.Head>
+									<Table.Head>Nivel</Table.Head>
+									<Table.Head class="text-right">Cantidad</Table.Head>
+									<Table.Head>Celda</Table.Head>
+								</Table.Row>
+							</Table.Header>
+							<Table.Body>
+								{#each whereUsed as bom (bom.id)}
+									{@const comp = bom.components.find((c) => c.articleId === article.id)}
+									<Table.Row>
+										<Table.Cell>
+											<a href="/lmat/boms/{bom.id}" class="text-primary font-mono text-xs hover:underline">{bom.specificationCode}</a>
+										</Table.Cell>
+										<Table.Cell>{bom.vehicleModel}</Table.Cell>
+										<Table.Cell>{bom.armorLevel}</Table.Cell>
+										<Table.Cell class="text-right font-mono tabular-nums">{comp?.quantity} {comp ? UDM_LABELS[comp.udm] : ''}</Table.Cell>
+										<Table.Cell class="text-muted-foreground">{comp?.cell}</Table.Cell>
+									</Table.Row>
+								{/each}
+							</Table.Body>
+						</Table.Root>
+					{:else}
+						<Empty.Root class="border-0">
+							<Empty.Header>
+								<Empty.Media variant="icon">
+									<FileText />
+								</Empty.Media>
+								<Empty.Title>Este articulo no aparece en ningun BOM.</Empty.Title>
+							</Empty.Header>
+						</Empty.Root>
+					{/if}
+				</Card.Content>
+			</Card.Root>
+		</Tabs.Content>
+	</Tabs.Root>
 
-		<!-- Metadata -->
-		<div class="text-muted-foreground flex items-center gap-4 text-xs">
-			<span>Creado: {formatDate(article.createdAt)}</span>
-			<span>Modificado: {formatDate(article.updatedAt)}</span>
-			<span>Planta: {article.plant}</span>
-		</div>
+	<!-- Metadata -->
+	<div class="text-muted-foreground flex items-center gap-4 text-xs">
+		<span>Creado: {formatDate(article.createdAt)}</span>
+		<span>Modificado: {formatDate(article.updatedAt)}</span>
+		<span>Planta: {article.plant}</span>
 	</div>
 {/if}
-
-<style>
-	.field-input {
-		width: 100%;
-		border-radius: 0.375rem;
-		border: 1px solid var(--border);
-		background: var(--secondary);
-		padding: 0.375rem 0.5rem;
-		font-size: 0.8125rem;
-		color: var(--foreground);
-		outline: none;
-	}
-	.field-input:focus {
-		border-color: var(--primary);
-	}
-</style>

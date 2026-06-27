@@ -12,6 +12,16 @@
 	} from '$lib/tps/constants.js';
 	import { formatDate } from '$lib/tps/utils.js';
 	import StatusBadge from '$lib/tps/components/status-badge.svelte';
+	import StatCard from '$lib/tps/components/stat-card.svelte';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import * as Alert from '$lib/components/ui/alert/index.js';
+	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Badge } from '$lib/components/ui/badge/index.js';
+	import { Progress } from '$lib/components/ui/progress/index.js';
+	import { Separator } from '$lib/components/ui/separator/index.js';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import Car from '@lucide/svelte/icons/car';
 	import Shield from '@lucide/svelte/icons/shield';
@@ -26,6 +36,7 @@
 	import FileText from '@lucide/svelte/icons/file-text';
 	import Settings from '@lucide/svelte/icons/settings';
 	import GitBranch from '@lucide/svelte/icons/git-branch';
+	import Info from '@lucide/svelte/icons/info';
 
 	type TabType = 'general' | 'proteccion' | 'boms' | 'validacion' | 'historial';
 
@@ -70,334 +81,352 @@
 </script>
 
 {#if !spec}
-	<div class="flex flex-col items-center justify-center gap-4 py-20">
+	<div class="mx-auto flex w-full max-w-5xl flex-col items-center justify-center gap-4 py-20">
 		<p class="text-muted-foreground">Especificacion no encontrada</p>
-		<a href="/lmat/especificaciones" class="text-primary hover:underline text-sm">Volver al listado</a>
+		<Button href="/lmat/especificaciones" variant="outline" size="sm">Volver al listado</Button>
 	</div>
-{/if}
-
-{#if spec}
-	<div class="flex flex-col gap-6">
+{:else}
+	<div class="mx-auto flex w-full max-w-5xl flex-col gap-6">
 		<!-- Header -->
-		<div class="flex items-center justify-between">
+		<div class="flex flex-wrap items-center justify-between gap-3">
 			<div class="flex items-center gap-3">
-				<a href="/lmat/especificaciones" class="flex h-8 w-8 items-center justify-center rounded-md border border-border hover:bg-secondary transition-colors">
-					<ArrowLeft class="h-4 w-4 text-foreground" />
-				</a>
-				<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-					<Car class="h-5 w-5 text-primary" />
+				<Button href="/lmat/especificaciones" variant="outline" size="icon">
+					<ArrowLeft />
+				</Button>
+				<div class="bg-primary/10 flex size-10 items-center justify-center rounded-lg">
+					<Car class="text-primary size-5" />
 				</div>
-				<div>
+				<div class="flex flex-col gap-1">
 					<div class="flex items-center gap-2">
-						<h1 class="text-xl font-bold text-foreground">{spec.brand} {spec.model}</h1>
-						<span class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-muted-foreground">v{spec.version}</span>
+						<h2 class="text-xl font-bold">{spec.brand} {spec.model}</h2>
+						<Badge variant="outline" class="font-mono">v{spec.version}</Badge>
 						<StatusBadge label={BOM_MATURITY_LABELS[spec.status]} colorClass={BOM_MATURITY_COLORS[spec.status]} />
 					</div>
-					<p class="text-sm text-muted-foreground">
+					<p class="text-muted-foreground text-sm">
 						{spec.code} / {ARMOR_LEVEL_LABELS[spec.armorLevel]} / {spec.year}
 					</p>
 				</div>
 			</div>
 			<div class="flex items-center gap-2">
 				{#if linkedECNs.length > 0}
-					<a href="/lmat/ecn" class="flex items-center gap-1.5 rounded-md border border-chart-4/30 bg-chart-4/10 px-3 py-1.5 text-xs text-chart-4 hover:bg-chart-4/20 transition-colors">
-						<GitBranch class="h-3.5 w-3.5" />
-						{linkedECNs.length} ECN Activos
-					</a>
+					<Button href="/lmat/ecn" variant="outline" size="sm">
+						<GitBranch data-icon="inline-start" /> {linkedECNs.length} ECN Activos
+					</Button>
 				{/if}
-				<a href="/lmat/especificaciones/{spec.id}/editar" class="flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
-					<Settings class="h-3.5 w-3.5" /> Editar
-				</a>
+				<Button href="/lmat/especificaciones/{spec.id}/editar" size="sm">
+					<Settings data-icon="inline-start" /> Editar
+				</Button>
 			</div>
 		</div>
 
 		<!-- Status Description -->
-		<div class="rounded-lg border p-3 {BOM_MATURITY_COLORS[spec.status].replace('text-', 'border-').replace('/15', '/30')}">
-			<p class="text-sm">
-				<span class="font-medium">Estado actual:</span>{' '}
-				{BOM_MATURITY_DESCRIPTIONS[spec.status]}
-			</p>
-		</div>
+		<Alert.Root>
+			<Info />
+			<Alert.Title>Estado actual: {BOM_MATURITY_LABELS[spec.status]}</Alert.Title>
+			<Alert.Description>{BOM_MATURITY_DESCRIPTIONS[spec.status]}</Alert.Description>
+		</Alert.Root>
 
 		<!-- Stats -->
 		<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-			<div class="rounded-lg border border-border bg-card p-3">
-				<span class="text-xs text-muted-foreground">BOMs Asociados</span>
-				<p class="text-xl font-bold text-card-foreground">{linkedBOMs.length}</p>
-			</div>
-			<div class="rounded-lg border border-border bg-card p-3">
-				<span class="text-xs text-muted-foreground">Zonas de Proteccion</span>
-				<p class="text-xl font-bold text-card-foreground">{spec.protectionByZone.length}</p>
-			</div>
-			<div class="rounded-lg border border-border bg-card p-3">
-				<span class="text-xs text-muted-foreground">Componentes Especiales</span>
-				<p class="text-xl font-bold text-card-foreground">{spec.specialComponents.length}</p>
-			</div>
-			<div class="rounded-lg border border-border bg-card p-3">
-				<span class="text-xs text-muted-foreground">Accesorios Opcionales</span>
-				<p class="text-xl font-bold text-card-foreground">{spec.optionalAccessories.length}</p>
-			</div>
+			<StatCard label="BOMs Asociados" value={linkedBOMs.length} icon={Layers} />
+			<StatCard label="Zonas de Proteccion" value={spec.protectionByZone.length} icon={Shield} />
+			<StatCard label="Componentes Especiales" value={spec.specialComponents.length} icon={Settings} />
+			<StatCard label="Accesorios Opcionales" value={spec.optionalAccessories.length} icon={FileText} />
 		</div>
 
 		<!-- Tabs -->
-		<div class="flex items-center gap-1 border-b border-border">
-			{#each tabs as tab (tab.id)}
-				{@const Icon = tab.icon}
-				<button
-					onclick={() => (activeTab = tab.id)}
-					class="flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 transition-colors {activeTab === tab.id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}"
-				>
-					<Icon class="h-3.5 w-3.5" />
-					{tab.label}
-				</button>
-			{/each}
-		</div>
+		<Tabs.Root bind:value={activeTab}>
+			<Tabs.List>
+				{#each tabs as tab (tab.id)}
+					{@const Icon = tab.icon}
+					<Tabs.Trigger value={tab.id}>
+						<Icon data-icon="inline-start" />
+						{tab.label}
+					</Tabs.Trigger>
+				{/each}
+			</Tabs.List>
 
-		<!-- Tab Content -->
-		{#if activeTab === 'general'}
-			<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-				<!-- Basic Info -->
-				<div class="rounded-lg border border-border bg-card">
-					<div class="border-b border-border px-4 py-3">
-						<h3 class="text-sm font-semibold text-card-foreground">Informacion General</h3>
-					</div>
-					<div class="p-4 space-y-3">
-						<div class="flex justify-between">
-							<span class="text-sm text-muted-foreground">Codigo</span>
-							<span class="text-sm font-mono text-card-foreground">{spec.code}</span>
-						</div>
-						<div class="flex justify-between">
-							<span class="text-sm text-muted-foreground">Marca</span>
-							<span class="text-sm text-card-foreground">{spec.brand}</span>
-						</div>
-						<div class="flex justify-between">
-							<span class="text-sm text-muted-foreground">Modelo</span>
-							<span class="text-sm text-card-foreground">{spec.model}</span>
-						</div>
-						<div class="flex justify-between">
-							<span class="text-sm text-muted-foreground">Ano / Generacion</span>
-							<span class="text-sm text-card-foreground">{spec.year}</span>
-						</div>
-						<div class="flex justify-between">
-							<span class="text-sm text-muted-foreground">Nivel de Blindaje</span>
-							<span class="text-sm text-card-foreground">{ARMOR_LEVEL_LABELS[spec.armorLevel]}</span>
-						</div>
-						<div class="flex justify-between">
-							<span class="text-sm text-muted-foreground">Tipo de Diseno</span>
-							<span class="text-sm text-card-foreground capitalize">{spec.designType.replace('_', ' ')}</span>
-						</div>
-						<div class="flex justify-between">
-							<span class="text-sm text-muted-foreground">Version</span>
-							<span class="text-sm font-mono text-card-foreground">v{spec.version}</span>
-						</div>
-						<div class="flex justify-between">
-							<span class="text-sm text-muted-foreground">Creado</span>
-							<span class="text-sm text-card-foreground">{formatDate(spec.createdAt)}</span>
-						</div>
-						<div class="flex justify-between">
-							<span class="text-sm text-muted-foreground">Actualizado</span>
-							<span class="text-sm text-card-foreground">{formatDate(spec.updatedAt)}</span>
-						</div>
-					</div>
-				</div>
-
-				<!-- Special Components -->
-				<div class="rounded-lg border border-border bg-card">
-					<div class="border-b border-border px-4 py-3">
-						<h3 class="text-sm font-semibold text-card-foreground">Componentes Especiales</h3>
-					</div>
-					<div class="p-4">
-						{#if spec.specialComponents.length > 0}
-							<ul class="space-y-2">
-								{#each spec.specialComponents as comp, idx (idx)}
-									<li class="flex items-center gap-2 text-sm text-card-foreground">
-										<div class="h-1.5 w-1.5 rounded-full bg-primary"></div>
-										{comp}
-									</li>
-								{/each}
-							</ul>
-						{:else}
-							<p class="text-sm text-muted-foreground">Sin componentes especiales</p>
-						{/if}
-					</div>
-
-					<div class="border-t border-border px-4 py-3">
-						<h3 class="text-sm font-semibold text-card-foreground mb-3">Accesorios Opcionales</h3>
-						{#if spec.optionalAccessories.length > 0}
-							<div class="flex flex-wrap gap-2">
-								{#each spec.optionalAccessories as acc, idx (idx)}
-									<span class="rounded-full bg-secondary px-2.5 py-1 text-xs text-muted-foreground">{acc}</span>
-								{/each}
+			<!-- General -->
+			<Tabs.Content value="general">
+				<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+					<!-- Basic Info -->
+					<Card.Root>
+						<Card.Header>
+							<Card.Title>Informacion General</Card.Title>
+						</Card.Header>
+						<Card.Content class="flex flex-col gap-3">
+							<div class="flex justify-between">
+								<span class="text-muted-foreground text-sm">Codigo</span>
+								<span class="font-mono text-sm">{spec.code}</span>
 							</div>
+							<div class="flex justify-between">
+								<span class="text-muted-foreground text-sm">Marca</span>
+								<span class="text-sm">{spec.brand}</span>
+							</div>
+							<div class="flex justify-between">
+								<span class="text-muted-foreground text-sm">Modelo</span>
+								<span class="text-sm">{spec.model}</span>
+							</div>
+							<div class="flex justify-between">
+								<span class="text-muted-foreground text-sm">Ano / Generacion</span>
+								<span class="text-sm">{spec.year}</span>
+							</div>
+							<div class="flex justify-between">
+								<span class="text-muted-foreground text-sm">Nivel de Blindaje</span>
+								<span class="text-sm">{ARMOR_LEVEL_LABELS[spec.armorLevel]}</span>
+							</div>
+							<div class="flex justify-between">
+								<span class="text-muted-foreground text-sm">Tipo de Diseno</span>
+								<span class="text-sm capitalize">{spec.designType.replace('_', ' ')}</span>
+							</div>
+							<div class="flex justify-between">
+								<span class="text-muted-foreground text-sm">Version</span>
+								<span class="font-mono text-sm">v{spec.version}</span>
+							</div>
+							<div class="flex justify-between">
+								<span class="text-muted-foreground text-sm">Creado</span>
+								<span class="text-sm">{formatDate(spec.createdAt)}</span>
+							</div>
+							<div class="flex justify-between">
+								<span class="text-muted-foreground text-sm">Actualizado</span>
+								<span class="text-sm">{formatDate(spec.updatedAt)}</span>
+							</div>
+						</Card.Content>
+					</Card.Root>
+
+					<!-- Special Components -->
+					<Card.Root>
+						<Card.Header>
+							<Card.Title>Componentes Especiales</Card.Title>
+						</Card.Header>
+						<Card.Content class="flex flex-col gap-4">
+							{#if spec.specialComponents.length > 0}
+								<ul class="flex flex-col gap-2">
+									{#each spec.specialComponents as comp, idx (idx)}
+										<li class="flex items-center gap-2 text-sm">
+											<div class="bg-primary size-1.5 rounded-full"></div>
+											{comp}
+										</li>
+									{/each}
+								</ul>
+							{:else}
+								<p class="text-muted-foreground text-sm">Sin componentes especiales</p>
+							{/if}
+
+							<Separator />
+
+							<div class="flex flex-col gap-3">
+								<h4 class="text-sm font-semibold">Accesorios Opcionales</h4>
+								{#if spec.optionalAccessories.length > 0}
+									<div class="flex flex-wrap gap-2">
+										{#each spec.optionalAccessories as acc, idx (idx)}
+											<Badge variant="secondary">{acc}</Badge>
+										{/each}
+									</div>
+								{:else}
+									<p class="text-muted-foreground text-sm">Sin accesorios opcionales</p>
+								{/if}
+							</div>
+						</Card.Content>
+					</Card.Root>
+				</div>
+			</Tabs.Content>
+
+			<!-- Proteccion -->
+			<Tabs.Content value="proteccion">
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>Proteccion por Zona</Card.Title>
+					</Card.Header>
+					<Card.Content>
+						{#if spec.protectionByZone.length > 0}
+							<Table.Root>
+								<Table.Header>
+									<Table.Row>
+										<Table.Head>Zona</Table.Head>
+										<Table.Head>Espesor</Table.Head>
+										<Table.Head>Material</Table.Head>
+										<Table.Head>Tipo de Traslape</Table.Head>
+									</Table.Row>
+								</Table.Header>
+								<Table.Body>
+									{#each spec.protectionByZone as zone, idx (idx)}
+										<Table.Row>
+											<Table.Cell class="font-medium">{zone.zone}</Table.Cell>
+											<Table.Cell class="font-mono">{zone.thickness}</Table.Cell>
+											<Table.Cell class="text-muted-foreground">{zone.material}</Table.Cell>
+											<Table.Cell class="text-muted-foreground">{zone.overlapType}</Table.Cell>
+										</Table.Row>
+									{/each}
+								</Table.Body>
+							</Table.Root>
 						{:else}
-							<p class="text-sm text-muted-foreground">Sin accesorios opcionales</p>
+							<Empty.Root class="border-0">
+								<Empty.Header>
+									<Empty.Media variant="icon">
+										<Shield />
+									</Empty.Media>
+									<Empty.Title>Sin zonas de proteccion</Empty.Title>
+									<Empty.Description>No se han definido zonas de proteccion</Empty.Description>
+								</Empty.Header>
+							</Empty.Root>
 						{/if}
-					</div>
-				</div>
-			</div>
-		{/if}
+					</Card.Content>
+				</Card.Root>
+			</Tabs.Content>
 
-		{#if activeTab === 'proteccion'}
-			<div class="rounded-lg border border-border bg-card overflow-hidden">
-				<div class="border-b border-border px-4 py-3">
-					<h3 class="text-sm font-semibold text-card-foreground">Proteccion por Zona</h3>
-				</div>
-				<div class="overflow-x-auto">
-					<table class="w-full text-sm">
-						<thead>
-							<tr class="border-b border-border bg-secondary/50 text-left">
-								<th class="px-4 py-2.5 text-xs font-medium text-muted-foreground">Zona</th>
-								<th class="px-4 py-2.5 text-xs font-medium text-muted-foreground">Espesor</th>
-								<th class="px-4 py-2.5 text-xs font-medium text-muted-foreground">Material</th>
-								<th class="px-4 py-2.5 text-xs font-medium text-muted-foreground">Tipo de Traslape</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each spec.protectionByZone as zone, idx (idx)}
-								<tr class="border-b border-border/50 hover:bg-secondary/30 transition-colors">
-									<td class="px-4 py-2.5 font-medium text-card-foreground">{zone.zone}</td>
-									<td class="px-4 py-2.5 font-mono text-card-foreground">{zone.thickness}</td>
-									<td class="px-4 py-2.5 text-muted-foreground">{zone.material}</td>
-									<td class="px-4 py-2.5 text-muted-foreground">{zone.overlapType}</td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				</div>
-				{#if spec.protectionByZone.length === 0}
-					<div class="p-8 text-center text-sm text-muted-foreground">
-						No se han definido zonas de proteccion
-					</div>
-				{/if}
-			</div>
-		{/if}
-
-		{#if activeTab === 'boms'}
-			<div class="rounded-lg border border-border bg-card overflow-hidden">
-				<div class="border-b border-border px-4 py-3">
-					<h3 class="text-sm font-semibold text-card-foreground">BOMs Vinculados</h3>
-				</div>
-				{#if linkedBOMs.length > 0}
-					<div class="divide-y divide-border/50">
-						{#each linkedBOMs as b (b.id)}
-							<a href="/lmat/boms/{b.id}" class="flex items-center justify-between px-4 py-3 hover:bg-secondary/30 transition-colors">
-								<div class="flex items-center gap-3">
-									<Layers class="h-4 w-4 text-primary" />
-									<div>
-										<p class="font-mono text-sm text-primary">{b.specificationCode}</p>
-										<p class="text-xs text-muted-foreground">
-											{b.components.length} componentes / v{b.version}
-										</p>
-									</div>
-								</div>
-								<div class="flex items-center gap-2">
-									<StatusBadge label={BOM_MATURITY_LABELS[b.maturityStatus]} colorClass={BOM_MATURITY_COLORS[b.maturityStatus]} />
-									<div class="flex items-center gap-1">
-										<div class="h-1.5 w-16 rounded-full bg-secondary">
-											<div class="h-1.5 rounded-full {b.healthPercent >= 80 ? 'bg-primary' : b.healthPercent >= 50 ? 'bg-chart-4' : 'bg-destructive'}" style="width: {b.healthPercent}%"></div>
-										</div>
-										<span class="text-xs font-mono text-muted-foreground">{b.healthPercent}%</span>
-									</div>
-									<ChevronRight class="h-4 w-4 text-muted-foreground" />
-								</div>
-							</a>
-						{/each}
-					</div>
-				{:else}
-					<div class="p-8 text-center text-sm text-muted-foreground">
-						No hay BOMs vinculados a esta especificacion
-					</div>
-				{/if}
-			</div>
-		{/if}
-
-		{#if activeTab === 'validacion'}
-			<div class="rounded-lg border border-border bg-card">
-				<div class="border-b border-border px-4 py-3">
-					<h3 class="text-sm font-semibold text-card-foreground">Validacion Multi-Departamental (LMAT 2.0)</h3>
-					<p class="text-xs text-muted-foreground mt-1">
-						Cada departamento debe validar su informacion antes de liberar la especificacion para serie
-					</p>
-				</div>
-				<div class="p-4">
-					{#if validations.length > 0}
-						<div class="space-y-3">
-							{#each validations as val, idx (idx)}
-								{@const vi = getValidationIcon(val.status)}
-								{@const Icon = vi.icon}
-								<div class="flex items-center justify-between rounded-lg border border-border p-3">
-									<div class="flex items-center gap-3">
-										<Icon class="h-4 w-4 {vi.cls}" />
-										<div>
-											<p class="font-medium text-card-foreground">{val.department}</p>
-											{#if val.validatedBy}
-												<p class="text-xs text-muted-foreground">
-													{val.validatedBy} - {formatDate(val.validatedAt || '')}
+			<!-- BOMs -->
+			<Tabs.Content value="boms">
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>BOMs Vinculados</Card.Title>
+					</Card.Header>
+					<Card.Content>
+						{#if linkedBOMs.length > 0}
+							<div class="flex flex-col">
+								{#each linkedBOMs as b, idx (b.id)}
+									{#if idx > 0}<Separator />{/if}
+									<a href="/lmat/boms/{b.id}" class="hover:bg-muted/50 -mx-2 flex items-center justify-between rounded-md px-2 py-3 transition-colors">
+										<div class="flex items-center gap-3">
+											<Layers class="text-primary size-4" />
+											<div class="flex flex-col">
+												<p class="text-primary font-mono text-sm">{b.specificationCode}</p>
+												<p class="text-muted-foreground text-xs">
+													{b.components.length} componentes / v{b.version}
 												</p>
-											{/if}
+											</div>
+										</div>
+										<div class="flex items-center gap-3">
+											<StatusBadge label={BOM_MATURITY_LABELS[b.maturityStatus]} colorClass={BOM_MATURITY_COLORS[b.maturityStatus]} />
+											<div class="flex items-center gap-2">
+												<Progress
+													value={b.healthPercent}
+													max={100}
+													class={b.healthPercent >= 80 ? 'h-1.5 w-16' : b.healthPercent >= 50 ? 'h-1.5 w-16 *:data-[slot=progress-indicator]:bg-chart-4' : 'h-1.5 w-16 *:data-[slot=progress-indicator]:bg-destructive'}
+												/>
+												<span class="text-muted-foreground font-mono text-xs tabular-nums">{b.healthPercent}%</span>
+											</div>
+											<ChevronRight class="text-muted-foreground size-4" />
+										</div>
+									</a>
+								{/each}
+							</div>
+						{:else}
+							<Empty.Root class="border-0">
+								<Empty.Header>
+									<Empty.Media variant="icon">
+										<Layers />
+									</Empty.Media>
+									<Empty.Title>Sin BOMs vinculados</Empty.Title>
+									<Empty.Description>No hay BOMs vinculados a esta especificacion</Empty.Description>
+								</Empty.Header>
+							</Empty.Root>
+						{/if}
+					</Card.Content>
+				</Card.Root>
+			</Tabs.Content>
+
+			<!-- Validacion -->
+			<Tabs.Content value="validacion">
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>Validacion Multi-Departamental (LMAT 2.0)</Card.Title>
+						<Card.Description>
+							Cada departamento debe validar su informacion antes de liberar la especificacion para serie
+						</Card.Description>
+					</Card.Header>
+					<Card.Content class="flex flex-col gap-4">
+						{#if validations.length > 0}
+							<div class="flex flex-col gap-3">
+								{#each validations as val, idx (idx)}
+									{@const vi = getValidationIcon(val.status)}
+									{@const Icon = vi.icon}
+									<div class="flex items-center justify-between rounded-lg border p-3">
+										<div class="flex items-center gap-3">
+											<Icon class="size-4 {vi.cls}" />
+											<div class="flex flex-col">
+												<p class="font-medium">{val.department}</p>
+												{#if val.validatedBy}
+													<p class="text-muted-foreground text-xs">
+														{val.validatedBy} - {formatDate(val.validatedAt || '')}
+													</p>
+												{/if}
+											</div>
+										</div>
+										<StatusBadge label={DEPT_VALIDATION_LABELS[val.status]} colorClass={DEPT_VALIDATION_COLORS[val.status]} />
+									</div>
+								{/each}
+							</div>
+						{:else}
+							<div class="flex flex-col gap-3">
+								{#each VALIDATION_DEPARTMENTS as dept, idx (idx)}
+									<div class="bg-muted/30 flex items-center justify-between rounded-lg border p-3">
+										<div class="flex items-center gap-3">
+											<Clock3 class="text-muted-foreground size-4" />
+											<p class="text-muted-foreground">{dept}</p>
+										</div>
+										<StatusBadge label="Pendiente" colorClass="bg-muted text-muted-foreground" />
+									</div>
+								{/each}
+							</div>
+						{/if}
+
+						<Separator />
+
+						<div class="flex flex-col gap-2">
+							<div class="flex items-center justify-between text-sm">
+								<span class="text-muted-foreground">Progreso de Validacion</span>
+								<span class="font-mono tabular-nums">
+									{validations.filter((v) => v.status === 'completado').length}/{VALIDATION_DEPARTMENTS.length}
+								</span>
+							</div>
+							<Progress
+								value={(validations.filter((v) => v.status === 'completado').length / VALIDATION_DEPARTMENTS.length) * 100}
+								max={100}
+							/>
+						</div>
+					</Card.Content>
+				</Card.Root>
+			</Tabs.Content>
+
+			<!-- Historial -->
+			<Tabs.Content value="historial">
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>Historial de Cambios</Card.Title>
+					</Card.Header>
+					<Card.Content>
+						{#if spec.changeHistory.length > 0}
+							<div class="flex flex-col">
+								{#each [...spec.changeHistory].reverse() as change, idx (change.id)}
+									{#if idx > 0}<Separator />{/if}
+									<div class="flex items-start gap-3 py-3">
+										<div class="bg-primary mt-1.5 size-2 rounded-full"></div>
+										<div class="flex flex-1 flex-col gap-0.5">
+											<div class="flex items-center justify-between">
+												<span class="text-sm font-medium">{change.changeType}</span>
+												<span class="text-muted-foreground text-xs">{formatDate(change.changedAt)}</span>
+											</div>
+											<p class="text-muted-foreground text-sm">{change.description}</p>
+											<p class="text-muted-foreground text-xs">Por: {change.changedBy}</p>
 										</div>
 									</div>
-									<StatusBadge label={DEPT_VALIDATION_LABELS[val.status]} colorClass={DEPT_VALIDATION_COLORS[val.status]} />
-								</div>
-							{/each}
-						</div>
-					{:else}
-						<div class="space-y-3">
-							{#each VALIDATION_DEPARTMENTS as dept, idx (idx)}
-								<div class="flex items-center justify-between rounded-lg border border-border/50 bg-secondary/20 p-3">
-									<div class="flex items-center gap-3">
-										<Clock3 class="h-4 w-4 text-muted-foreground" />
-										<p class="text-muted-foreground">{dept}</p>
-									</div>
-									<StatusBadge label="Pendiente" colorClass="bg-muted text-muted-foreground" />
-								</div>
-							{/each}
-						</div>
-					{/if}
-
-					<!-- Validation Progress -->
-					<div class="mt-4 pt-4 border-t border-border">
-						<div class="flex items-center justify-between mb-2">
-							<span class="text-sm text-muted-foreground">Progreso de Validacion</span>
-							<span class="text-sm font-mono text-card-foreground">
-								{validations.filter((v) => v.status === 'completado').length}/{VALIDATION_DEPARTMENTS.length}
-							</span>
-						</div>
-						<div class="h-2 rounded-full bg-secondary">
-							<div class="h-2 rounded-full bg-primary transition-all" style="width: {(validations.filter((v) => v.status === 'completado').length / VALIDATION_DEPARTMENTS.length) * 100}%"></div>
-						</div>
-					</div>
-				</div>
-			</div>
-		{/if}
-
-		{#if activeTab === 'historial'}
-			<div class="rounded-lg border border-border bg-card">
-				<div class="border-b border-border px-4 py-3">
-					<h3 class="text-sm font-semibold text-card-foreground">Historial de Cambios</h3>
-				</div>
-				{#if spec.changeHistory.length > 0}
-					<div class="divide-y divide-border/50">
-						{#each [...spec.changeHistory].reverse() as change (change.id)}
-							<div class="flex items-start gap-3 px-4 py-3">
-								<div class="mt-0.5 h-2 w-2 rounded-full bg-primary"></div>
-								<div class="flex-1">
-									<div class="flex items-center justify-between">
-										<span class="text-sm font-medium text-card-foreground">{change.changeType}</span>
-										<span class="text-xs text-muted-foreground">{formatDate(change.changedAt)}</span>
-									</div>
-									<p class="text-sm text-muted-foreground mt-0.5">{change.description}</p>
-									<p class="text-xs text-muted-foreground mt-1">Por: {change.changedBy}</p>
-								</div>
+								{/each}
 							</div>
-						{/each}
-					</div>
-				{:else}
-					<div class="p-8 text-center text-sm text-muted-foreground">
-						No hay cambios registrados
-					</div>
-				{/if}
-			</div>
-		{/if}
+						{:else}
+							<Empty.Root class="border-0">
+								<Empty.Header>
+									<Empty.Media variant="icon">
+										<History />
+									</Empty.Media>
+									<Empty.Title>Sin historial</Empty.Title>
+									<Empty.Description>No hay cambios registrados</Empty.Description>
+								</Empty.Header>
+							</Empty.Root>
+						{/if}
+					</Card.Content>
+				</Card.Root>
+			</Tabs.Content>
+		</Tabs.Root>
 	</div>
 {/if}

@@ -2,6 +2,15 @@
 	import { page } from '$app/state';
 	import { useStore } from '$lib/tps/store.svelte.js';
 	import { PRODUCTION_PROCESS_LABELS, PRODUCTION_PROCESS_COLORS } from '$lib/tps/constants.js';
+	import StatusBadge from '$lib/tps/components/status-badge.svelte';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Alert from '$lib/components/ui/alert/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
+	import { Textarea } from '$lib/components/ui/textarea/index.js';
+	import { Progress } from '$lib/components/ui/progress/index.js';
+	import { Separator } from '$lib/components/ui/separator/index.js';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import Package from '@lucide/svelte/icons/package';
 	import CircleCheckBig from '@lucide/svelte/icons/circle-check-big';
@@ -72,123 +81,87 @@
 </script>
 
 {#if !kit}
-	<div class="flex h-96 flex-col items-center justify-center gap-4">
-		<Package class="text-muted-foreground h-16 w-16" />
+	<div class="mx-auto flex w-full max-w-5xl flex-col items-center justify-center gap-4 py-20">
+		<Package class="text-muted-foreground size-16" />
 		<p class="text-muted-foreground text-lg">Kit no encontrado</p>
-		<a
-			href="/lmat/kits"
-			class="border-border bg-card hover:bg-accent inline-flex items-center rounded-md border px-4 py-2 text-sm"
-		>
-			Volver a Kits
-		</a>
+		<Button href="/lmat/kits" variant="outline" size="sm">Volver a Kits</Button>
 	</div>
 {:else}
 	{@const statusConfig = KIT_STATUS_CONFIG[kit.status]}
-	{@const StatusIcon = statusConfig.icon}
 	{@const scannedCount = kit.items.filter((i) => i.scanned).length}
 	{@const totalCount = kit.items.length}
 	{@const progress = totalCount > 0 ? (scannedCount / totalCount) * 100 : 0}
 
-	<div class="space-y-6">
+	<div class="mx-auto flex w-full max-w-5xl flex-col gap-6">
 		<!-- Header -->
-		<div class="flex items-center gap-4">
-			<a
-				href="/lmat/kits"
-				class="hover:bg-accent inline-flex h-9 w-9 items-center justify-center rounded-md"
-			>
-				<ArrowLeft class="h-4 w-4" />
-			</a>
-			<div class="flex-1">
+		<div class="flex flex-wrap items-center gap-4">
+			<Button href="/lmat/kits" variant="outline" size="icon">
+				<ArrowLeft />
+			</Button>
+			<div class="flex flex-1 flex-col gap-1">
 				<div class="flex items-center gap-3">
-					<h1 class="text-2xl font-semibold">Kit #{kit.id.toUpperCase()}</h1>
-					<span
-						class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium {statusConfig.color}"
-					>
-						<StatusIcon class="mr-1 h-3 w-3" />
-						{statusConfig.label}
-					</span>
+					<h2 class="text-2xl font-semibold">Kit #{kit.id.toUpperCase()}</h2>
+					<StatusBadge label={statusConfig.label} colorClass={statusConfig.color} />
 				</div>
-				<p class="text-muted-foreground">
+				<p class="text-muted-foreground text-sm">
 					Folio {kit.folio} - {spec?.model || 'Sin especificacion'} - {kit.cell}
 				</p>
 			</div>
 			<div class="flex gap-2">
-				<button
-					class="border-border bg-card hover:bg-accent inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm"
-				>
-					<QrCode class="h-4 w-4" />
-					Escanear
-				</button>
-				<button
-					class="border-border bg-card hover:bg-accent inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm"
-				>
-					<Printer class="h-4 w-4" />
-					Imprimir
-				</button>
-				<button
-					class="border-border bg-card hover:bg-accent inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm"
-				>
-					<Download class="h-4 w-4" />
-					Exportar
-				</button>
+				<Button variant="outline" size="sm">
+					<QrCode data-icon="inline-start" /> Escanear
+				</Button>
+				<Button variant="outline" size="sm">
+					<Printer data-icon="inline-start" /> Imprimir
+				</Button>
+				<Button variant="outline" size="sm">
+					<Download data-icon="inline-start" /> Exportar
+				</Button>
 			</div>
 		</div>
 
 		<!-- Info Cards -->
-		<div class="grid grid-cols-4 gap-4">
-			<div class="border-border bg-card rounded-lg border">
-				<div class="p-6 pb-2">
-					<p class="text-muted-foreground text-sm">Proceso</p>
-				</div>
-				<div class="p-6 pt-0">
-					<span
-						class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium {PRODUCTION_PROCESS_COLORS[
-							kit.process
-						]}"
-					>
-						{PRODUCTION_PROCESS_LABELS[kit.process]}
-					</span>
-				</div>
-			</div>
-			<div class="border-border bg-card rounded-lg border">
-				<div class="p-6 pb-2">
-					<p class="text-muted-foreground text-sm">Celda</p>
-				</div>
-				<div class="p-6 pt-0">
-					<p class="text-lg font-medium">{kit.cell}</p>
-				</div>
-			</div>
-			<div class="border-border bg-card rounded-lg border">
-				<div class="p-6 pb-2">
-					<p class="text-muted-foreground text-sm">Progreso</p>
-				</div>
-				<div class="space-y-2 p-6 pt-0">
+		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+			<Card.Root>
+				<Card.Header>
+					<Card.Description>Proceso</Card.Description>
+				</Card.Header>
+				<Card.Content>
+					<StatusBadge label={PRODUCTION_PROCESS_LABELS[kit.process]} colorClass={PRODUCTION_PROCESS_COLORS[kit.process]} />
+				</Card.Content>
+			</Card.Root>
+			<Card.Root>
+				<Card.Header>
+					<Card.Description>Celda</Card.Description>
+					<Card.Title class="text-lg">{kit.cell}</Card.Title>
+				</Card.Header>
+			</Card.Root>
+			<Card.Root>
+				<Card.Header>
+					<Card.Description>Progreso</Card.Description>
+				</Card.Header>
+				<Card.Content class="flex flex-col gap-2">
 					<div class="flex items-center justify-between text-sm">
 						<span>{scannedCount} de {totalCount} escaneados</span>
-						<span class="font-medium">{Math.round(progress)}%</span>
+						<span class="font-medium tabular-nums">{Math.round(progress)}%</span>
 					</div>
-					<div class="bg-secondary h-2 rounded-full">
-						<div
-							class="bg-primary h-2 rounded-full transition-all"
-							style="width: {progress}%"
-						></div>
-					</div>
-				</div>
-			</div>
-			<div class="border-border bg-card rounded-lg border">
-				<div class="p-6 pb-2">
-					<p class="text-muted-foreground text-sm">Estado</p>
-				</div>
-				<div class="p-6 pt-0">
+					<Progress value={progress} max={100} />
+				</Card.Content>
+			</Card.Root>
+			<Card.Root>
+				<Card.Header>
+					<Card.Description>Estado</Card.Description>
+				</Card.Header>
+				<Card.Content>
 					{#if kit.preparedBy}
-						<div class="space-y-1">
+						<div class="flex flex-col gap-1">
 							<div class="flex items-center gap-2 text-sm">
-								<User class="h-3 w-3" />
+								<User class="size-3" />
 								<span>Preparado por: {kit.preparedBy}</span>
 							</div>
 							{#if kit.deliveredTo}
 								<div class="text-muted-foreground flex items-center gap-2 text-sm">
-									<Truck class="h-3 w-3" />
+									<Truck class="size-3" />
 									<span>Entregado a: {kit.deliveredTo}</span>
 								</div>
 							{/if}
@@ -196,164 +169,118 @@
 					{:else}
 						<p class="text-muted-foreground text-sm">Sin preparar</p>
 					{/if}
-				</div>
-			</div>
+				</Card.Content>
+			</Card.Root>
 		</div>
 
 		<!-- Items List -->
-		<div class="border-border bg-card rounded-lg border">
-			<div class="space-y-1.5 p-6">
-				<h3 class="font-semibold tracking-tight">Componentes del Kit</h3>
-				<p class="text-muted-foreground text-sm">
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>Componentes del Kit</Card.Title>
+				<Card.Description>
 					Escanea cada componente para confirmar su inclusion en el kit
-				</p>
-			</div>
-			<div class="p-6 pt-0">
-				<div class="overflow-hidden rounded-lg border">
-					<table class="w-full">
-						<thead>
-							<tr class="bg-muted/50 border-b">
-								<th class="w-12 p-3 text-left"></th>
-								<th class="p-3 text-left">Codigo</th>
-								<th class="p-3 text-left">Descripcion</th>
-								<th class="p-3 text-center">Cant. BOM</th>
-								<th class="p-3 text-center">Cant. Surtida</th>
-								<th class="p-3 text-center">Backorder</th>
-								<th class="p-3 text-left">UdM</th>
-								<th class="p-3 text-left">Estado</th>
-								<th class="p-3 text-left">Accion</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each kit.items as item (item.id)}
-								<tr class="border-b {item.scanned ? 'bg-emerald-500/5' : ''}">
-									<td class="p-3">
-										<input
-											type="checkbox"
-											checked={item.scanned}
-											disabled={item.scanned}
-											onchange={() => handleScanItem(item.id)}
-											class="h-4 w-4 rounded border"
-										/>
-									</td>
-									<td class="p-3 font-mono text-sm">{item.articleCode}</td>
-									<td class="p-3">{item.articleDescription}</td>
-									<td class="p-3 text-center font-medium">{item.quantityBOM}</td>
-									<td class="p-3 text-center">
-										<span
-											class={item.quantitySupplied === item.quantityBOM
-												? 'text-emerald-500'
-												: 'text-destructive'}
-										>
-											{item.quantitySupplied}
-										</span>
-									</td>
-									<td class="p-3 text-center">
-										{#if item.quantityBackorder > 0}
-											<span
-												class="bg-destructive text-destructive-foreground inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
-											>
-												{item.quantityBackorder}
-											</span>
-										{:else}
-											<span class="text-muted-foreground">-</span>
-										{/if}
-									</td>
-									<td class="text-muted-foreground p-3">{item.udm}</td>
-									<td class="p-3">
-										{#if item.scanned}
-											<span
-												class="inline-flex items-center rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-medium text-emerald-400"
-											>
-												<CircleCheckBig class="mr-1 h-3 w-3" />
-												Escaneado
-											</span>
-										{:else if item.quantityBackorder > 0}
-											<span
-												class="bg-destructive text-destructive-foreground inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
-											>
-												<TriangleAlert class="mr-1 h-3 w-3" />
-												Backorder
-											</span>
-										{:else}
-											<span
-												class="border-border inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium"
-											>
-												Pendiente
-											</span>
-										{/if}
-									</td>
-									<td class="p-3">
-										{#if !item.scanned}
-											<button
-												onclick={() => handleScanItem(item.id)}
-												class="border-border bg-card hover:bg-accent inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-sm"
-											>
-												<QrCode class="mr-1 h-3 w-3" />
-												Escanear
-											</button>
-										{/if}
-									</td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
+				</Card.Description>
+			</Card.Header>
+			<Card.Content>
+				<Table.Root>
+					<Table.Header>
+						<Table.Row>
+							<Table.Head class="w-12"></Table.Head>
+							<Table.Head>Codigo</Table.Head>
+							<Table.Head>Descripcion</Table.Head>
+							<Table.Head class="text-center">Cant. BOM</Table.Head>
+							<Table.Head class="text-center">Cant. Surtida</Table.Head>
+							<Table.Head class="text-center">Backorder</Table.Head>
+							<Table.Head>UdM</Table.Head>
+							<Table.Head>Estado</Table.Head>
+							<Table.Head>Accion</Table.Head>
+						</Table.Row>
+					</Table.Header>
+					<Table.Body>
+						{#each kit.items as item (item.id)}
+							<Table.Row class={item.scanned ? 'bg-emerald-500/5' : ''}>
+								<Table.Cell>
+									<Checkbox
+										checked={item.scanned}
+										disabled={item.scanned}
+										onCheckedChange={() => handleScanItem(item.id)}
+									/>
+								</Table.Cell>
+								<Table.Cell class="font-mono text-sm">{item.articleCode}</Table.Cell>
+								<Table.Cell>{item.articleDescription}</Table.Cell>
+								<Table.Cell class="text-center font-medium tabular-nums">{item.quantityBOM}</Table.Cell>
+								<Table.Cell class="text-center tabular-nums">
+									<span class={item.quantitySupplied === item.quantityBOM ? 'text-emerald-500' : 'text-destructive'}>
+										{item.quantitySupplied}
+									</span>
+								</Table.Cell>
+								<Table.Cell class="text-center">
+									{#if item.quantityBackorder > 0}
+										<StatusBadge label={String(item.quantityBackorder)} colorClass="bg-destructive text-destructive-foreground" />
+									{:else}
+										<span class="text-muted-foreground">-</span>
+									{/if}
+								</Table.Cell>
+								<Table.Cell class="text-muted-foreground">{item.udm}</Table.Cell>
+								<Table.Cell>
+									{#if item.scanned}
+										<StatusBadge label="Escaneado" colorClass="bg-emerald-500/15 text-emerald-400" />
+									{:else if item.quantityBackorder > 0}
+										<StatusBadge label="Backorder" colorClass="bg-destructive text-destructive-foreground" />
+									{:else}
+										<StatusBadge label="Pendiente" colorClass="bg-muted text-muted-foreground" />
+									{/if}
+								</Table.Cell>
+								<Table.Cell>
+									{#if !item.scanned}
+										<Button variant="outline" size="sm" onclick={() => handleScanItem(item.id)}>
+											<QrCode data-icon="inline-start" /> Escanear
+										</Button>
+									{/if}
+								</Table.Cell>
+							</Table.Row>
+						{/each}
+					</Table.Body>
+				</Table.Root>
+			</Card.Content>
+		</Card.Root>
 
 		<!-- Backorder Notes -->
 		{#if kit.hasBackorder}
-			<div class="border-destructive/50 bg-card rounded-lg border">
-				<div class="space-y-1.5 p-6">
-					<h3 class="text-destructive flex items-center gap-2 font-semibold tracking-tight">
-						<TriangleAlert class="h-5 w-5" />
-						Backorder
-					</h3>
-					<p class="text-muted-foreground text-sm">
-						Este kit tiene componentes pendientes de surtir
-					</p>
-				</div>
-				<div class="p-6 pt-0">
-					<p class="mb-4 text-sm">{kit.backorderNotes || 'Sin notas de backorder'}</p>
-				</div>
-			</div>
+			<Alert.Root variant="destructive">
+				<TriangleAlert />
+				<Alert.Title>Backorder</Alert.Title>
+				<Alert.Description>
+					{kit.backorderNotes || 'Este kit tiene componentes pendientes de surtir'}
+				</Alert.Description>
+			</Alert.Root>
 		{/if}
 
 		<!-- Actions -->
-		<div class="border-border bg-card rounded-lg border">
-			<div class="space-y-1.5 p-6">
-				<h3 class="font-semibold tracking-tight">Acciones</h3>
-			</div>
-			<div class="space-y-4 p-6 pt-0">
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>Acciones</Card.Title>
+			</Card.Header>
+			<Card.Content class="flex flex-col gap-4">
 				<div class="flex gap-4">
 					{#if kit.status !== 'entregado' && progress === 100}
-						<button
-							onclick={handleMarkDelivered}
-							class="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
-						>
-							<Truck class="h-4 w-4" />
-							Marcar como Entregado
-						</button>
+						<Button onclick={handleMarkDelivered}>
+							<Truck data-icon="inline-start" /> Marcar como Entregado
+						</Button>
 					{/if}
 					{#if kit.status !== 'entregado' && progress < 100}
-						<div class="flex-1 space-y-3">
-							<textarea
+						<div class="flex flex-1 flex-col gap-3">
+							<Textarea
 								placeholder="Notas de backorder (ej: Cristal trasero en transito - llega manana)"
 								bind:value={backorderNotes}
-								class="border-border bg-card placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm outline-none"
-							></textarea>
-							<button
-								onclick={handleMarkBackorder}
-								class="border-border bg-card hover:bg-accent inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm"
-							>
-								<TriangleAlert class="h-4 w-4" />
-								Registrar Backorder
-							</button>
+							/>
+							<Button variant="outline" class="self-start" onclick={handleMarkBackorder}>
+								<TriangleAlert data-icon="inline-start" /> Registrar Backorder
+							</Button>
 						</div>
 					{/if}
 				</div>
-			</div>
-		</div>
+			</Card.Content>
+		</Card.Root>
 	</div>
 {/if}

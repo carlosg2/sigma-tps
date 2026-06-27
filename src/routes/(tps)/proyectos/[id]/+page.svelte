@@ -12,6 +12,11 @@
 	} from '$lib/tps/constants.js';
 	import { formatCurrency, formatDate } from '$lib/tps/utils.js';
 	import type { CostType } from '$lib/tps/types.js';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Progress } from '$lib/components/ui/progress/index.js';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import CheckCircle2 from '@lucide/svelte/icons/circle-check-big';
 	import Circle from '@lucide/svelte/icons/circle';
@@ -36,34 +41,38 @@
 </script>
 
 {#if !project}
-	<div class="flex flex-col items-center justify-center gap-4 py-20">
-		<p class="text-muted-foreground">Proyecto no encontrado</p>
-		<a href="/proyectos" class="text-primary text-sm hover:underline">Volver al listado</a>
-	</div>
+	<Empty.Root>
+		<Empty.Header>
+			<Empty.Title>Proyecto no encontrado</Empty.Title>
+			<Empty.Description>El proyecto solicitado no existe o fue eliminado.</Empty.Description>
+		</Empty.Header>
+		<Empty.Content>
+			<Button href="/proyectos" variant="outline">Volver al listado</Button>
+		</Empty.Content>
+	</Empty.Root>
 {:else}
-	<div class="flex flex-col gap-6">
-		<!-- Header -->
-		<div class="flex items-center gap-3">
-			<a
-				href="/proyectos"
-				class="border-border hover:bg-secondary flex h-8 w-8 items-center justify-center rounded-md border transition-colors"
-			>
-				<ArrowLeft class="text-foreground h-4 w-4" />
-			</a>
-			<div class="flex-1">
-				<div class="flex items-center gap-3">
-					<h1 class="text-primary font-mono text-2xl font-bold">{project.folioTPS}</h1>
-					<StatusBadge label={PROJECT_STATUS_LABELS[project.status]} colorClass={PROJECT_STATUS_COLORS[project.status]} />
-				</div>
-				<p class="text-muted-foreground text-sm">
-					{project.vehicleModel} / {ARMOR_LEVEL_LABELS[project.armorLevel]} / {project.clientName} / {PLANT_LABELS[project.plant]}
-				</p>
+	<!-- Header -->
+	<div class="flex flex-wrap items-center gap-3">
+		<Button href="/proyectos" variant="outline" size="icon" class="size-8">
+			<ArrowLeft />
+		</Button>
+		<div class="flex-1">
+			<div class="flex items-center gap-3">
+				<h1 class="text-primary font-mono text-2xl font-bold">{project.folioTPS}</h1>
+				<StatusBadge label={PROJECT_STATUS_LABELS[project.status]} colorClass={PROJECT_STATUS_COLORS[project.status]} />
 			</div>
+			<p class="text-muted-foreground text-sm">
+				{project.vehicleModel} / {ARMOR_LEVEL_LABELS[project.armorLevel]} / {project.clientName} / {PLANT_LABELS[project.plant]}
+			</p>
 		</div>
+	</div>
 
-		<!-- Timeline -->
-		<div class="border-border bg-card rounded-lg border p-4">
-			<h3 class="text-card-foreground mb-4 text-sm font-semibold">Timeline del Proyecto</h3>
+	<!-- Timeline -->
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>Timeline del Proyecto</Card.Title>
+		</Card.Header>
+		<Card.Content>
 			<div class="flex items-center gap-0 overflow-x-auto pb-2">
 				{#each PROJECT_STAGE_ORDER as stageName, idx (stageName)}
 					{@const stage = project.stages.find((s) => s.name === stageName)}
@@ -85,7 +94,7 @@
 								{/if}
 							</div>
 							<span
-								class="max-w-[60px] text-center text-[10px] leading-tight {isCurrent
+								class="max-w-15 text-center text-[10px] leading-tight {isCurrent
 									? 'text-primary font-semibold'
 									: isCompleted
 										? 'text-card-foreground'
@@ -103,194 +112,215 @@
 					</div>
 				{/each}
 			</div>
-		</div>
+		</Card.Content>
+	</Card.Root>
 
-		<!-- Stats Cards -->
-		<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-			<div class="border-border bg-card rounded-lg border p-3">
-				<span class="text-muted-foreground text-xs">Cotizacion</span>
-				<p class="text-card-foreground text-lg font-bold">{formatCurrency(project.quotationAmount)}</p>
-			</div>
-			<div class="border-border bg-card rounded-lg border p-3">
-				<span class="text-muted-foreground text-xs">Costo Acumulado</span>
-				<p class="text-card-foreground text-lg font-bold">{formatCurrency(project.totalCost)}</p>
-			</div>
-			<div class="border-border bg-card rounded-lg border p-3">
-				<span class="text-muted-foreground text-xs">Margen Estimado</span>
-				<p
-					class="text-lg font-bold {project.estimatedMargin >= 20
+	<!-- Stats Cards -->
+	<div class="grid grid-cols-2 gap-4 md:grid-cols-4 *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:shadow-xs">
+		<Card.Root>
+			<Card.Header>
+				<Card.Description>Cotizacion</Card.Description>
+				<Card.Title class="text-lg font-bold tabular-nums">{formatCurrency(project.quotationAmount)}</Card.Title>
+			</Card.Header>
+		</Card.Root>
+		<Card.Root>
+			<Card.Header>
+				<Card.Description>Costo Acumulado</Card.Description>
+				<Card.Title class="text-lg font-bold tabular-nums">{formatCurrency(project.totalCost)}</Card.Title>
+			</Card.Header>
+		</Card.Root>
+		<Card.Root>
+			<Card.Header>
+				<Card.Description>Margen Estimado</Card.Description>
+				<Card.Title
+					class="text-lg font-bold tabular-nums {project.estimatedMargin >= 20
 						? 'text-primary'
 						: project.estimatedMargin >= 10
 							? 'text-chart-4'
-							: 'text-destructive-foreground'}"
+							: 'text-destructive'}"
 				>
 					{project.estimatedMargin > 0 ? `${project.estimatedMargin.toFixed(1)}%` : '---'}
-				</p>
-			</div>
-			<div class="border-border bg-card rounded-lg border p-3">
-				<span class="text-muted-foreground text-xs">Dias en Produccion</span>
-				<p class="text-card-foreground flex items-center gap-1 text-lg font-bold">
-					<Clock class="text-muted-foreground h-4 w-4" />
+				</Card.Title>
+			</Card.Header>
+		</Card.Root>
+		<Card.Root>
+			<Card.Header>
+				<Card.Description>Dias en Produccion</Card.Description>
+				<Card.Title class="flex items-center gap-1 text-lg font-bold tabular-nums">
+					<Clock class="text-muted-foreground size-4" />
 					{project.daysInProduction > 0 ? project.daysInProduction : '---'}
-				</p>
-			</div>
-		</div>
+				</Card.Title>
+			</Card.Header>
+		</Card.Root>
+	</div>
 
-		<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-			<!-- Cost Breakdown -->
-			<div class="border-border bg-card rounded-lg border">
-				<div class="border-border border-b px-4 py-3">
-					<h3 class="text-card-foreground flex items-center gap-2 text-sm font-semibold">
-						<DollarSign class="text-primary h-4 w-4" /> Desglose de Costos
-					</h3>
-				</div>
-				<div class="p-4">
-					{#each Object.entries(COST_TYPE_LABELS) as [type, label] (type)}
-						{@const amount = costsByType[type] || 0}
-						{@const percent = project.totalCost > 0 ? (amount / project.totalCost) * 100 : 0}
-						<div class="border-border/30 flex items-center justify-between border-b py-2 last:border-0">
-							<span class="text-muted-foreground text-xs">{label}</span>
-							<div class="flex items-center gap-3">
-								<div class="bg-secondary h-1.5 w-20 rounded-full">
-									<div class="bg-chart-2 h-1.5 rounded-full transition-all" style="width: {percent}%"></div>
-								</div>
-								<span class="text-card-foreground w-24 text-right font-mono text-xs">{formatCurrency(amount)}</span>
-								<span class="text-muted-foreground w-10 text-right font-mono text-xs">{percent.toFixed(0)}%</span>
-							</div>
+	<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+		<!-- Cost Breakdown -->
+		<Card.Root>
+			<Card.Header>
+				<Card.Title class="flex items-center gap-2">
+					<DollarSign class="text-primary size-4" /> Desglose de Costos
+				</Card.Title>
+			</Card.Header>
+			<Card.Content>
+				{#each Object.entries(COST_TYPE_LABELS) as [type, label] (type)}
+					{@const amount = costsByType[type] || 0}
+					{@const percent = project.totalCost > 0 ? (amount / project.totalCost) * 100 : 0}
+					<div class="border-border/30 flex items-center justify-between border-b py-2 last:border-0">
+						<span class="text-muted-foreground text-xs">{label}</span>
+						<div class="flex items-center gap-3">
+							<Progress value={percent} max={100} class="h-1.5 w-20 *:data-[slot=progress-indicator]:bg-chart-2" />
+							<span class="text-card-foreground w-24 text-right font-mono text-xs tabular-nums">{formatCurrency(amount)}</span>
+							<span class="text-muted-foreground w-10 text-right font-mono text-xs tabular-nums">{percent.toFixed(0)}%</span>
 						</div>
-					{/each}
-					<div class="border-border mt-2 flex items-center justify-between border-t pt-3">
-						<span class="text-card-foreground text-sm font-semibold">Total</span>
-						<span class="text-card-foreground font-mono text-sm font-bold">{formatCurrency(project.totalCost)}</span>
 					</div>
+				{/each}
+				<div class="border-border mt-2 flex items-center justify-between border-t pt-3">
+					<span class="text-card-foreground text-sm font-semibold">Total</span>
+					<span class="text-card-foreground font-mono text-sm font-bold tabular-nums">{formatCurrency(project.totalCost)}</span>
 				</div>
-			</div>
+			</Card.Content>
+		</Card.Root>
 
-			<!-- Estado de Resultados -->
-			<div class="border-border bg-card rounded-lg border">
-				<div class="border-border border-b px-4 py-3">
-					<h3 class="text-card-foreground text-sm font-semibold">Estado de Resultados del Proyecto</h3>
+		<!-- Estado de Resultados -->
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>Estado de Resultados del Proyecto</Card.Title>
+			</Card.Header>
+			<Card.Content class="flex flex-col gap-2">
+				<div class="flex items-center justify-between py-2">
+					<span class="text-card-foreground text-sm">Precio de Venta (Cotizacion)</span>
+					<span class="text-card-foreground font-mono text-sm font-bold tabular-nums">{formatCurrency(project.quotationAmount)}</span>
 				</div>
-				<div class="flex flex-col gap-2 p-4">
-					<div class="flex items-center justify-between py-2">
-						<span class="text-card-foreground text-sm">Precio de Venta (Cotizacion)</span>
-						<span class="text-card-foreground font-mono text-sm font-bold">{formatCurrency(project.quotationAmount)}</span>
-					</div>
-					<div class="flex items-center justify-between py-2">
-						<span class="text-card-foreground text-sm">(-) Costo Total</span>
-						<span class="text-destructive-foreground font-mono text-sm">-{formatCurrency(project.totalCost)}</span>
-					</div>
-					<div class="border-border mt-1 flex items-center justify-between border-t py-2 pt-3">
-						<span class="text-card-foreground text-sm font-semibold">Utilidad Bruta</span>
-						<span
-							class="font-mono text-lg font-bold {project.quotationAmount - project.totalCost >= 0
-								? 'text-primary'
-								: 'text-destructive-foreground'}"
-						>
-							{formatCurrency(project.quotationAmount - project.totalCost)}
-						</span>
-					</div>
-					<div class="flex items-center justify-between py-1">
-						<span class="text-muted-foreground text-xs">Margen %</span>
-						<span
-							class="font-mono text-sm font-semibold {project.estimatedMargin >= 20
-								? 'text-primary'
-								: project.estimatedMargin >= 10
-									? 'text-chart-4'
-									: 'text-destructive-foreground'}"
-						>
-							{project.estimatedMargin > 0 ? `${project.estimatedMargin.toFixed(1)}%` : '---'}
-						</span>
-					</div>
+				<div class="flex items-center justify-between py-2">
+					<span class="text-card-foreground text-sm">(-) Costo Total</span>
+					<span class="text-destructive font-mono text-sm tabular-nums">-{formatCurrency(project.totalCost)}</span>
 				</div>
-			</div>
-		</div>
+				<div class="border-border mt-1 flex items-center justify-between border-t py-2 pt-3">
+					<span class="text-card-foreground text-sm font-semibold">Utilidad Bruta</span>
+					<span
+						class="font-mono text-lg font-bold tabular-nums {project.quotationAmount - project.totalCost >= 0
+							? 'text-primary'
+							: 'text-destructive'}"
+					>
+						{formatCurrency(project.quotationAmount - project.totalCost)}
+					</span>
+				</div>
+				<div class="flex items-center justify-between py-1">
+					<span class="text-muted-foreground text-xs">Margen %</span>
+					<span
+						class="font-mono text-sm font-semibold tabular-nums {project.estimatedMargin >= 20
+							? 'text-primary'
+							: project.estimatedMargin >= 10
+								? 'text-chart-4'
+								: 'text-destructive'}"
+					>
+						{project.estimatedMargin > 0 ? `${project.estimatedMargin.toFixed(1)}%` : '---'}
+					</span>
+				</div>
+			</Card.Content>
+		</Card.Root>
+	</div>
 
-		<!-- Linked BOM -->
-		{#if linkedBom}
-			<div class="border-border bg-card rounded-lg border p-4">
-				<h3 class="text-card-foreground mb-2 text-sm font-semibold">BOM Vinculado</h3>
+	<!-- Linked BOM -->
+	{#if linkedBom}
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>BOM Vinculado</Card.Title>
+			</Card.Header>
+			<Card.Content>
 				<a href="/lmat/boms/{linkedBom.id}" class="text-primary flex items-center gap-2 text-sm hover:underline">
 					<span class="font-mono">{linkedBom.specificationCode}</span>
 					<ChevronRight class="h-4 w-4" />
 					<span class="text-muted-foreground">{linkedBom.vehicleModel} - {ARMOR_LEVEL_LABELS[linkedBom.armorLevel]}</span>
 				</a>
-			</div>
-		{/if}
+			</Card.Content>
+		</Card.Root>
+	{/if}
 
-		<!-- Documents -->
-		<div class="border-border bg-card rounded-lg border">
-			<div class="border-border border-b px-4 py-3">
-				<h3 class="text-card-foreground flex items-center gap-2 text-sm font-semibold">
-					<FileText class="text-primary h-4 w-4" /> Documentos Vinculados
-				</h3>
-			</div>
+	<!-- Documents -->
+	<Card.Root>
+		<Card.Header>
+			<Card.Title class="flex items-center gap-2">
+				<FileText class="text-primary size-4" /> Documentos Vinculados
+			</Card.Title>
+		</Card.Header>
+		<Card.Content>
 			{#if project.documents.length > 0}
-				<table class="w-full text-sm">
-					<thead>
-						<tr class="border-border border-b text-left">
-							<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Tipo</th>
-							<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Descripcion</th>
-							<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Referencia</th>
-							<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Fecha</th>
-						</tr>
-					</thead>
-					<tbody>
+				<Table.Root>
+					<Table.Header>
+						<Table.Row>
+							<Table.Head>Tipo</Table.Head>
+							<Table.Head>Descripcion</Table.Head>
+							<Table.Head>Referencia</Table.Head>
+							<Table.Head>Fecha</Table.Head>
+						</Table.Row>
+					</Table.Header>
+					<Table.Body>
 						{#each project.documents as doc (doc.id)}
-							<tr class="border-border/30 border-b">
-								<td class="px-4 py-2">
+							<Table.Row>
+								<Table.Cell>
 									<StatusBadge label={doc.type.toUpperCase()} colorClass="bg-secondary text-foreground" />
-								</td>
-								<td class="text-card-foreground px-4 py-2">{doc.label}</td>
-								<td class="text-muted-foreground px-4 py-2 font-mono text-xs">{doc.reference}</td>
-								<td class="text-muted-foreground px-4 py-2 text-xs">{formatDate(doc.date)}</td>
-							</tr>
+								</Table.Cell>
+								<Table.Cell>{doc.label}</Table.Cell>
+								<Table.Cell class="text-muted-foreground font-mono text-xs">{doc.reference}</Table.Cell>
+								<Table.Cell class="text-muted-foreground text-xs">{formatDate(doc.date)}</Table.Cell>
+							</Table.Row>
 						{/each}
-					</tbody>
-				</table>
+					</Table.Body>
+				</Table.Root>
 			{:else}
-				<div class="text-muted-foreground px-4 py-6 text-center text-sm">No hay documentos vinculados.</div>
+				<Empty.Root class="border-0">
+					<Empty.Header>
+						<Empty.Media variant="icon">
+							<FileText />
+						</Empty.Media>
+						<Empty.Title>No hay documentos vinculados</Empty.Title>
+					</Empty.Header>
+				</Empty.Root>
 			{/if}
-		</div>
+		</Card.Content>
+	</Card.Root>
 
-		<!-- Cost Detail Table -->
-		{#if project.costs.length > 0}
-			<div class="border-border bg-card overflow-hidden rounded-lg border">
-				<div class="border-border border-b px-4 py-3">
-					<h3 class="text-card-foreground text-sm font-semibold">Detalle de Costos</h3>
-				</div>
-				<table class="w-full text-sm">
-					<thead>
-						<tr class="border-border border-b text-left">
-							<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Fecha</th>
-							<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Tipo</th>
-							<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Descripcion</th>
-							<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Fuente</th>
-							<th class="text-muted-foreground px-4 py-2 text-right text-xs font-medium">Monto</th>
-						</tr>
-					</thead>
-					<tbody>
+	<!-- Cost Detail Table -->
+	{#if project.costs.length > 0}
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>Detalle de Costos</Card.Title>
+			</Card.Header>
+			<Card.Content>
+				<Table.Root>
+					<Table.Header>
+						<Table.Row>
+							<Table.Head>Fecha</Table.Head>
+							<Table.Head>Tipo</Table.Head>
+							<Table.Head>Descripcion</Table.Head>
+							<Table.Head>Fuente</Table.Head>
+							<Table.Head class="text-right">Monto</Table.Head>
+						</Table.Row>
+					</Table.Header>
+					<Table.Body>
 						{#each project.costs as cost (cost.id)}
-							<tr class="border-border/30 border-b">
-								<td class="text-muted-foreground px-4 py-1.5 text-xs">{formatDate(cost.date)}</td>
-								<td class="px-4 py-1.5">
+							<Table.Row>
+								<Table.Cell class="text-muted-foreground text-xs">{formatDate(cost.date)}</Table.Cell>
+								<Table.Cell>
 									<StatusBadge label={COST_TYPE_LABELS[cost.type as CostType]} colorClass="bg-secondary text-foreground" />
-								</td>
-								<td class="text-card-foreground px-4 py-1.5">{cost.description}</td>
-								<td class="text-muted-foreground px-4 py-1.5 text-xs">{cost.source}</td>
-								<td class="text-card-foreground px-4 py-1.5 text-right font-mono">{formatCurrency(cost.amount)}</td>
-							</tr>
+								</Table.Cell>
+								<Table.Cell>{cost.description}</Table.Cell>
+								<Table.Cell class="text-muted-foreground text-xs">{cost.source}</Table.Cell>
+								<Table.Cell class="text-right font-mono tabular-nums">{formatCurrency(cost.amount)}</Table.Cell>
+							</Table.Row>
 						{/each}
-					</tbody>
-				</table>
-			</div>
-		{/if}
+					</Table.Body>
+				</Table.Root>
+			</Card.Content>
+		</Card.Root>
+	{/if}
 
-		<!-- Metadata -->
-		<div class="text-muted-foreground flex items-center gap-4 text-xs">
-			<span>Creado: {formatDate(project.createdAt)}</span>
-			<span>Modificado: {formatDate(project.updatedAt)}</span>
-			<span>Avance: {project.progressPercent}%</span>
-		</div>
+	<!-- Metadata -->
+	<div class="text-muted-foreground flex items-center gap-4 text-xs">
+		<span>Creado: {formatDate(project.createdAt)}</span>
+		<span>Modificado: {formatDate(project.updatedAt)}</span>
+		<span>Avance: {project.progressPercent}%</span>
 	</div>
 {/if}

@@ -12,12 +12,21 @@
 	import { formatCurrency, searchMatch } from '$lib/tps/utils.js';
 	import { cn } from '$lib/utils.js';
 	import type { ArticleStatus, ABCClass } from '$lib/tps/types.js';
-	import Search from '@lucide/svelte/icons/search';
-	import Filter from '@lucide/svelte/icons/filter';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
+	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Progress } from '$lib/components/ui/progress/index.js';
+	import SearchIcon from '@lucide/svelte/icons/search';
 	import ChevronUp from '@lucide/svelte/icons/chevron-up';
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import ArrowUpDown from '@lucide/svelte/icons/arrow-up-down';
 	import Download from '@lucide/svelte/icons/download';
+	import FileUp from '@lucide/svelte/icons/file-up';
+	import Plus from '@lucide/svelte/icons/plus';
+	import PackageIcon from '@lucide/svelte/icons/package';
 
 	type SortField = 'code' | 'description' | 'price' | 'completeness' | 'leadTimeDays' | 'status';
 	type SortDir = 'asc' | 'desc';
@@ -71,6 +80,18 @@
 		Math.round(app.articles.reduce((s, a) => s + a.completeness, 0) / (total || 1))
 	);
 
+	const statusLabel = $derived(
+		statusFilter === 'todos' ? 'Todos los estatus' : ARTICLE_STATUS_LABELS[statusFilter]
+	);
+	const abcLabel = $derived(abcFilter === 'todos' ? 'Todas las clases' : ABC_LABELS[abcFilter]);
+	const groupLabel = $derived(groupFilter === 'todos' ? 'Todos los grupos' : groupFilter);
+
+	const kpis = $derived([
+		{ label: 'Con Proveedor', n: withSupplier },
+		{ label: 'Con Precio', n: withPrice },
+		{ label: 'Con Lead Time', n: withLeadTime }
+	]);
+
 	function exportCSV() {
 		const headers = ['Codigo', 'Descripcion', 'Grupo', 'UdM', 'Proveedor', 'Precio', 'Lead Time', 'ABC', 'Status', 'Completitud'];
 		const rows = filtered.map((a) => [a.code, a.description, a.group, UDM_LABELS[a.udmBase], a.supplierName, a.price, a.leadTimeDays, a.abcClass, a.status, a.completeness]);
@@ -85,190 +106,189 @@
 	}
 </script>
 
-<div class="flex flex-col gap-6">
-	<!-- Header -->
-	<div class="flex items-center justify-between">
-		<div>
-			<h1 class="text-foreground text-2xl font-bold">Catalogo de Articulos</h1>
-			<p class="text-muted-foreground text-sm">{total} articulos en catalogo, {filtered.length} mostrados</p>
-		</div>
-		<div class="flex items-center gap-2">
-			<button
-				onclick={exportCSV}
-				class="border-border bg-secondary text-secondary-foreground hover:bg-accent flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs transition-colors"
-			>
-				<Download class="h-3.5 w-3.5" /> Exportar CSV
-			</button>
-			<a
-				href="/articulos/importar"
-				class="border-border bg-secondary text-secondary-foreground hover:bg-accent flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs transition-colors"
-			>
-				Importar
-			</a>
-			<a
-				href="/articulos/nuevo"
-				class="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors"
-			>
-				Nuevo Articulo
-			</a>
-		</div>
-	</div>
-
-	<!-- Completeness Dashboard -->
-	<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-		{#each [{ label: 'Con Proveedor', n: withSupplier, color: 'bg-chart-1', sub: `${withSupplier} de ${total}` }, { label: 'Con Precio', n: withPrice, color: 'bg-chart-2', sub: `${withPrice} de ${total}` }, { label: 'Con Lead Time', n: withLeadTime, color: 'bg-chart-4', sub: `${withLeadTime} de ${total}` }] as kpi (kpi.label)}
-			<div class="border-border bg-card rounded-lg border p-3">
-				<div class="mb-1.5 flex items-center justify-between">
-					<span class="text-muted-foreground text-xs">{kpi.label}</span>
-					<span class="text-card-foreground font-mono text-xs">{Math.round((kpi.n / total) * 100)}%</span>
-				</div>
-				<div class="bg-secondary h-1.5 rounded-full">
-					<div class="{kpi.color} h-1.5 rounded-full transition-all" style="width: {(kpi.n / total) * 100}%"></div>
-				</div>
-				<p class="text-muted-foreground mt-1 text-[10px]">{kpi.sub}</p>
-			</div>
-		{/each}
-		<div class="border-border bg-card rounded-lg border p-3">
-			<div class="mb-1.5 flex items-center justify-between">
-				<span class="text-muted-foreground text-xs">Completitud Promedio</span>
-				<span class="text-card-foreground font-mono text-xs">{avgCompleteness}%</span>
-			</div>
-			<div class="bg-secondary h-1.5 rounded-full">
-				<div class="bg-primary h-1.5 rounded-full transition-all" style="width: {avgCompleteness}%"></div>
-			</div>
-			<p class="text-muted-foreground mt-1 text-[10px]">{active} activos</p>
-		</div>
-	</div>
-
-	<!-- Filters -->
-	<div class="flex flex-wrap items-center gap-3">
-		<div class="border-border bg-card flex max-w-sm min-w-[200px] flex-1 items-center gap-1.5 rounded-md border px-3 py-1.5">
-			<Search class="text-muted-foreground h-3.5 w-3.5" />
-			<input
-				type="text"
-				placeholder="Buscar por codigo, descripcion o proveedor..."
-				bind:value={query}
-				class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent text-sm outline-none"
-			/>
-		</div>
-		<div class="flex items-center gap-1.5">
-			<Filter class="text-muted-foreground h-3.5 w-3.5" />
-			<select
-				bind:value={statusFilter}
-				class="border-border bg-card text-foreground rounded-md border px-2 py-1.5 text-xs outline-none"
-			>
-				<option value="todos">Todos los estatus</option>
-				{#each Object.entries(ARTICLE_STATUS_LABELS) as [k, v] (k)}
-					<option value={k}>{v}</option>
-				{/each}
-			</select>
-			<select
-				bind:value={abcFilter}
-				class="border-border bg-card text-foreground rounded-md border px-2 py-1.5 text-xs outline-none"
-			>
-				<option value="todos">Todas las clases</option>
-				{#each Object.entries(ABC_LABELS) as [k, v] (k)}
-					<option value={k}>{v}</option>
-				{/each}
-			</select>
-			<select
-				bind:value={groupFilter}
-				class="border-border bg-card text-foreground rounded-md border px-2 py-1.5 text-xs outline-none"
-			>
-				<option value="todos">Todos los grupos</option>
-				{#each ARTICLE_GROUPS as g (g)}
-					<option value={g}>{g}</option>
-				{/each}
-			</select>
-		</div>
-	</div>
-
-	<!-- Table -->
-	<div class="border-border bg-card overflow-hidden rounded-lg border">
-		<div class="overflow-x-auto">
-			<table class="w-full text-sm">
-				<thead>
-					<tr class="border-border bg-secondary/50 border-b text-left">
-						<th class="text-muted-foreground cursor-pointer px-4 py-2.5 text-xs font-medium select-none" onclick={() => toggleSort('code')}>
-							<span class="flex items-center gap-1">Codigo
-								{#if sortField !== 'code'}<ArrowUpDown class="h-3 w-3 opacity-30" />{:else if sortDir === 'asc'}<ChevronUp class="h-3 w-3" />{:else}<ChevronDown class="h-3 w-3" />{/if}
-							</span>
-						</th>
-						<th class="text-muted-foreground cursor-pointer px-4 py-2.5 text-xs font-medium select-none" onclick={() => toggleSort('description')}>
-							<span class="flex items-center gap-1">Descripcion
-								{#if sortField !== 'description'}<ArrowUpDown class="h-3 w-3 opacity-30" />{:else if sortDir === 'asc'}<ChevronUp class="h-3 w-3" />{:else}<ChevronDown class="h-3 w-3" />{/if}
-							</span>
-						</th>
-						<th class="text-muted-foreground px-4 py-2.5 text-xs font-medium">UdM</th>
-						<th class="text-muted-foreground px-4 py-2.5 text-xs font-medium">Proveedor</th>
-						<th class="text-muted-foreground cursor-pointer px-4 py-2.5 text-right text-xs font-medium select-none" onclick={() => toggleSort('price')}>
-							<span class="flex items-center justify-end gap-1">Precio
-								{#if sortField !== 'price'}<ArrowUpDown class="h-3 w-3 opacity-30" />{:else if sortDir === 'asc'}<ChevronUp class="h-3 w-3" />{:else}<ChevronDown class="h-3 w-3" />{/if}
-							</span>
-						</th>
-						<th class="text-muted-foreground cursor-pointer px-4 py-2.5 text-right text-xs font-medium select-none" onclick={() => toggleSort('leadTimeDays')}>
-							<span class="flex items-center justify-end gap-1">Lead Time
-								{#if sortField !== 'leadTimeDays'}<ArrowUpDown class="h-3 w-3 opacity-30" />{:else if sortDir === 'asc'}<ChevronUp class="h-3 w-3" />{:else}<ChevronDown class="h-3 w-3" />{/if}
-							</span>
-						</th>
-						<th class="text-muted-foreground px-4 py-2.5 text-xs font-medium">ABC</th>
-						<th class="text-muted-foreground cursor-pointer px-4 py-2.5 text-xs font-medium select-none" onclick={() => toggleSort('status')}>
-							<span class="flex items-center gap-1">Estatus
-								{#if sortField !== 'status'}<ArrowUpDown class="h-3 w-3 opacity-30" />{:else if sortDir === 'asc'}<ChevronUp class="h-3 w-3" />{:else}<ChevronDown class="h-3 w-3" />{/if}
-							</span>
-						</th>
-						<th class="text-muted-foreground cursor-pointer px-4 py-2.5 text-right text-xs font-medium select-none" onclick={() => toggleSort('completeness')}>
-							<span class="flex items-center justify-end gap-1">Completitud
-								{#if sortField !== 'completeness'}<ArrowUpDown class="h-3 w-3 opacity-30" />{:else if sortDir === 'asc'}<ChevronUp class="h-3 w-3" />{:else}<ChevronDown class="h-3 w-3" />{/if}
-							</span>
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each filtered as article (article.id)}
-						<tr class="border-border/50 hover:bg-secondary/30 border-b transition-colors">
-							<td class="px-4 py-2">
-								<a href="/articulos/{article.id}" class="text-primary font-mono text-xs hover:underline">{article.code}</a>
-							</td>
-							<td class="text-card-foreground max-w-[280px] truncate px-4 py-2">{article.description}</td>
-							<td class="text-muted-foreground px-4 py-2 text-xs">{UDM_LABELS[article.udmBase]}</td>
-							<td class="text-muted-foreground max-w-[150px] truncate px-4 py-2 text-xs">
-								{#if article.supplierName}{article.supplierName}{:else}<span class="text-destructive">Sin proveedor</span>{/if}
-							</td>
-							<td class="text-card-foreground px-4 py-2 text-right font-mono text-xs">
-								{#if article.price > 0}{formatCurrency(article.price, article.currency)}{:else}<span class="text-destructive">---</span>{/if}
-							</td>
-							<td class="text-card-foreground px-4 py-2 text-right font-mono text-xs">
-								{#if article.leadTimeDays > 0}{article.leadTimeDays}d{:else}<span class="text-destructive">---</span>{/if}
-							</td>
-							<td class="px-4 py-2">
-								<StatusBadge label={article.abcClass === 'sin_clasificar' ? '---' : article.abcClass} colorClass={ABC_COLORS[article.abcClass]} />
-							</td>
-							<td class="px-4 py-2">
-								<StatusBadge label={ARTICLE_STATUS_LABELS[article.status]} colorClass={ARTICLE_STATUS_COLORS[article.status]} />
-							</td>
-							<td class="px-4 py-2">
-								<div class="flex items-center justify-end gap-2">
-									<div class="bg-secondary h-1.5 w-16 rounded-full">
-										<div
-											class={cn('h-1.5 rounded-full transition-all', article.completeness >= 80 ? 'bg-primary' : article.completeness >= 50 ? 'bg-chart-4' : 'bg-destructive')}
-											style="width: {article.completeness}%"
-										></div>
-									</div>
-									<span class="text-muted-foreground w-8 text-right font-mono text-xs">{article.completeness}%</span>
-								</div>
-							</td>
-						</tr>
-					{/each}
-					{#if filtered.length === 0}
-						<tr>
-							<td colspan="9" class="text-muted-foreground px-4 py-8 text-center text-sm">
-								No se encontraron articulos con los filtros seleccionados.
-							</td>
-						</tr>
-					{/if}
-				</tbody>
-			</table>
-		</div>
+<!-- Header -->
+<div class="flex flex-wrap items-center justify-between gap-3">
+	<p class="text-muted-foreground text-sm">{total} articulos en catalogo · {filtered.length} mostrados</p>
+	<div class="flex items-center gap-2">
+		<Button variant="outline" size="sm" onclick={exportCSV}>
+			<Download data-icon="inline-start" /> Exportar CSV
+		</Button>
+		<Button href="/articulos/importar" variant="outline" size="sm">
+			<FileUp data-icon="inline-start" /> Importar
+		</Button>
+		<Button href="/articulos/nuevo" size="sm">
+			<Plus data-icon="inline-start" /> Nuevo Articulo
+		</Button>
 	</div>
 </div>
+
+<!-- Completeness KPIs -->
+<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+	{#each kpis as kpi (kpi.label)}
+		<Card.Root>
+			<Card.Header>
+				<Card.Description>{kpi.label}</Card.Description>
+				<Card.Title class="text-2xl font-semibold tabular-nums">
+					{Math.round((kpi.n / total) * 100)}%
+				</Card.Title>
+			</Card.Header>
+			<Card.Content>
+				<Progress value={(kpi.n / total) * 100} max={100} />
+				<p class="text-muted-foreground mt-2 text-xs">{kpi.n} de {total}</p>
+			</Card.Content>
+		</Card.Root>
+	{/each}
+	<Card.Root>
+		<Card.Header>
+			<Card.Description>Completitud Promedio</Card.Description>
+			<Card.Title class="text-2xl font-semibold tabular-nums">{avgCompleteness}%</Card.Title>
+		</Card.Header>
+		<Card.Content>
+			<Progress value={avgCompleteness} max={100} />
+			<p class="text-muted-foreground mt-2 text-xs">{active} activos</p>
+		</Card.Content>
+	</Card.Root>
+</div>
+
+<!-- Table card -->
+<Card.Root>
+	<Card.Header>
+		<Card.Title>Catalogo</Card.Title>
+		<Card.Description>Busca y filtra los articulos del catalogo.</Card.Description>
+	</Card.Header>
+	<Card.Content class="flex flex-col gap-4">
+		<!-- Filters -->
+		<div class="flex flex-wrap items-center gap-2">
+			<div class="relative w-full max-w-sm flex-1">
+				<SearchIcon class="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
+				<Input
+					placeholder="Buscar por codigo, descripcion o proveedor..."
+					bind:value={query}
+					class="pl-8"
+				/>
+			</div>
+			<Select.Root type="single" bind:value={statusFilter}>
+				<Select.Trigger size="sm" class="w-44">{statusLabel}</Select.Trigger>
+				<Select.Content>
+					<Select.Item value="todos">Todos los estatus</Select.Item>
+					{#each Object.entries(ARTICLE_STATUS_LABELS) as [k, v] (k)}
+						<Select.Item value={k}>{v}</Select.Item>
+					{/each}
+				</Select.Content>
+			</Select.Root>
+			<Select.Root type="single" bind:value={abcFilter}>
+				<Select.Trigger size="sm" class="w-44">{abcLabel}</Select.Trigger>
+				<Select.Content>
+					<Select.Item value="todos">Todas las clases</Select.Item>
+					{#each Object.entries(ABC_LABELS) as [k, v] (k)}
+						<Select.Item value={k}>{v}</Select.Item>
+					{/each}
+				</Select.Content>
+			</Select.Root>
+			<Select.Root type="single" bind:value={groupFilter}>
+				<Select.Trigger size="sm" class="w-44">{groupLabel}</Select.Trigger>
+				<Select.Content>
+					<Select.Item value="todos">Todos los grupos</Select.Item>
+					{#each ARTICLE_GROUPS as g (g)}
+						<Select.Item value={g}>{g}</Select.Item>
+					{/each}
+				</Select.Content>
+			</Select.Root>
+		</div>
+
+		<!-- Table -->
+		<Table.Root>
+			<Table.Header>
+				<Table.Row>
+					<Table.Head>
+						<Button variant="ghost" size="sm" class="-ml-3 h-8" onclick={() => toggleSort('code')}>
+							Codigo
+							{#if sortField !== 'code'}<ArrowUpDown data-icon="inline-end" class="opacity-50" />{:else if sortDir === 'asc'}<ChevronUp data-icon="inline-end" />{:else}<ChevronDown data-icon="inline-end" />{/if}
+						</Button>
+					</Table.Head>
+					<Table.Head>
+						<Button variant="ghost" size="sm" class="-ml-3 h-8" onclick={() => toggleSort('description')}>
+							Descripcion
+							{#if sortField !== 'description'}<ArrowUpDown data-icon="inline-end" class="opacity-50" />{:else if sortDir === 'asc'}<ChevronUp data-icon="inline-end" />{:else}<ChevronDown data-icon="inline-end" />{/if}
+						</Button>
+					</Table.Head>
+					<Table.Head>UdM</Table.Head>
+					<Table.Head>Proveedor</Table.Head>
+					<Table.Head class="text-right">
+						<Button variant="ghost" size="sm" class="-mr-3 h-8" onclick={() => toggleSort('price')}>
+							Precio
+							{#if sortField !== 'price'}<ArrowUpDown data-icon="inline-end" class="opacity-50" />{:else if sortDir === 'asc'}<ChevronUp data-icon="inline-end" />{:else}<ChevronDown data-icon="inline-end" />{/if}
+						</Button>
+					</Table.Head>
+					<Table.Head class="text-right">
+						<Button variant="ghost" size="sm" class="-mr-3 h-8" onclick={() => toggleSort('leadTimeDays')}>
+							Lead Time
+							{#if sortField !== 'leadTimeDays'}<ArrowUpDown data-icon="inline-end" class="opacity-50" />{:else if sortDir === 'asc'}<ChevronUp data-icon="inline-end" />{:else}<ChevronDown data-icon="inline-end" />{/if}
+						</Button>
+					</Table.Head>
+					<Table.Head>ABC</Table.Head>
+					<Table.Head>
+						<Button variant="ghost" size="sm" class="-ml-3 h-8" onclick={() => toggleSort('status')}>
+							Estatus
+							{#if sortField !== 'status'}<ArrowUpDown data-icon="inline-end" class="opacity-50" />{:else if sortDir === 'asc'}<ChevronUp data-icon="inline-end" />{:else}<ChevronDown data-icon="inline-end" />{/if}
+						</Button>
+					</Table.Head>
+					<Table.Head class="text-right">
+						<Button variant="ghost" size="sm" class="-mr-3 h-8" onclick={() => toggleSort('completeness')}>
+							Completitud
+							{#if sortField !== 'completeness'}<ArrowUpDown data-icon="inline-end" class="opacity-50" />{:else if sortDir === 'asc'}<ChevronUp data-icon="inline-end" />{:else}<ChevronDown data-icon="inline-end" />{/if}
+						</Button>
+					</Table.Head>
+				</Table.Row>
+			</Table.Header>
+			<Table.Body>
+				{#each filtered as article (article.id)}
+					<Table.Row>
+						<Table.Cell>
+							<a href="/articulos/{article.id}" class="text-primary font-mono text-xs hover:underline">{article.code}</a>
+						</Table.Cell>
+						<Table.Cell class="max-w-70 truncate">{article.description}</Table.Cell>
+						<Table.Cell class="text-muted-foreground text-xs">{UDM_LABELS[article.udmBase]}</Table.Cell>
+						<Table.Cell class="text-muted-foreground max-w-37.5 truncate text-xs">
+							{#if article.supplierName}{article.supplierName}{:else}<span class="text-destructive">Sin proveedor</span>{/if}
+						</Table.Cell>
+						<Table.Cell class="text-right font-mono text-xs tabular-nums">
+							{#if article.price > 0}{formatCurrency(article.price, article.currency)}{:else}<span class="text-destructive">---</span>{/if}
+						</Table.Cell>
+						<Table.Cell class="text-right font-mono text-xs tabular-nums">
+							{#if article.leadTimeDays > 0}{article.leadTimeDays}d{:else}<span class="text-destructive">---</span>{/if}
+						</Table.Cell>
+						<Table.Cell>
+							<StatusBadge label={article.abcClass === 'sin_clasificar' ? '---' : article.abcClass} colorClass={ABC_COLORS[article.abcClass]} />
+						</Table.Cell>
+						<Table.Cell>
+							<StatusBadge label={ARTICLE_STATUS_LABELS[article.status]} colorClass={ARTICLE_STATUS_COLORS[article.status]} />
+						</Table.Cell>
+						<Table.Cell>
+							<div class="flex items-center justify-end gap-2">
+								<Progress
+									value={article.completeness}
+									max={100}
+									class={cn('h-1.5 w-16', article.completeness >= 80 ? '' : article.completeness >= 50 ? '*:data-[slot=progress-indicator]:bg-chart-4' : '*:data-[slot=progress-indicator]:bg-destructive')}
+								/>
+								<span class="text-muted-foreground w-8 text-right font-mono text-xs tabular-nums">{article.completeness}%</span>
+							</div>
+						</Table.Cell>
+					</Table.Row>
+				{/each}
+			</Table.Body>
+		</Table.Root>
+
+		{#if filtered.length === 0}
+			<Empty.Root class="border-0">
+				<Empty.Header>
+					<Empty.Media variant="icon">
+						<PackageIcon />
+					</Empty.Media>
+					<Empty.Title>Sin resultados</Empty.Title>
+					<Empty.Description>No se encontraron articulos con los filtros seleccionados.</Empty.Description>
+				</Empty.Header>
+			</Empty.Root>
+		{/if}
+	</Card.Content>
+</Card.Root>

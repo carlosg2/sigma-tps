@@ -1,7 +1,16 @@
 <script lang="ts">
 	import { useStore } from '$lib/tps/store.svelte.js';
-	import { BOM_STATUS_LABELS, ARMOR_LEVEL_LABELS } from '$lib/tps/constants.js';
+	import { BOM_STATUS_LABELS, BOM_STATUS_COLORS, ARMOR_LEVEL_LABELS } from '$lib/tps/constants.js';
 	import { generateId } from '$lib/tps/utils.js';
+	import StatusBadge from '$lib/tps/components/status-badge.svelte';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Alert from '$lib/components/ui/alert/index.js';
+	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import Search from '@lucide/svelte/icons/search';
 	import ArrowRightLeft from '@lucide/svelte/icons/arrow-right-left';
@@ -83,161 +92,197 @@
 </script>
 
 {#if applied}
-	<div class="mx-auto flex max-w-lg flex-col items-center justify-center gap-4 py-20 text-center">
-		<CheckCircle2 class="text-primary h-12 w-12" />
-		<h2 class="text-foreground text-lg font-semibold">Cambio masivo aplicado</h2>
-		<p class="text-muted-foreground text-sm">
-			Se reemplazo <span class="text-primary font-mono">{oldArticle?.code}</span> por
-			<span class="text-primary font-mono">{newArticle?.code}</span> en
-			{selectedBomIds.length} BOMs. Se creo una nueva revision en cada BOM afectado.
-		</p>
-		<div class="flex gap-2">
-			<a href="/lmat/boms" class="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-4 py-2 text-sm font-medium">Ver BOMs</a>
-			<button onclick={reset} class="border-border text-foreground hover:bg-secondary rounded-md border px-4 py-2 text-sm">Nuevo Cambio</button>
-		</div>
+	<div class="mx-auto flex w-full max-w-5xl flex-col gap-6">
+		<Empty.Root>
+			<Empty.Header>
+				<Empty.Media variant="icon">
+					<CheckCircle2 />
+				</Empty.Media>
+				<Empty.Title>Cambio masivo aplicado</Empty.Title>
+				<Empty.Description>
+					Se reemplazo <span class="text-primary font-mono">{oldArticle?.code}</span> por
+					<span class="text-primary font-mono">{newArticle?.code}</span> en
+					{selectedBomIds.length} BOMs. Se creo una nueva revision en cada BOM afectado.
+				</Empty.Description>
+			</Empty.Header>
+			<Empty.Content>
+				<div class="flex justify-center gap-2">
+					<Button href="/lmat/boms">Ver BOMs</Button>
+					<Button variant="outline" onclick={reset}>Nuevo Cambio</Button>
+				</div>
+			</Empty.Content>
+		</Empty.Root>
 	</div>
 {:else}
-	<div class="flex max-w-4xl flex-col gap-6">
+	<div class="mx-auto flex w-full max-w-5xl flex-col gap-6">
 		<div class="flex items-center gap-3">
-			<a href="/lmat/boms" class="border-border hover:bg-secondary flex h-8 w-8 items-center justify-center rounded-md border transition-colors">
-				<ArrowLeft class="text-foreground h-4 w-4" />
-			</a>
-			<div>
-				<h1 class="text-foreground text-xl font-bold">Cambio Masivo de Componente</h1>
-				<p class="text-muted-foreground text-sm">Reemplaza un componente por otro en multiples BOMs</p>
-			</div>
+			<Button href="/lmat/boms" variant="outline" size="icon">
+				<ArrowLeft />
+			</Button>
+			<p class="text-muted-foreground text-sm">Reemplaza un componente por otro en multiples BOMs</p>
 		</div>
 
 		<!-- Step 1 -->
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-			<div class="border-border bg-card rounded-lg border p-4">
-				<h3 class="text-card-foreground mb-3 text-sm font-semibold">Componente ACTUAL (a reemplazar)</h3>
-				<div class="border-border bg-secondary flex items-center gap-2 rounded-md border px-3 py-2">
-					<Search class="text-muted-foreground h-4 w-4" />
-					<input type="text" placeholder="Buscar articulo..." bind:value={oldQuery}
-						oninput={() => { oldArticleId = null; selectedBomIds = []; }}
-						class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent text-sm outline-none" />
-				</div>
-				{#if !oldArticleId && searchArticles(oldQuery).length > 0}
-					<div class="border-border mt-1 flex flex-col overflow-hidden rounded-md border">
-						{#each searchArticles(oldQuery) as a (a.id)}
-							<button onclick={() => { oldArticleId = a.id; oldQuery = a.code; selectAll(); }}
-								class="hover:bg-accent border-border/30 flex items-center gap-2 border-b px-3 py-1.5 text-left text-xs transition-colors last:border-0">
-								<span class="text-primary font-mono">{a.code}</span>
-								<span class="text-foreground truncate">{a.description}</span>
-							</button>
-						{/each}
+			<Card.Root>
+				<Card.Header>
+					<Card.Title>Componente ACTUAL (a reemplazar)</Card.Title>
+				</Card.Header>
+				<Card.Content class="flex flex-col gap-2">
+					<div class="relative w-full">
+						<Search class="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
+						<Input
+							placeholder="Buscar articulo..."
+							bind:value={oldQuery}
+							oninput={() => { oldArticleId = null; selectedBomIds = []; }}
+							class="pl-8"
+						/>
 					</div>
-				{/if}
-				{#if oldArticle}
-					<div class="border-primary/30 bg-primary/5 mt-2 rounded-md border p-2">
-						<p class="text-primary font-mono text-xs">{oldArticle.code}</p>
-						<p class="text-muted-foreground truncate text-xs">{oldArticle.description}</p>
-					</div>
-				{/if}
-			</div>
+					{#if !oldArticleId && searchArticles(oldQuery).length > 0}
+						<div class="flex flex-col overflow-hidden rounded-md border">
+							{#each searchArticles(oldQuery) as a (a.id)}
+								<button
+									onclick={() => { oldArticleId = a.id; oldQuery = a.code; selectAll(); }}
+									class="hover:bg-accent border-border/30 flex items-center gap-2 border-b px-3 py-1.5 text-left text-xs transition-colors last:border-0"
+								>
+									<span class="text-primary font-mono">{a.code}</span>
+									<span class="text-foreground truncate">{a.description}</span>
+								</button>
+							{/each}
+						</div>
+					{/if}
+					{#if oldArticle}
+						<div class="border-primary/30 bg-primary/5 rounded-md border p-2">
+							<p class="text-primary font-mono text-xs">{oldArticle.code}</p>
+							<p class="text-muted-foreground truncate text-xs">{oldArticle.description}</p>
+						</div>
+					{/if}
+				</Card.Content>
+			</Card.Root>
 
-			<div class="border-border bg-card rounded-lg border p-4">
-				<h3 class="text-card-foreground mb-3 text-sm font-semibold">Componente NUEVO (reemplazo)</h3>
-				<div class="border-border bg-secondary flex items-center gap-2 rounded-md border px-3 py-2">
-					<Search class="text-muted-foreground h-4 w-4" />
-					<input type="text" placeholder="Buscar articulo..." bind:value={newQuery}
-						oninput={() => (newArticleId = null)}
-						class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent text-sm outline-none" />
-				</div>
-				{#if !newArticleId && searchArticles(newQuery).length > 0}
-					<div class="border-border mt-1 flex flex-col overflow-hidden rounded-md border">
-						{#each searchArticles(newQuery) as a (a.id)}
-							<button onclick={() => { newArticleId = a.id; newQuery = a.code; }}
-								class="hover:bg-accent border-border/30 flex items-center gap-2 border-b px-3 py-1.5 text-left text-xs transition-colors last:border-0">
-								<span class="text-primary font-mono">{a.code}</span>
-								<span class="text-foreground truncate">{a.description}</span>
-							</button>
-						{/each}
+			<Card.Root>
+				<Card.Header>
+					<Card.Title>Componente NUEVO (reemplazo)</Card.Title>
+				</Card.Header>
+				<Card.Content class="flex flex-col gap-2">
+					<div class="relative w-full">
+						<Search class="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
+						<Input
+							placeholder="Buscar articulo..."
+							bind:value={newQuery}
+							oninput={() => (newArticleId = null)}
+							class="pl-8"
+						/>
 					</div>
-				{/if}
-				{#if newArticle}
-					<div class="border-primary/30 bg-primary/5 mt-2 rounded-md border p-2">
-						<p class="text-primary font-mono text-xs">{newArticle.code}</p>
-						<p class="text-muted-foreground truncate text-xs">{newArticle.description}</p>
-					</div>
-				{/if}
-			</div>
+					{#if !newArticleId && searchArticles(newQuery).length > 0}
+						<div class="flex flex-col overflow-hidden rounded-md border">
+							{#each searchArticles(newQuery) as a (a.id)}
+								<button
+									onclick={() => { newArticleId = a.id; newQuery = a.code; }}
+									class="hover:bg-accent border-border/30 flex items-center gap-2 border-b px-3 py-1.5 text-left text-xs transition-colors last:border-0"
+								>
+									<span class="text-primary font-mono">{a.code}</span>
+									<span class="text-foreground truncate">{a.description}</span>
+								</button>
+							{/each}
+						</div>
+					{/if}
+					{#if newArticle}
+						<div class="border-primary/30 bg-primary/5 rounded-md border p-2">
+							<p class="text-primary font-mono text-xs">{newArticle.code}</p>
+							<p class="text-muted-foreground truncate text-xs">{newArticle.description}</p>
+						</div>
+					{/if}
+				</Card.Content>
+			</Card.Root>
 		</div>
 
 		<!-- Step 2 -->
 		{#if oldArticleId && affectedBOMs.length > 0}
-			<div class="border-border bg-card overflow-hidden rounded-lg border">
-				<div class="border-border flex items-center justify-between border-b px-4 py-3">
-					<h3 class="text-card-foreground text-sm font-semibold">
-						BOMs afectados ({affectedBOMs.length}) - Selecciona cuales modificar
-					</h3>
-					<div class="flex gap-2">
-						<button onclick={selectAll} class="text-primary text-xs hover:underline">Todos</button>
-						<button onclick={deselectAll} class="text-muted-foreground text-xs hover:underline">Ninguno</button>
-					</div>
-				</div>
-				<table class="w-full text-sm">
-					<thead>
-						<tr class="border-border border-b text-left">
-							<th class="w-8 px-4 py-2"></th>
-							<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Especificacion</th>
-							<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Modelo</th>
-							<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Nivel</th>
-							<th class="text-muted-foreground px-4 py-2 text-xs font-medium">Estatus</th>
-							<th class="text-muted-foreground px-4 py-2 text-right text-xs font-medium">Cantidad</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each affectedBOMs as bom (bom.id)}
-							{@const comp = bom.components.find((c) => c.articleId === oldArticleId)!}
-							<tr class="border-border/50 hover:bg-secondary/30 cursor-pointer border-b transition-colors" onclick={() => toggleBom(bom.id)}>
-								<td class="px-4 py-2">
-									<input type="checkbox" checked={selectedBomIds.includes(bom.id)} readonly class="border-border accent-primary rounded" />
-								</td>
-								<td class="text-primary px-4 py-2 font-mono text-xs">{bom.specificationCode}</td>
-								<td class="text-card-foreground px-4 py-2">{bom.vehicleModel}</td>
-								<td class="text-muted-foreground px-4 py-2 text-xs">{ARMOR_LEVEL_LABELS[bom.armorLevel]}</td>
-								<td class="text-muted-foreground px-4 py-2 text-xs">{BOM_STATUS_LABELS[bom.status]}</td>
-								<td class="text-card-foreground px-4 py-2 text-right font-mono">{comp.quantity}</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
+			<Card.Root>
+				<Card.Header>
+					<Card.Title>BOMs afectados ({affectedBOMs.length})</Card.Title>
+					<Card.Description>Selecciona cuales modificar</Card.Description>
+					<Card.Action>
+						<div class="flex gap-2">
+							<Button variant="ghost" size="sm" onclick={selectAll}>Todos</Button>
+							<Button variant="ghost" size="sm" onclick={deselectAll}>Ninguno</Button>
+						</div>
+					</Card.Action>
+				</Card.Header>
+				<Card.Content>
+					<Table.Root>
+						<Table.Header>
+							<Table.Row>
+								<Table.Head class="w-8"></Table.Head>
+								<Table.Head>Especificacion</Table.Head>
+								<Table.Head>Modelo</Table.Head>
+								<Table.Head>Nivel</Table.Head>
+								<Table.Head>Estatus</Table.Head>
+								<Table.Head class="text-right">Cantidad</Table.Head>
+							</Table.Row>
+						</Table.Header>
+						<Table.Body>
+							{#each affectedBOMs as bom (bom.id)}
+								{@const comp = bom.components.find((c) => c.articleId === oldArticleId)!}
+								<Table.Row class="cursor-pointer" onclick={() => toggleBom(bom.id)}>
+									<Table.Cell>
+										<Checkbox checked={selectedBomIds.includes(bom.id)} />
+									</Table.Cell>
+									<Table.Cell>
+										<span class="text-primary font-mono text-xs">{bom.specificationCode}</span>
+									</Table.Cell>
+									<Table.Cell>{bom.vehicleModel}</Table.Cell>
+									<Table.Cell class="text-muted-foreground text-xs">{ARMOR_LEVEL_LABELS[bom.armorLevel]}</Table.Cell>
+									<Table.Cell>
+										<StatusBadge label={BOM_STATUS_LABELS[bom.status]} colorClass={BOM_STATUS_COLORS[bom.status]} />
+									</Table.Cell>
+									<Table.Cell class="text-right font-mono tabular-nums">{comp.quantity}</Table.Cell>
+								</Table.Row>
+							{/each}
+						</Table.Body>
+					</Table.Root>
+				</Card.Content>
+			</Card.Root>
 		{/if}
 
 		{#if oldArticleId && affectedBOMs.length === 0}
-			<div class="border-border bg-card text-muted-foreground rounded-lg border px-4 py-8 text-center text-sm">
-				Este articulo no aparece en ningun BOM.
-			</div>
+			<Empty.Root>
+				<Empty.Header>
+					<Empty.Media variant="icon">
+						<Search />
+					</Empty.Media>
+					<Empty.Title>Sin BOMs afectados</Empty.Title>
+					<Empty.Description>Este articulo no aparece en ningun BOM.</Empty.Description>
+				</Empty.Header>
+			</Empty.Root>
 		{/if}
 
 		<!-- Step 3 -->
 		{#if oldArticleId && newArticleId && selectedBomIds.length > 0}
-			<div class="border-chart-4/30 bg-card rounded-lg border p-4">
-				<div class="mb-3 flex items-start gap-3">
-					<AlertTriangle class="text-chart-4 mt-0.5 h-5 w-5 shrink-0" />
-					<div>
-						<h3 class="text-card-foreground text-sm font-semibold">Preview del cambio</h3>
-						<p class="text-muted-foreground mt-1 text-xs">
+			<Card.Root>
+				<Card.Content class="flex flex-col gap-4 pt-6">
+					<Alert.Root>
+						<AlertTriangle />
+						<Alert.Title>Preview del cambio</Alert.Title>
+						<Alert.Description>
 							Reemplazar <span class="text-primary font-mono">{oldArticle?.code}</span> por
 							<span class="text-primary font-mono">{newArticle?.code}</span> en
-							<span class="text-card-foreground font-bold">{selectedBomIds.length}</span> BOMs.
+							<span class="text-foreground font-bold">{selectedBomIds.length}</span> BOMs.
 							Se creara una nueva revision en cada BOM afectado.
-						</p>
+						</Alert.Description>
+					</Alert.Root>
+					<div class="grid gap-2">
+						<Label for="motivo">Motivo del cambio (obligatorio):</Label>
+						<Input id="motivo" bind:value={reason} placeholder="Ej: Cambio de proveedor, nuevo material equivalente..." />
 					</div>
-				</div>
-				<div class="mb-3">
-					<label for="motivo" class="text-muted-foreground mb-1 block text-xs">Motivo del cambio (obligatorio):</label>
-					<input id="motivo" type="text" class="border-border bg-secondary text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm outline-none"
-						bind:value={reason} placeholder="Ej: Cambio de proveedor, nuevo material equivalente..." />
-				</div>
-				<button onclick={applyChange} disabled={!reason.trim()}
-					class="bg-chart-4 text-background hover:bg-chart-4/90 flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50">
-					<ArrowRightLeft class="h-4 w-4" /> Aplicar Cambio Masivo
-				</button>
-			</div>
+					<div>
+						<Button onclick={applyChange} disabled={!reason.trim()}>
+							<ArrowRightLeft data-icon="inline-start" /> Aplicar Cambio Masivo
+						</Button>
+					</div>
+				</Card.Content>
+			</Card.Root>
 		{/if}
 	</div>
 {/if}

@@ -1,19 +1,22 @@
 <script lang="ts">
 	import { setTpsStore } from '$lib/tps/store.svelte.js';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import AppSidebar from '$lib/tps/components/app-sidebar.svelte';
-	import Header from '$lib/tps/components/header.svelte';
+	import SiteHeader from '$lib/tps/components/site-header.svelte';
 
 	let { children } = $props();
 
 	setTpsStore();
 </script>
 
-<div class="flex h-screen overflow-hidden">
-	<AppSidebar />
-	<div class="flex flex-1 flex-col overflow-hidden">
-		<Header />
-		<main class="flex-1 overflow-y-auto p-6">
+<Sidebar.Provider
+	style="--sidebar-width: calc(var(--spacing) * 64); --header-height: calc(var(--spacing) * 14);"
+>
+	<AppSidebar variant="inset" />
+	<Sidebar.Inset>
+		<SiteHeader />
+		<main class="@container/main flex flex-1 flex-col gap-6 p-4 md:p-6">
 			{@render children()}
 		</main>
-	</div>
-</div>
+	</Sidebar.Inset>
+</Sidebar.Provider>

@@ -1,11 +1,17 @@
 <script lang="ts">
 	import { useStore } from '$lib/tps/store.svelte.js';
+	import StatusBadge from '$lib/tps/components/status-badge.svelte';
 	import {
 		BOM_MATURITY_LABELS,
 		BOM_MATURITY_COLORS,
 		ECN_STATUS_LABELS,
 		ECN_STATUS_COLORS
 	} from '$lib/tps/constants.js';
+	import { cn } from '$lib/utils.js';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Progress } from '$lib/components/ui/progress/index.js';
 	import type { Component } from 'svelte';
 	import FileStack from '@lucide/svelte/icons/file-stack';
 	import Car from '@lucide/svelte/icons/car';
@@ -79,157 +85,142 @@
 	];
 </script>
 
-<div class="flex flex-col gap-6">
-	<!-- Header -->
-	<div class="flex items-center justify-between">
-		<div>
-			<h1 class="text-foreground text-2xl font-bold">LMAT - Lista de Materiales</h1>
-			<p class="text-muted-foreground text-sm">
-				Gestion integral de listas de materiales, especificaciones tecnicas y control de cambios
-			</p>
-		</div>
-		<a
-			href="/lmat/boms/nuevo"
-			class="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium"
-		>
-			<Plus class="h-4 w-4" /> Nuevo BOM
-		</a>
-	</div>
+<!-- Header -->
+<div class="flex flex-wrap items-center justify-between gap-3">
+	<p class="text-muted-foreground text-sm">
+		Gestion integral de listas de materiales, especificaciones tecnicas y control de cambios
+	</p>
+	<Button href="/lmat/boms/nuevo" size="sm">
+		<Plus data-icon="inline-start" /> Nuevo BOM
+	</Button>
+</div>
 
-	<!-- Quick Stats -->
-	<div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-		{#each stats as s (s.label)}
-			{@const Icon = s.icon}
-			<a
-				href={s.href}
-				class="hover:bg-secondary/50 flex flex-col rounded-lg border p-4 transition-colors {s.alert ? 'border-chart-4/50 bg-chart-4/5' : 'border-border bg-card'}"
-			>
-				<div class="mb-2 flex items-center justify-between">
-					<span class={s.alert ? 'text-chart-4' : 'text-muted-foreground'}><Icon class="h-5 w-5" /></span>
-					{#if s.alert}<AlertTriangle class="text-chart-4 h-4 w-4" />{/if}
-				</div>
-				<span class="text-card-foreground text-2xl font-bold">{s.value}</span>
-				<span class="text-muted-foreground text-xs">{s.label}</span>
-				<span class="text-muted-foreground mt-0.5 text-[10px]">{s.subtitle}</span>
-			</a>
-		{/each}
-	</div>
-
-	<!-- Quick Actions -->
-	<div class="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-7">
-		{#each quickActions as a (a.href)}
-			{@const Icon = a.icon}
-			<a
-				href={a.href}
-				class="border-border bg-card hover:bg-secondary/50 flex flex-col items-center gap-1.5 rounded-lg border p-3 transition-colors"
-			>
-				<span class="text-muted-foreground"><Icon class="h-5 w-5" /></span>
-				<span class="text-card-foreground text-xs font-medium">{a.label}</span>
-			</a>
-		{/each}
-	</div>
-
-	<!-- Main Content Grid -->
-	<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-		<!-- Recent BOMs -->
-		<div class="border-border bg-card rounded-lg border lg:col-span-2">
-			<div class="border-border flex items-center justify-between border-b px-4 py-3">
-				<div class="flex items-center gap-2">
-					<FileStack class="text-primary h-4 w-4" />
-					<h3 class="text-card-foreground font-semibold">BOMs Recientes</h3>
-				</div>
-				<a href="/lmat/boms" class="text-primary flex items-center gap-1 text-xs hover:underline">
-					Ver todos <ArrowRight class="h-3 w-3" />
-				</a>
-			</div>
-			<div class="divide-border divide-y">
-				{#each recentBOMs as bom (bom.id)}
-					<a
-						href="/lmat/boms/{bom.id}"
-						class="hover:bg-secondary/50 flex items-center justify-between px-4 py-3 transition-colors"
-					>
-						<div class="flex items-center gap-3">
-							<div class="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
-								<Layers class="text-primary h-5 w-5" />
-							</div>
-							<div>
-								<p class="text-card-foreground font-medium">{bom.vehicleModel}</p>
-								<div class="text-muted-foreground flex items-center gap-2 text-xs">
-									<span>{bom.specificationCode}</span>
-									<span>v{bom.version}</span>
-								</div>
-							</div>
-						</div>
-						<div class="flex items-center gap-3">
-							<span class="rounded-full px-2 py-0.5 text-[10px] font-medium {BOM_MATURITY_COLORS[bom.maturityStatus || 'en_desarrollo']}">
-								{BOM_MATURITY_LABELS[bom.maturityStatus || 'en_desarrollo']}
-							</span>
-							<div class="flex items-center gap-1">
-								<div class="bg-secondary h-1.5 w-16 rounded-full">
-									<div
-										class="h-1.5 rounded-full {bom.healthPercent >= 80 ? 'bg-emerald-500' : bom.healthPercent >= 50 ? 'bg-chart-4' : 'bg-destructive'}"
-										style="width: {bom.healthPercent}%"
-									></div>
-								</div>
-								<span class="text-muted-foreground font-mono text-xs">{bom.healthPercent}%</span>
-							</div>
-						</div>
-					</a>
-				{/each}
-			</div>
-		</div>
-
-		<!-- ECNs & Maturity -->
-		<div class="flex flex-col gap-4">
-			<div class="border-border bg-card rounded-lg border">
-				<div class="border-border flex items-center justify-between border-b px-4 py-3">
-					<div class="flex items-center gap-2">
-						<GitBranch class="text-chart-4 h-4 w-4" />
-						<h3 class="text-card-foreground font-semibold">ECNs Recientes</h3>
-					</div>
-					<a href="/lmat/ecn" class="text-primary flex items-center gap-1 text-xs hover:underline">
-						Ver todos <ArrowRight class="h-3 w-3" />
-					</a>
-				</div>
-				<div class="divide-border divide-y">
-					{#if recentECNs.length > 0}
-						{#each recentECNs as ecn (ecn.id)}
-							<a
-								href="/lmat/ecn/{ecn.id}"
-								class="hover:bg-secondary/50 flex items-center justify-between px-4 py-3 transition-colors"
-							>
-								<div>
-									<p class="text-card-foreground font-mono text-sm font-medium">{ecn.code}</p>
-									<p class="text-muted-foreground line-clamp-1 text-xs">{ecn.justification}</p>
-								</div>
-								<span class="rounded-full px-2 py-0.5 text-[10px] font-medium {ECN_STATUS_COLORS[ecn.status]}">
-									{ECN_STATUS_LABELS[ecn.status]}
-								</span>
-							</a>
-						{/each}
-					{:else}
-						<div class="text-muted-foreground px-4 py-6 text-center text-sm">No hay ECNs pendientes</div>
+<!-- Quick Stats -->
+<div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+	{#each stats as s (s.label)}
+		{@const Icon = s.icon}
+		<a href={s.href} class="group">
+			<Card.Root class={cn('h-full transition-colors hover:bg-muted/50', s.alert && 'border-chart-4/50 bg-chart-4/5')}>
+				<Card.Header>
+					<Card.Description class="flex items-center gap-2">
+						<Icon class="size-4 {s.alert ? 'text-chart-4' : ''}" /> {s.label}
+					</Card.Description>
+					<Card.Title class="text-2xl font-semibold tabular-nums">{s.value}</Card.Title>
+					{#if s.alert}
+						<Card.Action><AlertTriangle class="text-chart-4 size-4" /></Card.Action>
 					{/if}
-				</div>
-			</div>
+				</Card.Header>
+				<Card.Content>
+					<p class="text-muted-foreground text-xs">{s.subtitle}</p>
+				</Card.Content>
+			</Card.Root>
+		</a>
+	{/each}
+</div>
 
-			<div class="border-border bg-card rounded-lg border">
-				<div class="border-border flex items-center gap-2 border-b px-4 py-3">
-					<Layers class="text-primary h-4 w-4" />
-					<h3 class="text-card-foreground font-semibold">Estado de Madurez</h3>
-				</div>
-				<div class="space-y-2 p-4">
-					{#each maturityStats as { status, count, pct } (status)}
-						<div class="flex items-center gap-3">
-							<span class="w-24 rounded px-1.5 py-0.5 text-xs {BOM_MATURITY_COLORS[status]}">{BOM_MATURITY_LABELS[status]}</span>
-							<div class="bg-secondary h-2 flex-1 rounded-full">
-								<div class="bg-primary/60 h-2 rounded-full transition-all" style="width: {pct}%"></div>
-							</div>
-							<span class="text-muted-foreground w-8 text-right font-mono text-xs">{count}</span>
-						</div>
+<!-- Quick Actions -->
+<div class="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-7">
+	{#each quickActions as a (a.href)}
+		{@const Icon = a.icon}
+		<a href={a.href} class="group">
+			<Card.Root class="transition-colors hover:bg-muted/50">
+				<Card.Content class="flex flex-col items-center gap-1.5 py-4">
+					<Icon class="text-muted-foreground size-5" />
+					<span class="text-xs font-medium">{a.label}</span>
+				</Card.Content>
+			</Card.Root>
+		</a>
+	{/each}
+</div>
+
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+	<!-- Recent BOMs -->
+	<Card.Root class="lg:col-span-2">
+		<Card.Header>
+			<Card.Title>BOMs Recientes</Card.Title>
+			<Card.Action>
+				<Button href="/lmat/boms" variant="link" size="sm">
+					Ver todos <ArrowRight data-icon="inline-end" />
+				</Button>
+			</Card.Action>
+		</Card.Header>
+		<Card.Content>
+			<Table.Root>
+				<Table.Header>
+					<Table.Row>
+						<Table.Head>Modelo</Table.Head>
+						<Table.Head>Especificacion</Table.Head>
+						<Table.Head>Madurez</Table.Head>
+						<Table.Head>Salud</Table.Head>
+					</Table.Row>
+				</Table.Header>
+				<Table.Body>
+					{#each recentBOMs as bom (bom.id)}
+						<Table.Row>
+							<Table.Cell>
+								<a href="/lmat/boms/{bom.id}" class="font-medium hover:underline">{bom.vehicleModel}</a>
+							</Table.Cell>
+							<Table.Cell class="text-muted-foreground font-mono text-xs">{bom.specificationCode} · v{bom.version}</Table.Cell>
+							<Table.Cell>
+								<StatusBadge label={BOM_MATURITY_LABELS[bom.maturityStatus || 'en_desarrollo']} colorClass={BOM_MATURITY_COLORS[bom.maturityStatus || 'en_desarrollo']} />
+							</Table.Cell>
+							<Table.Cell>
+								<div class="flex items-center gap-2">
+									<Progress value={bom.healthPercent} max={100} class={cn('h-1.5 w-16', bom.healthPercent >= 80 ? '' : bom.healthPercent >= 50 ? '*:data-[slot=progress-indicator]:bg-chart-4' : '*:data-[slot=progress-indicator]:bg-destructive')} />
+									<span class="text-muted-foreground w-8 text-right font-mono text-xs tabular-nums">{bom.healthPercent}%</span>
+								</div>
+							</Table.Cell>
+						</Table.Row>
 					{/each}
-				</div>
-			</div>
-		</div>
+				</Table.Body>
+			</Table.Root>
+		</Card.Content>
+	</Card.Root>
+
+	<!-- ECNs & Maturity -->
+	<div class="flex flex-col gap-4">
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>ECNs Recientes</Card.Title>
+				<Card.Action>
+					<Button href="/lmat/ecn" variant="link" size="sm">
+						Ver todos <ArrowRight data-icon="inline-end" />
+					</Button>
+				</Card.Action>
+			</Card.Header>
+			<Card.Content class="flex flex-col gap-2">
+				{#if recentECNs.length > 0}
+					{#each recentECNs as ecn (ecn.id)}
+						<a href="/lmat/ecn/{ecn.id}" class="hover:bg-muted/50 -mx-2 flex items-center justify-between gap-2 rounded-md px-2 py-2 transition-colors">
+							<div class="min-w-0">
+								<p class="font-mono text-sm font-medium">{ecn.code}</p>
+								<p class="text-muted-foreground line-clamp-1 text-xs">{ecn.justification}</p>
+							</div>
+							<StatusBadge label={ECN_STATUS_LABELS[ecn.status]} colorClass={ECN_STATUS_COLORS[ecn.status]} />
+						</a>
+					{/each}
+				{:else}
+					<p class="text-muted-foreground py-4 text-center text-sm">No hay ECNs pendientes</p>
+				{/if}
+			</Card.Content>
+		</Card.Root>
+
+		<Card.Root>
+			<Card.Header>
+				<Card.Title class="flex items-center gap-2"><Layers class="size-4" /> Estado de Madurez</Card.Title>
+			</Card.Header>
+			<Card.Content class="flex flex-col gap-2">
+				{#each maturityStats as { status, count, pct } (status)}
+					<div class="flex items-center gap-3">
+						<div class="w-24 shrink-0">
+							<StatusBadge label={BOM_MATURITY_LABELS[status]} colorClass={BOM_MATURITY_COLORS[status]} />
+						</div>
+						<Progress value={pct} max={100} class="flex-1" />
+						<span class="text-muted-foreground w-8 text-right font-mono text-xs tabular-nums">{count}</span>
+					</div>
+				{/each}
+			</Card.Content>
+		</Card.Root>
 	</div>
 </div>

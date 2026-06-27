@@ -5,12 +5,20 @@
 		VEHICLE_MODELS,
 		ARMOR_LEVEL_LABELS,
 		PROJECT_STATUS_LABELS,
-		PROJECT_STAGE_ORDER
+		PROJECT_STAGE_ORDER,
+		PLANT_LABELS
 	} from '$lib/tps/constants.js';
 	import { generateId } from '$lib/tps/utils.js';
 	import type { Project, ArmorLevel, Plant, ProjectStage } from '$lib/tps/types.js';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
+	import * as Alert from '$lib/components/ui/alert/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import Save from '@lucide/svelte/icons/save';
+	import AlertTriangle from '@lucide/svelte/icons/triangle-alert';
 
 	const store = useStore();
 	const app = $derived(store.state);
@@ -96,119 +104,123 @@
 	}
 </script>
 
-<div class="flex max-w-2xl flex-col gap-6">
-	<div class="flex items-center gap-3">
-		<a
-			href="/proyectos"
-			class="border-border hover:bg-secondary flex h-8 w-8 items-center justify-center rounded-md border transition-colors"
-		>
-			<ArrowLeft class="text-foreground h-4 w-4" />
-		</a>
-		<div>
-			<h1 class="text-foreground text-xl font-bold">Nuevo Proyecto</h1>
-			<p class="text-muted-foreground text-sm">Crea un nuevo folio de vehiculo</p>
-		</div>
+<div class="mx-auto flex w-full max-w-2xl flex-col gap-6">
+	<div class="flex flex-wrap items-center justify-between gap-3">
+		<Button href="/proyectos" variant="outline" size="sm">
+			<ArrowLeft data-icon="inline-start" /> Volver
+		</Button>
+		<p class="text-muted-foreground text-sm">Crea un nuevo folio de vehiculo</p>
 	</div>
 
 	{#if errors.length > 0}
-		<div class="border-destructive/30 bg-destructive/10 rounded-md border p-3">
-			{#each errors as e, i (i)}
-				<p class="text-destructive-foreground text-sm">{e}</p>
-			{/each}
-		</div>
+		<Alert.Root variant="destructive">
+			<AlertTriangle />
+			<Alert.Title>Revisa los siguientes campos</Alert.Title>
+			<Alert.Description>
+				<ul class="list-disc pl-4">
+					{#each errors as e, i (i)}
+						<li>{e}</li>
+					{/each}
+				</ul>
+			</Alert.Description>
+		</Alert.Root>
 	{/if}
 
-	<div class="border-border bg-card flex flex-col gap-4 rounded-lg border p-4">
-		<div>
-			<label class="text-muted-foreground mb-1 block text-xs">Folio TPS (4 digitos) *</label>
-			<input
-				class="border-border bg-secondary text-foreground w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
-				value={form.folioTPS}
-				oninput={(e) => (form.folioTPS = e.currentTarget.value.replace(/\D/g, '').slice(0, 4))}
-				placeholder="0001"
-				maxlength="4"
-			/>
-		</div>
-		<div>
-			<label class="text-muted-foreground mb-1 block text-xs">Modelo de Vehiculo</label>
-			<select
-				class="border-border bg-secondary text-foreground w-full rounded-md border px-3 py-2 text-sm outline-none"
-				bind:value={form.vehicleModel}
-			>
-				{#each VEHICLE_MODELS as m (m)}
-					<option value={m}>{m}</option>
-				{/each}
-			</select>
-		</div>
-		<div>
-			<label class="text-muted-foreground mb-1 block text-xs">Nivel de Blindaje</label>
-			<select
-				class="border-border bg-secondary text-foreground w-full rounded-md border px-3 py-2 text-sm outline-none"
-				bind:value={form.armorLevel}
-			>
-				{#each Object.entries(ARMOR_LEVEL_LABELS) as [k, v] (k)}
-					<option value={k}>{v}</option>
-				{/each}
-			</select>
-		</div>
-		<div>
-			<label class="text-muted-foreground mb-1 block text-xs">Cliente *</label>
-			<select
-				class="border-border bg-secondary text-foreground w-full rounded-md border px-3 py-2 text-sm outline-none"
-				bind:value={form.clientId}
-			>
-				<option value="">Seleccionar...</option>
-				{#each app.clients as c (c.id)}
-					<option value={c.id}>{c.name}</option>
-				{/each}
-			</select>
-		</div>
-		<div>
-			<label class="text-muted-foreground mb-1 block text-xs">Planta</label>
-			<select
-				class="border-border bg-secondary text-foreground w-full rounded-md border px-3 py-2 text-sm outline-none"
-				bind:value={form.plant}
-			>
-				<option value="planta_1">Planta 1</option>
-				<option value="planta_2">Planta 2</option>
-			</select>
-		</div>
-		<div>
-			<label class="text-muted-foreground mb-1 block text-xs">Monto Cotizacion (MXN)</label>
-			<input
-				type="number"
-				class="border-border bg-secondary text-foreground w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
-				value={form.quotationAmount || ''}
-				oninput={(e) => (form.quotationAmount = Number(e.currentTarget.value))}
-				placeholder="0"
-			/>
-		</div>
-		<div>
-			<label class="text-muted-foreground mb-1 block text-xs">BOM Vinculado (opcional)</label>
-			<select
-				class="border-border bg-secondary text-foreground w-full rounded-md border px-3 py-2 text-sm outline-none"
-				bind:value={form.bomId}
-			>
-				<option value="">Sin BOM</option>
-				{#each app.boms as b (b.id)}
-					<option value={b.id}>{b.specificationCode} - {b.vehicleModel}</option>
-				{/each}
-			</select>
-		</div>
-	</div>
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>Datos del Proyecto</Card.Title>
+		</Card.Header>
+		<Card.Content class="flex flex-col gap-4">
+			<div class="grid gap-2">
+				<Label for="folioTPS">Folio TPS (4 digitos) *</Label>
+				<Input
+					id="folioTPS"
+					class="font-mono"
+					value={form.folioTPS}
+					oninput={(e) => (form.folioTPS = e.currentTarget.value.replace(/\D/g, '').slice(0, 4))}
+					placeholder="0001"
+					maxlength={4}
+				/>
+			</div>
+			<div class="grid gap-4 md:grid-cols-2">
+				<div class="grid gap-2">
+					<Label>Modelo de Vehiculo</Label>
+					<Select.Root type="single" bind:value={form.vehicleModel}>
+						<Select.Trigger class="w-full">{form.vehicleModel}</Select.Trigger>
+						<Select.Content>
+							{#each VEHICLE_MODELS as m (m)}
+								<Select.Item value={m}>{m}</Select.Item>
+							{/each}
+						</Select.Content>
+					</Select.Root>
+				</div>
+				<div class="grid gap-2">
+					<Label>Nivel de Blindaje</Label>
+					<Select.Root type="single" bind:value={form.armorLevel}>
+						<Select.Trigger class="w-full">{ARMOR_LEVEL_LABELS[form.armorLevel]}</Select.Trigger>
+						<Select.Content>
+							{#each Object.entries(ARMOR_LEVEL_LABELS) as [k, v] (k)}
+								<Select.Item value={k}>{v}</Select.Item>
+							{/each}
+						</Select.Content>
+					</Select.Root>
+				</div>
+			</div>
+			<div class="grid gap-2">
+				<Label>Cliente *</Label>
+				<Select.Root type="single" bind:value={form.clientId}>
+					<Select.Trigger class="w-full">{app.clients.find((c) => c.id === form.clientId)?.name ?? 'Seleccionar...'}</Select.Trigger>
+					<Select.Content>
+						{#each app.clients as c (c.id)}
+							<Select.Item value={c.id}>{c.name}</Select.Item>
+						{/each}
+					</Select.Content>
+				</Select.Root>
+			</div>
+			<div class="grid gap-4 md:grid-cols-2">
+				<div class="grid gap-2">
+					<Label>Planta</Label>
+					<Select.Root type="single" bind:value={form.plant}>
+						<Select.Trigger class="w-full">{PLANT_LABELS[form.plant]}</Select.Trigger>
+						<Select.Content>
+							<Select.Item value="planta_1">Planta 1</Select.Item>
+							<Select.Item value="planta_2">Planta 2</Select.Item>
+						</Select.Content>
+					</Select.Root>
+				</div>
+				<div class="grid gap-2">
+					<Label for="quotationAmount">Monto Cotizacion (MXN)</Label>
+					<Input
+						id="quotationAmount"
+						type="number"
+						class="font-mono"
+						value={form.quotationAmount || ''}
+						oninput={(e) => (form.quotationAmount = Number(e.currentTarget.value))}
+						placeholder="0"
+					/>
+				</div>
+			</div>
+			<div class="grid gap-2">
+				<Label>BOM Vinculado (opcional)</Label>
+				<Select.Root type="single" bind:value={form.bomId}>
+					<Select.Trigger class="w-full">
+						{#if form.bomId}{@const b = app.boms.find((b) => b.id === form.bomId)}{b ? `${b.specificationCode} - ${b.vehicleModel}` : 'Sin BOM'}{:else}Sin BOM{/if}
+					</Select.Trigger>
+					<Select.Content>
+						<Select.Item value="">Sin BOM</Select.Item>
+						{#each app.boms as b (b.id)}
+							<Select.Item value={b.id}>{b.specificationCode} - {b.vehicleModel}</Select.Item>
+						{/each}
+					</Select.Content>
+				</Select.Root>
+			</div>
+		</Card.Content>
+	</Card.Root>
 
-	<div class="flex items-center gap-3">
-		<a
-			href="/proyectos"
-			class="border-border text-foreground hover:bg-secondary rounded-md border px-4 py-2 text-sm transition-colors"
-		>
-			Cancelar
-		</a>
-		<button
-			onclick={handleSave}
-			class="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors"
-		>
-			<Save class="h-4 w-4" /> Crear Proyecto
-		</button>
+	<div class="flex items-center justify-end gap-3">
+		<Button href="/proyectos" variant="outline">Cancelar</Button>
+		<Button onclick={handleSave}>
+			<Save data-icon="inline-start" /> Crear Proyecto
+		</Button>
 	</div>
 </div>

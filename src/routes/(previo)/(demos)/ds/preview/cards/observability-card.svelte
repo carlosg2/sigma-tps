@@ -17,7 +17,7 @@
 		<Card.Title>Observability Plus reemplaza a Monitoring</Card.Title>
 		<Card.Description>
 			Pasa a la forma mejorada de explorar tus datos con lenguaje natural. Monitoring ya no
-			estará disponible en el plan Pro en noviembre de 2025.
+			estará disponible en el plan Pro en noviembre de 2026.
 		</Card.Description>
 	</Card.Header>
 	<Card.Footer>

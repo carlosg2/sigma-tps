@@ -81,8 +81,8 @@ function makeArticle(overrides: Partial<Article> & { id: string; code: string; d
     p5Code: "",
     documents: [],
     imageUrl: "",
-    createdAt: "2025-01-15",
-    updatedAt: "2025-06-01",
+    createdAt: "2026-01-15",
+    updatedAt: "2026-06-01",
     createdBy: "u3",
     ...overrides,
   }
@@ -307,7 +307,7 @@ function makeDeptValidations(status: "pendiente" | "parcial" | "completo"): Depa
     department: dept,
     status: status === "completo" ? "completado" : status === "parcial" && idx < 3 ? "completado" : "pendiente",
     validatedBy: status === "completo" || (status === "parcial" && idx < 3) ? "Roberto Silva" : null,
-    validatedAt: status === "completo" || (status === "parcial" && idx < 3) ? "2025-05-01" : null,
+    validatedAt: status === "completo" || (status === "parcial" && idx < 3) ? "2026-05-01" : null,
     notes: "",
   }))
 }
@@ -326,45 +326,45 @@ const boms: BOM[] = [
     maturityStatus: "liberado",
     components: bom1Components,
     revisions: [
-      { id: "rev1-1", bomId: "bom1", version: 1, changedBy: "Roberto Silva", changedAt: "2025-01-20", changeReason: "Creacion inicial", componentsSnapshot: bom1SnapshotV1, diff: [] },
-      { id: "rev1-2", bomId: "bom1", version: 2, changedBy: "Roberto Silva", changedAt: "2025-03-15", changeReason: "Eliminar soporte provisional y ajustar cantidades", componentsSnapshot: bom1SnapshotV2, diff: [{ type: "removed", articleCode: "ACB-TEMP-001", articleDescription: "Soporte provisional (eliminado)" }, { type: "modified", articleCode: "ACB-LAT-001", articleDescription: "Placa acero balistico lateral", field: "quantity", oldValue: "6", newValue: "7" }] },
-      { id: "rev1-3", bomId: "bom1", version: 3, changedBy: "Roberto Silva", changedAt: "2025-05-10", changeReason: "Incrementar cantidades finales y agregar componentes faltantes", componentsSnapshot: bom1Components, diff: [{ type: "modified", articleCode: "ACB-LAT-001", articleDescription: "Placa acero balistico lateral", field: "quantity", oldValue: "7", newValue: "8" }, { type: "added", articleCode: "KEV-PANEL-001", articleDescription: "Panel Kevlar puerta" }] },
+      { id: "rev1-1", bomId: "bom1", version: 1, changedBy: "Roberto Silva", changedAt: "2026-01-20", changeReason: "Creacion inicial", componentsSnapshot: bom1SnapshotV1, diff: [] },
+      { id: "rev1-2", bomId: "bom1", version: 2, changedBy: "Roberto Silva", changedAt: "2026-03-15", changeReason: "Eliminar soporte provisional y ajustar cantidades", componentsSnapshot: bom1SnapshotV2, diff: [{ type: "removed", articleCode: "ACB-TEMP-001", articleDescription: "Soporte provisional (eliminado)" }, { type: "modified", articleCode: "ACB-LAT-001", articleDescription: "Placa acero balistico lateral", field: "quantity", oldValue: "6", newValue: "7" }] },
+      { id: "rev1-3", bomId: "bom1", version: 3, changedBy: "Roberto Silva", changedAt: "2026-05-10", changeReason: "Incrementar cantidades finales y agregar componentes faltantes", componentsSnapshot: bom1Components, diff: [{ type: "modified", articleCode: "ACB-LAT-001", articleDescription: "Placa acero balistico lateral", field: "quantity", oldValue: "7", newValue: "8" }, { type: "added", articleCode: "KEV-PANEL-001", articleDescription: "Panel Kevlar puerta" }] },
     ],
     healthPercent: calcHealth(bom1Components),
     departmentValidations: makeDeptValidations("completo"),
     specificationId: "spec1",
     plantRoutes: plantRoutesP1,
     cuttingKitIds: ["ck1", "ck2", "ck3"],
-    createdAt: "2025-01-20", updatedAt: "2025-05-10", createdBy: "u3"
+    createdAt: "2026-01-20", updatedAt: "2026-05-10", createdBy: "u3"
   },
   {
     id: "bom2", specificationCode: "ESP-002", vehicleModel: "Chevrolet Suburban", armorLevel: "NIV", plant: "planta_1", version: 2, status: "aprobado",
     maturityStatus: "liberado",
     components: bom2Components,
     revisions: [
-      { id: "rev2-1", bomId: "bom2", version: 1, changedBy: "Roberto Silva", changedAt: "2025-02-01", changeReason: "Creacion inicial", componentsSnapshot: bom2Components.slice(0, 12), diff: [] },
-      { id: "rev2-2", bomId: "bom2", version: 2, changedBy: "Roberto Silva", changedAt: "2025-04-20", changeReason: "Actualizar cantidades de tornilleria por revision de ingenieria", componentsSnapshot: bom2Components, diff: [{ type: "modified", articleCode: "TH-3/8-001", articleDescription: "Tornillo hexagonal", field: "quantity", oldValue: "150", newValue: "200" }] },
+      { id: "rev2-1", bomId: "bom2", version: 1, changedBy: "Roberto Silva", changedAt: "2026-02-01", changeReason: "Creacion inicial", componentsSnapshot: bom2Components.slice(0, 12), diff: [] },
+      { id: "rev2-2", bomId: "bom2", version: 2, changedBy: "Roberto Silva", changedAt: "2026-04-20", changeReason: "Actualizar cantidades de tornilleria por revision de ingenieria", componentsSnapshot: bom2Components, diff: [{ type: "modified", articleCode: "TH-3/8-001", articleDescription: "Tornillo hexagonal", field: "quantity", oldValue: "150", newValue: "200" }] },
     ],
     healthPercent: calcHealth(bom2Components),
     departmentValidations: makeDeptValidations("completo"),
     specificationId: "spec2",
     plantRoutes: plantRoutesP1,
     cuttingKitIds: ["ck4", "ck5"],
-    createdAt: "2025-02-01", updatedAt: "2025-04-20", createdBy: "u3"
+    createdAt: "2026-02-01", updatedAt: "2026-04-20", createdBy: "u3"
   },
   {
     id: "bom3", specificationCode: "ESP-003", vehicleModel: "Ford Explorer", armorLevel: "NIII_plus", plant: "planta_2", version: 1, status: "aprobado",
     maturityStatus: "estabilizado",
     components: bom3Components,
     revisions: [
-      { id: "rev3-1", bomId: "bom3", version: 1, changedBy: "Fernando Diaz", changedAt: "2025-03-01", changeReason: "Creacion inicial", componentsSnapshot: bom3Components, diff: [] },
+      { id: "rev3-1", bomId: "bom3", version: 1, changedBy: "Fernando Diaz", changedAt: "2026-03-01", changeReason: "Creacion inicial", componentsSnapshot: bom3Components, diff: [] },
     ],
     healthPercent: calcHealth(bom3Components),
     departmentValidations: makeDeptValidations("parcial"),
     specificationId: "spec3",
     plantRoutes: plantRoutesP2,
     cuttingKitIds: [],
-    createdAt: "2025-03-01", updatedAt: "2025-03-01", createdBy: "u9"
+    createdAt: "2026-03-01", updatedAt: "2026-03-01", createdBy: "u9"
   },
   {
     id: "bom4", specificationCode: "ESP-004", vehicleModel: "Toyota Hilux", armorLevel: "NIII", plant: "planta_2", version: 1, status: "en_revision",
@@ -383,7 +383,7 @@ const boms: BOM[] = [
     specificationId: null,
     plantRoutes: plantRoutesP2,
     cuttingKitIds: [],
-    createdAt: "2025-05-01", updatedAt: "2025-05-01", createdBy: "u9"
+    createdAt: "2026-05-01", updatedAt: "2026-05-01", createdBy: "u9"
   },
   {
     id: "bom5", specificationCode: "ESP-005", vehicleModel: "Chevrolet Tahoe", armorLevel: "NV", plant: "planta_1", version: 1, status: "borrador",
@@ -402,7 +402,7 @@ const boms: BOM[] = [
     specificationId: null,
     plantRoutes: plantRoutesP1,
     cuttingKitIds: [],
-    createdAt: "2025-06-01", updatedAt: "2025-06-01", createdBy: "u3"
+    createdAt: "2026-06-01", updatedAt: "2026-06-01", createdBy: "u3"
   },
 ]
 // Recalc health
@@ -429,72 +429,72 @@ function makeStages(currentStatus: ProjectStatus): ProjectStage[] {
 
 const projects: Project[] = [
   { id: "p1", folioTPS: "4521", vehicleModel: "Toyota Land Cruiser 300", armorLevel: "NIII", clientId: "c1", clientName: "Grupo Financiero Azteca", plant: "planta_1", status: "produccion", quotationAmount: 1850000, stages: makeStages("produccion"), costs: [
-    { id: "pc1-1", projectId: "p1", type: "material", description: "Kit de acero balistico", amount: 385000, date: "2025-06-01", source: "BOM ESP-001" },
-    { id: "pc1-2", projectId: "p1", type: "material", description: "Cristales blindados", amount: 115000, date: "2025-06-05", source: "BOM ESP-001" },
-    { id: "pc1-3", projectId: "p1", type: "mano_obra", description: "Despiece y blindaje (120 hrs)", amount: 48000, date: "2025-06-10", source: "Nomina" },
-    { id: "pc1-4", projectId: "p1", type: "gif", description: "GIF prorrateo junio", amount: 25000, date: "2025-06-15", source: "Contabilidad" },
+    { id: "pc1-1", projectId: "p1", type: "material", description: "Kit de acero balistico", amount: 385000, date: "2026-06-01", source: "BOM ESP-001" },
+    { id: "pc1-2", projectId: "p1", type: "material", description: "Cristales blindados", amount: 115000, date: "2026-06-05", source: "BOM ESP-001" },
+    { id: "pc1-3", projectId: "p1", type: "mano_obra", description: "Despiece y blindaje (120 hrs)", amount: 48000, date: "2026-06-10", source: "Nomina" },
+    { id: "pc1-4", projectId: "p1", type: "gif", description: "GIF prorrateo junio", amount: 25000, date: "2026-06-15", source: "Contabilidad" },
   ], documents: [
-    { id: "pd1-1", type: "cotizacion", label: "Cotizacion COT-2025-089", reference: "COT-2025-089", date: "2025-04-10" },
-    { id: "pd1-2", type: "anticipo", label: "Anticipo 50% - Transferencia", reference: "TRF-20250420-001", date: "2025-04-20" },
-  ], bomId: "bom1", daysInProduction: 22, progressPercent: 55, totalCost: 573000, estimatedMargin: 69, createdAt: "2025-04-10", updatedAt: "2025-06-15" },
+    { id: "pd1-1", type: "cotizacion", label: "Cotizacion COT-2026-089", reference: "COT-2026-089", date: "2026-04-10" },
+    { id: "pd1-2", type: "anticipo", label: "Anticipo 50% - Transferencia", reference: "TRF-20260420-001", date: "2026-04-20" },
+  ], bomId: "bom1", daysInProduction: 22, progressPercent: 55, totalCost: 573000, estimatedMargin: 69, createdAt: "2026-04-10", updatedAt: "2026-06-15" },
 
   { id: "p2", folioTPS: "4522", vehicleModel: "Chevrolet Suburban", armorLevel: "NIV", clientId: "c2", clientName: "Gobierno del Estado de NL", plant: "planta_1", status: "produccion", quotationAmount: 2450000, stages: makeStages("produccion"), costs: [
-    { id: "pc2-1", projectId: "p2", type: "material", description: "Kit de materiales NIV", amount: 620000, date: "2025-06-03", source: "BOM ESP-002" },
-    { id: "pc2-2", projectId: "p2", type: "mano_obra", description: "Despiece (80 hrs)", amount: 32000, date: "2025-06-08", source: "Nomina" },
+    { id: "pc2-1", projectId: "p2", type: "material", description: "Kit de materiales NIV", amount: 620000, date: "2026-06-03", source: "BOM ESP-002" },
+    { id: "pc2-2", projectId: "p2", type: "mano_obra", description: "Despiece (80 hrs)", amount: 32000, date: "2026-06-08", source: "Nomina" },
   ], documents: [
-    { id: "pd2-1", type: "cotizacion", label: "Cotizacion COT-2025-092", reference: "COT-2025-092", date: "2025-04-25" },
-  ], bomId: "bom2", daysInProduction: 18, progressPercent: 40, totalCost: 652000, estimatedMargin: 73.4, createdAt: "2025-04-25", updatedAt: "2025-06-08" },
+    { id: "pd2-1", type: "cotizacion", label: "Cotizacion COT-2026-092", reference: "COT-2026-092", date: "2026-04-25" },
+  ], bomId: "bom2", daysInProduction: 18, progressPercent: 40, totalCost: 652000, estimatedMargin: 73.4, createdAt: "2026-04-25", updatedAt: "2026-06-08" },
 
   { id: "p3", folioTPS: "4523", vehicleModel: "Ford Explorer", armorLevel: "NIII_plus", clientId: "c4", clientName: "Minera Fresnillo PLC", plant: "planta_2", status: "calidad", quotationAmount: 1650000, stages: makeStages("calidad"), costs: [
-    { id: "pc3-1", projectId: "p3", type: "material", description: "Materiales completos", amount: 420000, date: "2025-05-10", source: "BOM ESP-003" },
-    { id: "pc3-2", projectId: "p3", type: "mano_obra", description: "Produccion completa (200 hrs)", amount: 80000, date: "2025-06-01", source: "Nomina" },
-    { id: "pc3-3", projectId: "p3", type: "gif", description: "GIF prorrateo", amount: 35000, date: "2025-06-05", source: "Contabilidad" },
-    { id: "pc3-4", projectId: "p3", type: "servicio_tercero", description: "Maquila de vestidura especial", amount: 45000, date: "2025-05-20", source: "Factura proveedor" },
-  ], documents: [], bomId: "bom3", daysInProduction: 35, progressPercent: 85, totalCost: 580000, estimatedMargin: 64.8, createdAt: "2025-03-15", updatedAt: "2025-06-05" },
+    { id: "pc3-1", projectId: "p3", type: "material", description: "Materiales completos", amount: 420000, date: "2026-05-10", source: "BOM ESP-003" },
+    { id: "pc3-2", projectId: "p3", type: "mano_obra", description: "Produccion completa (200 hrs)", amount: 80000, date: "2026-06-01", source: "Nomina" },
+    { id: "pc3-3", projectId: "p3", type: "gif", description: "GIF prorrateo", amount: 35000, date: "2026-06-05", source: "Contabilidad" },
+    { id: "pc3-4", projectId: "p3", type: "servicio_tercero", description: "Maquila de vestidura especial", amount: 45000, date: "2026-05-20", source: "Factura proveedor" },
+  ], documents: [], bomId: "bom3", daysInProduction: 35, progressPercent: 85, totalCost: 580000, estimatedMargin: 64.8, createdAt: "2026-03-15", updatedAt: "2026-06-05" },
 
   { id: "p4", folioTPS: "4524", vehicleModel: "Toyota Land Cruiser 300", armorLevel: "NIII", clientId: "c5", clientName: "Particular - Sr. Alejandro Ramos", plant: "planta_1", status: "facturacion", quotationAmount: 1850000, stages: makeStages("facturacion"), costs: [
-    { id: "pc4-1", projectId: "p4", type: "material", description: "Materiales completos", amount: 395000, date: "2025-04-01", source: "BOM ESP-001" },
-    { id: "pc4-2", projectId: "p4", type: "mano_obra", description: "Produccion completa", amount: 85000, date: "2025-05-15", source: "Nomina" },
-    { id: "pc4-3", projectId: "p4", type: "gif", description: "GIF", amount: 30000, date: "2025-05-20", source: "Contabilidad" },
-  ], documents: [], bomId: "bom1", daysInProduction: 42, progressPercent: 95, totalCost: 510000, estimatedMargin: 72.4, createdAt: "2025-02-01", updatedAt: "2025-05-20" },
+    { id: "pc4-1", projectId: "p4", type: "material", description: "Materiales completos", amount: 395000, date: "2026-04-01", source: "BOM ESP-001" },
+    { id: "pc4-2", projectId: "p4", type: "mano_obra", description: "Produccion completa", amount: 85000, date: "2026-05-15", source: "Nomina" },
+    { id: "pc4-3", projectId: "p4", type: "gif", description: "GIF", amount: 30000, date: "2026-05-20", source: "Contabilidad" },
+  ], documents: [], bomId: "bom1", daysInProduction: 42, progressPercent: 95, totalCost: 510000, estimatedMargin: 72.4, createdAt: "2026-02-01", updatedAt: "2026-05-20" },
 
   { id: "p5", folioTPS: "4525", vehicleModel: "Chevrolet Suburban", armorLevel: "NIV", clientId: "c3", clientName: "Embajada de USA en Mexico", plant: "planta_1", status: "cotizacion", quotationAmount: 2650000, stages: makeStages("cotizacion"), costs: [], documents: [
-    { id: "pd5-1", type: "cotizacion", label: "Cotizacion COT-2025-105", reference: "COT-2025-105", date: "2025-06-10" },
-  ], bomId: null, daysInProduction: 0, progressPercent: 5, totalCost: 0, estimatedMargin: 0, createdAt: "2025-06-10", updatedAt: "2025-06-10" },
+    { id: "pd5-1", type: "cotizacion", label: "Cotizacion COT-2026-105", reference: "COT-2026-105", date: "2026-06-10" },
+  ], bomId: null, daysInProduction: 0, progressPercent: 5, totalCost: 0, estimatedMargin: 0, createdAt: "2026-06-10", updatedAt: "2026-06-10" },
 
-  { id: "p6", folioTPS: "4526", vehicleModel: "Toyota Hilux", armorLevel: "NIII", clientId: "c4", clientName: "Minera Fresnillo PLC", plant: "planta_2", status: "anticipo", quotationAmount: 1250000, stages: makeStages("anticipo"), costs: [], documents: [], bomId: "bom4", daysInProduction: 0, progressPercent: 10, totalCost: 0, estimatedMargin: 0, createdAt: "2025-06-05", updatedAt: "2025-06-12" },
+  { id: "p6", folioTPS: "4526", vehicleModel: "Toyota Hilux", armorLevel: "NIII", clientId: "c4", clientName: "Minera Fresnillo PLC", plant: "planta_2", status: "anticipo", quotationAmount: 1250000, stages: makeStages("anticipo"), costs: [], documents: [], bomId: "bom4", daysInProduction: 0, progressPercent: 10, totalCost: 0, estimatedMargin: 0, createdAt: "2026-06-05", updatedAt: "2026-06-12" },
 
-  { id: "p7", folioTPS: "4527", vehicleModel: "Chevrolet Tahoe", armorLevel: "NV", clientId: "c1", clientName: "Grupo Financiero Azteca", plant: "planta_1", status: "planeacion", quotationAmount: 3200000, stages: makeStages("planeacion"), costs: [], documents: [], bomId: "bom5", daysInProduction: 0, progressPercent: 15, totalCost: 0, estimatedMargin: 0, createdAt: "2025-05-20", updatedAt: "2025-06-01" },
+  { id: "p7", folioTPS: "4527", vehicleModel: "Chevrolet Tahoe", armorLevel: "NV", clientId: "c1", clientName: "Grupo Financiero Azteca", plant: "planta_1", status: "planeacion", quotationAmount: 3200000, stages: makeStages("planeacion"), costs: [], documents: [], bomId: "bom5", daysInProduction: 0, progressPercent: 15, totalCost: 0, estimatedMargin: 0, createdAt: "2026-05-20", updatedAt: "2026-06-01" },
 
   { id: "p8", folioTPS: "4520", vehicleModel: "Toyota Land Cruiser 300", armorLevel: "NIII", clientId: "c2", clientName: "Gobierno del Estado de NL", plant: "planta_1", status: "entregado", quotationAmount: 1850000, stages: makeStages("entregado"), costs: [
-    { id: "pc8-1", projectId: "p8", type: "material", description: "Materiales completos", amount: 390000, date: "2025-01-15", source: "BOM ESP-001" },
-    { id: "pc8-2", projectId: "p8", type: "mano_obra", description: "Produccion completa", amount: 82000, date: "2025-02-20", source: "Nomina" },
-    { id: "pc8-3", projectId: "p8", type: "gif", description: "GIF", amount: 28000, date: "2025-02-28", source: "Contabilidad" },
-  ], documents: [], bomId: "bom1", daysInProduction: 0, progressPercent: 100, totalCost: 500000, estimatedMargin: 73, createdAt: "2024-12-01", updatedAt: "2025-03-15" },
+    { id: "pc8-1", projectId: "p8", type: "material", description: "Materiales completos", amount: 390000, date: "2026-01-15", source: "BOM ESP-001" },
+    { id: "pc8-2", projectId: "p8", type: "mano_obra", description: "Produccion completa", amount: 82000, date: "2026-02-20", source: "Nomina" },
+    { id: "pc8-3", projectId: "p8", type: "gif", description: "GIF", amount: 28000, date: "2026-02-28", source: "Contabilidad" },
+  ], documents: [], bomId: "bom1", daysInProduction: 0, progressPercent: 100, totalCost: 500000, estimatedMargin: 73, createdAt: "2024-12-01", updatedAt: "2026-03-15" },
 ]
 
 // --- GAPs ---
 const gaps: GAP[] = [
-  { id: "g1", area: "Ingenieria", description: "Estandarizar formato de BOM entre Planta 1 (SolidWorks) y Planta 2 (AutoCAD 2D)", type: "datos_maestros", status: "en_progreso", priority: "critica", phase: 1, assignedTo: "Roberto Silva", notes: "Se definio formato unificado, en proceso de migracion", createdAt: "2025-01-10", updatedAt: "2025-06-01" },
-  { id: "g2", area: "Ingenieria", description: "Implementar control de revisiones y ECN en BOMs", type: "workflow", status: "en_progreso", priority: "critica", phase: 1, assignedTo: "Roberto Silva", notes: "Modulo de versionamiento listo en nueva app", createdAt: "2025-01-10", updatedAt: "2025-06-01" },
-  { id: "g3", area: "Almacen", description: "Corregir 200-300 errores detectados en BOMs al surtir kits", type: "datos_maestros", status: "en_progreso", priority: "alta", phase: 1, assignedTo: "Miguel Hernandez", notes: "150 corregidos, faltan ~100", createdAt: "2025-01-15", updatedAt: "2025-05-20" },
-  { id: "g4", area: "Compras", description: "Enriquecer catalogo de articulos: lead time, proveedor y precio faltantes en 50% de items", type: "datos_maestros", status: "en_progreso", priority: "critica", phase: 1, assignedTo: "Ana Torres", notes: "30% completado", createdAt: "2025-01-15", updatedAt: "2025-06-01" },
-  { id: "g5", area: "Compras", description: "Eliminar duplicados en catalogo de articulos (sistema P5 - doble codigo)", type: "datos_maestros", status: "pendiente", priority: "alta", phase: 1, assignedTo: "Ana Torres", notes: "", createdAt: "2025-02-01", updatedAt: "2025-02-01" },
-  { id: "g6", area: "Almacen", description: "Definir y configurar multiunidades (UdM compra vs almacen vs produccion)", type: "datos_maestros", status: "en_progreso", priority: "alta", phase: 1, assignedTo: "Miguel Hernandez", notes: "Equivalencias definidas para 60% de articulos", createdAt: "2025-02-01", updatedAt: "2025-05-15" },
-  { id: "g7", area: "Finanzas", description: "Configurar dimension Proyecto en plan de cuentas para costeo por folio", type: "datos_maestros", status: "pendiente", priority: "critica", phase: 1, assignedTo: "Patricia Lopez", notes: "Requiere decision de estructura contable", createdAt: "2025-02-15", updatedAt: "2025-02-15" },
-  { id: "g8", area: "Produccion", description: "Definir rutas y centros de trabajo estandar por planta", type: "datos_maestros", status: "pendiente", priority: "alta", phase: 1, assignedTo: "Laura Garcia", notes: "", createdAt: "2025-03-01", updatedAt: "2025-03-01" },
-  { id: "g9", area: "Compras", description: "Depurar OC acumuladas desde 2021 que distorsionan calculos", type: "datos_maestros", status: "pendiente", priority: "alta", phase: 1, assignedTo: "Ana Torres", notes: "~500 OC por revisar", createdAt: "2025-03-01", updatedAt: "2025-03-01" },
-  { id: "g10", area: "Produccion", description: "Cerrar ~300 ordenes de produccion abiertas sin actualizar", type: "datos_maestros", status: "pendiente", priority: "media", phase: 1, assignedTo: "Laura Garcia", notes: "", createdAt: "2025-03-15", updatedAt: "2025-03-15" },
-  { id: "g11", area: "Almacen", description: "Realizar inventario fisico completo antes del go-live", type: "datos_maestros", status: "pendiente", priority: "critica", phase: 1, assignedTo: "Miguel Hernandez", notes: "Programar para 2 semanas antes del go-live", createdAt: "2025-04-01", updatedAt: "2025-04-01" },
-  { id: "g12", area: "Almacen", description: "Contabilizar inventario de consignacion actualmente invisible en sistema", type: "datos_maestros", status: "pendiente", priority: "alta", phase: 2, assignedTo: "Miguel Hernandez", notes: "", createdAt: "2025-04-01", updatedAt: "2025-04-01" },
-  { id: "g13", area: "Finanzas", description: "Automatizar conciliacion bancaria (5,000+ lineas/mes manual)", type: "automatizacion", status: "diferido_fase2", priority: "alta", phase: 2, assignedTo: "Patricia Lopez", notes: "Solo Bajio esta automatizado", createdAt: "2025-04-15", updatedAt: "2025-04-15" },
-  { id: "g14", area: "Finanzas", description: "Eliminar re-captura en flujo de recepcion a pago (4-5 pasos manuales)", type: "automatizacion", status: "diferido_fase2", priority: "media", phase: 2, assignedTo: "Patricia Lopez", notes: "", createdAt: "2025-04-15", updatedAt: "2025-04-15" },
-  { id: "g15", area: "Ventas", description: "Crear cotizador/configurador de producto con precios por modelo y nivel", type: "automatizacion", status: "diferido_fase2", priority: "media", phase: 3, assignedTo: "Carlos Mendoza", notes: "", createdAt: "2025-05-01", updatedAt: "2025-05-01" },
-  { id: "g16", area: "Produccion", description: "Implementar tablero Kanban con captura de avance en kiosco", type: "automatizacion", status: "diferido_fase2", priority: "alta", phase: 2, assignedTo: "Laura Garcia", notes: "", createdAt: "2025-05-01", updatedAt: "2025-05-01" },
-  { id: "g17", area: "TI", description: "Decidir sobre migracion de SVisio (sistema actual de seguimiento)", type: "integracion", status: "pendiente", priority: "media", phase: 1, assignedTo: "Carlos Mendoza", notes: "Evaluar si se reemplaza completamente", createdAt: "2025-05-15", updatedAt: "2025-05-15" },
-  { id: "g18", area: "Calidad", description: "Definir fronteras de calidad como gates de liberacion en produccion", type: "workflow", status: "pendiente", priority: "alta", phase: 2, assignedTo: "Sofia Morales", notes: "", createdAt: "2025-05-15", updatedAt: "2025-05-15" },
-  { id: "g19", area: "Compras", description: "Completar datos de proveedores (cuenta bancaria, correo) para pagos automaticos", type: "datos_maestros", status: "en_progreso", priority: "media", phase: 1, assignedTo: "Ana Torres", notes: "40% completado", createdAt: "2025-05-20", updatedAt: "2025-06-01" },
-  { id: "g20", area: "Finanzas", description: "Reparar candado de facturas duplicadas (dejo de funcionar)", type: "automatizacion", status: "resuelto", priority: "critica", phase: 1, assignedTo: "Patricia Lopez", notes: "Implementado por UUID de CFDI en nueva app", createdAt: "2025-01-20", updatedAt: "2025-06-01" },
+  { id: "g1", area: "Ingenieria", description: "Estandarizar formato de BOM entre Planta 1 (SolidWorks) y Planta 2 (AutoCAD 2D)", type: "datos_maestros", status: "en_progreso", priority: "critica", phase: 1, assignedTo: "Roberto Silva", notes: "Se definio formato unificado, en proceso de migracion", createdAt: "2026-01-10", updatedAt: "2026-06-01" },
+  { id: "g2", area: "Ingenieria", description: "Implementar control de revisiones y ECN en BOMs", type: "workflow", status: "en_progreso", priority: "critica", phase: 1, assignedTo: "Roberto Silva", notes: "Modulo de versionamiento listo en nueva app", createdAt: "2026-01-10", updatedAt: "2026-06-01" },
+  { id: "g3", area: "Almacen", description: "Corregir 200-300 errores detectados en BOMs al surtir kits", type: "datos_maestros", status: "en_progreso", priority: "alta", phase: 1, assignedTo: "Miguel Hernandez", notes: "150 corregidos, faltan ~100", createdAt: "2026-01-15", updatedAt: "2026-05-20" },
+  { id: "g4", area: "Compras", description: "Enriquecer catalogo de articulos: lead time, proveedor y precio faltantes en 50% de items", type: "datos_maestros", status: "en_progreso", priority: "critica", phase: 1, assignedTo: "Ana Torres", notes: "30% completado", createdAt: "2026-01-15", updatedAt: "2026-06-01" },
+  { id: "g5", area: "Compras", description: "Eliminar duplicados en catalogo de articulos (sistema P5 - doble codigo)", type: "datos_maestros", status: "pendiente", priority: "alta", phase: 1, assignedTo: "Ana Torres", notes: "", createdAt: "2026-02-01", updatedAt: "2026-02-01" },
+  { id: "g6", area: "Almacen", description: "Definir y configurar multiunidades (UdM compra vs almacen vs produccion)", type: "datos_maestros", status: "en_progreso", priority: "alta", phase: 1, assignedTo: "Miguel Hernandez", notes: "Equivalencias definidas para 60% de articulos", createdAt: "2026-02-01", updatedAt: "2026-05-15" },
+  { id: "g7", area: "Finanzas", description: "Configurar dimension Proyecto en plan de cuentas para costeo por folio", type: "datos_maestros", status: "pendiente", priority: "critica", phase: 1, assignedTo: "Patricia Lopez", notes: "Requiere decision de estructura contable", createdAt: "2026-02-15", updatedAt: "2026-02-15" },
+  { id: "g8", area: "Produccion", description: "Definir rutas y centros de trabajo estandar por planta", type: "datos_maestros", status: "pendiente", priority: "alta", phase: 1, assignedTo: "Laura Garcia", notes: "", createdAt: "2026-03-01", updatedAt: "2026-03-01" },
+  { id: "g9", area: "Compras", description: "Depurar OC acumuladas desde 2021 que distorsionan calculos", type: "datos_maestros", status: "pendiente", priority: "alta", phase: 1, assignedTo: "Ana Torres", notes: "~500 OC por revisar", createdAt: "2026-03-01", updatedAt: "2026-03-01" },
+  { id: "g10", area: "Produccion", description: "Cerrar ~300 ordenes de produccion abiertas sin actualizar", type: "datos_maestros", status: "pendiente", priority: "media", phase: 1, assignedTo: "Laura Garcia", notes: "", createdAt: "2026-03-15", updatedAt: "2026-03-15" },
+  { id: "g11", area: "Almacen", description: "Realizar inventario fisico completo antes del go-live", type: "datos_maestros", status: "pendiente", priority: "critica", phase: 1, assignedTo: "Miguel Hernandez", notes: "Programar para 2 semanas antes del go-live", createdAt: "2026-04-01", updatedAt: "2026-04-01" },
+  { id: "g12", area: "Almacen", description: "Contabilizar inventario de consignacion actualmente invisible en sistema", type: "datos_maestros", status: "pendiente", priority: "alta", phase: 2, assignedTo: "Miguel Hernandez", notes: "", createdAt: "2026-04-01", updatedAt: "2026-04-01" },
+  { id: "g13", area: "Finanzas", description: "Automatizar conciliacion bancaria (5,000+ lineas/mes manual)", type: "automatizacion", status: "diferido_fase2", priority: "alta", phase: 2, assignedTo: "Patricia Lopez", notes: "Solo Bajio esta automatizado", createdAt: "2026-04-15", updatedAt: "2026-04-15" },
+  { id: "g14", area: "Finanzas", description: "Eliminar re-captura en flujo de recepcion a pago (4-5 pasos manuales)", type: "automatizacion", status: "diferido_fase2", priority: "media", phase: 2, assignedTo: "Patricia Lopez", notes: "", createdAt: "2026-04-15", updatedAt: "2026-04-15" },
+  { id: "g15", area: "Ventas", description: "Crear cotizador/configurador de producto con precios por modelo y nivel", type: "automatizacion", status: "diferido_fase2", priority: "media", phase: 3, assignedTo: "Carlos Mendoza", notes: "", createdAt: "2026-05-01", updatedAt: "2026-05-01" },
+  { id: "g16", area: "Produccion", description: "Implementar tablero Kanban con captura de avance en kiosco", type: "automatizacion", status: "diferido_fase2", priority: "alta", phase: 2, assignedTo: "Laura Garcia", notes: "", createdAt: "2026-05-01", updatedAt: "2026-05-01" },
+  { id: "g17", area: "TI", description: "Decidir sobre migracion de SVisio (sistema actual de seguimiento)", type: "integracion", status: "pendiente", priority: "media", phase: 1, assignedTo: "Carlos Mendoza", notes: "Evaluar si se reemplaza completamente", createdAt: "2026-05-15", updatedAt: "2026-05-15" },
+  { id: "g18", area: "Calidad", description: "Definir fronteras de calidad como gates de liberacion en produccion", type: "workflow", status: "pendiente", priority: "alta", phase: 2, assignedTo: "Sofia Morales", notes: "", createdAt: "2026-05-15", updatedAt: "2026-05-15" },
+  { id: "g19", area: "Compras", description: "Completar datos de proveedores (cuenta bancaria, correo) para pagos automaticos", type: "datos_maestros", status: "en_progreso", priority: "media", phase: 1, assignedTo: "Ana Torres", notes: "40% completado", createdAt: "2026-05-20", updatedAt: "2026-06-01" },
+  { id: "g20", area: "Finanzas", description: "Reparar candado de facturas duplicadas (dejo de funcionar)", type: "automatizacion", status: "resuelto", priority: "critica", phase: 1, assignedTo: "Patricia Lopez", notes: "Implementado por UUID de CFDI en nueva app", createdAt: "2026-01-20", updatedAt: "2026-06-01" },
 ]
 
 // --- Checklist go-live ---
@@ -507,25 +507,25 @@ const checklist: ChecklistItem[] = [
   { id: "cl6", label: "Plan de cuentas con dimension Proyecto", description: "Estructura contable configurada para costeo por folio TPS", completed: false, area: "Finanzas", completedAt: null, completedBy: "" },
   { id: "cl7", label: "Proveedores con cuenta bancaria y correo", description: "Datos completos para pagos automaticos", completed: false, area: "Compras", completedAt: null, completedBy: "" },
   { id: "cl8", label: "Rutas y centros de trabajo definidos", description: "Rutas de manufactura estandar por modelo y planta", completed: false, area: "Produccion", completedAt: null, completedBy: "" },
-  { id: "cl9", label: "Usuarios y permisos configurados", description: "30-50 usuarios con roles y permisos por area", completed: true, area: "TI", completedAt: "2025-06-01", completedBy: "Carlos Mendoza" },
+  { id: "cl9", label: "Usuarios y permisos configurados", description: "30-50 usuarios con roles y permisos por area", completed: true, area: "TI", completedAt: "2026-06-01", completedBy: "Carlos Mendoza" },
   { id: "cl10", label: "Capacitacion de key users completada", description: "Key users de cada area capacitados en modulos correspondientes", completed: false, area: "TI", completedAt: null, completedBy: "" },
 ]
 
 // --- Decisiones ---
 const decisions: Decision[] = [
-  { id: "d1", description: "Migrar SVisio o mantenerlo en paralelo?", impact: "SVisio es el sistema actual de seguimiento de produccion. Migrarlo implica reconstruir toda la logica de seguimiento en el ERP.", options: "Opcion A: Migrar completamente. Opcion B: Mantener SVisio para produccion y usar ERP solo para planeacion. Opcion C: Fase 1 con ambos, migrar en Fase 2.", status: "pendiente", decidedBy: "", decidedAt: null, resolution: "", linkedGapIds: ["g17"], createdAt: "2025-05-15" },
-  { id: "d2", description: "Mantener Clear Mechanic para servicio postventa?", impact: "Clear Mechanic maneja el taller de servicio actualmente. Reemplazarlo requiere modulo completo de servicio en el ERP.", options: "Opcion A: Mantener Clear Mechanic. Opcion B: Integrar via API. Opcion C: Reemplazar en Fase 3.", status: "decidido", decidedBy: "Carlos Mendoza", decidedAt: "2025-06-01", resolution: "Mantener Clear Mechanic en Fase 1-2, evaluar reemplazo en Fase 3", linkedGapIds: [], createdAt: "2025-05-15" },
-  { id: "d3", description: "Estructura de codigos de articulo: mantener sistema P5 o unificar?", impact: "El sistema P5 genera 2 codigos por producto (fabricacion interna vs compra). Unificar elimina duplicados pero requiere migracion masiva.", options: "Opcion A: Unificar con nuevo esquema de codificacion. Opcion B: Mantener P5 con referencia cruzada. Opcion C: Migrar gradualmente.", status: "pendiente", decidedBy: "", decidedAt: null, resolution: "", linkedGapIds: ["g5"], createdAt: "2025-06-01" },
+  { id: "d1", description: "Migrar SVisio o mantenerlo en paralelo?", impact: "SVisio es el sistema actual de seguimiento de produccion. Migrarlo implica reconstruir toda la logica de seguimiento en el ERP.", options: "Opcion A: Migrar completamente. Opcion B: Mantener SVisio para produccion y usar ERP solo para planeacion. Opcion C: Fase 1 con ambos, migrar en Fase 2.", status: "pendiente", decidedBy: "", decidedAt: null, resolution: "", linkedGapIds: ["g17"], createdAt: "2026-05-15" },
+  { id: "d2", description: "Mantener Clear Mechanic para servicio postventa?", impact: "Clear Mechanic maneja el taller de servicio actualmente. Reemplazarlo requiere modulo completo de servicio en el ERP.", options: "Opcion A: Mantener Clear Mechanic. Opcion B: Integrar via API. Opcion C: Reemplazar en Fase 3.", status: "decidido", decidedBy: "Carlos Mendoza", decidedAt: "2026-06-01", resolution: "Mantener Clear Mechanic en Fase 1-2, evaluar reemplazo en Fase 3", linkedGapIds: [], createdAt: "2026-05-15" },
+  { id: "d3", description: "Estructura de codigos de articulo: mantener sistema P5 o unificar?", impact: "El sistema P5 genera 2 codigos por producto (fabricacion interna vs compra). Unificar elimina duplicados pero requiere migracion masiva.", options: "Opcion A: Unificar con nuevo esquema de codificacion. Opcion B: Mantener P5 con referencia cruzada. Opcion C: Migrar gradualmente.", status: "pendiente", decidedBy: "", decidedAt: null, resolution: "", linkedGapIds: ["g5"], createdAt: "2026-06-01" },
 ]
 
 // --- LMAT 2.0: Especificaciones Tecnicas ---
 const specifications: TechnicalSpecification[] = [
   {
     id: "spec1",
-    code: "ESP-LC300-NIII-2025",
+    code: "ESP-LC300-NIII-2026",
     brand: "Toyota",
     model: "Land Cruiser 300",
-    year: "2022-2025",
+    year: "2022-2026",
     armorLevel: "NIII",
     designType: "alto_volumen",
     version: 3,
@@ -543,19 +543,19 @@ const specifications: TechnicalSpecification[] = [
     cuttingKits: [],
     documents: [],
     changeHistory: [
-      { id: "sch1-1", changedBy: "Roberto Silva", changedAt: "2025-01-20", changeType: "Creacion", description: "Especificacion inicial" },
-      { id: "sch1-2", changedBy: "Roberto Silva", changedAt: "2025-05-10", changeType: "Actualizacion", description: "Actualizacion de cantidades de acero" },
+      { id: "sch1-1", changedBy: "Roberto Silva", changedAt: "2026-01-20", changeType: "Creacion", description: "Especificacion inicial" },
+      { id: "sch1-2", changedBy: "Roberto Silva", changedAt: "2026-05-10", changeType: "Actualizacion", description: "Actualizacion de cantidades de acero" },
     ],
-    createdAt: "2025-01-20",
-    updatedAt: "2025-05-10",
+    createdAt: "2026-01-20",
+    updatedAt: "2026-05-10",
     createdBy: "u3",
   },
   {
     id: "spec2",
-    code: "ESP-SUBURBAN-NIV-2025",
+    code: "ESP-SUBURBAN-NIV-2026",
     brand: "Chevrolet",
     model: "Suburban",
-    year: "2021-2025",
+    year: "2021-2026",
     armorLevel: "NIV",
     designType: "alto_volumen",
     version: 2,
@@ -573,16 +573,16 @@ const specifications: TechnicalSpecification[] = [
     cuttingKits: [],
     documents: [],
     changeHistory: [],
-    createdAt: "2025-02-01",
-    updatedAt: "2025-04-20",
+    createdAt: "2026-02-01",
+    updatedAt: "2026-04-20",
     createdBy: "u3",
   },
   {
     id: "spec3",
-    code: "ESP-EXPLORER-NIII+-2025",
+    code: "ESP-EXPLORER-NIII+-2026",
     brand: "Ford",
     model: "Explorer",
-    year: "2020-2025",
+    year: "2020-2026",
     armorLevel: "NIII_plus",
     designType: "bajo_volumen",
     version: 1,
@@ -598,8 +598,8 @@ const specifications: TechnicalSpecification[] = [
     cuttingKits: [],
     documents: [],
     changeHistory: [],
-    createdAt: "2025-03-01",
-    updatedAt: "2025-03-01",
+    createdAt: "2026-03-01",
+    updatedAt: "2026-03-01",
     createdBy: "u9",
   },
 ]
@@ -608,45 +608,45 @@ const specifications: TechnicalSpecification[] = [
 const ecns: ECN[] = [
   {
     id: "ecn1",
-    code: "ECN-2025-001",
+    code: "ECN-2026-001",
     status: "completado",
     requestedBy: "Roberto Silva",
-    requestedAt: "2025-03-10",
+    requestedAt: "2026-03-10",
     justification: "Incrementar cantidad de acero por feedback de produccion - refuerzo insuficiente en zona de bisagras",
     affectedBOMIds: ["bom1"],
     affectedArticleIds: ["a1"],
     affectedFolios: ["4520", "4521"],
     inventoryImpact: "Sin impacto - se incrementa consumo",
     approvals: [
-      { department: "Ingenieria", approvedBy: "Roberto Silva", approvedAt: "2025-03-11", status: "aprobado", notes: "" },
-      { department: "Manufactura", approvedBy: "Laura Garcia", approvedAt: "2025-03-12", status: "aprobado", notes: "" },
-      { department: "Compras", approvedBy: "Ana Torres", approvedAt: "2025-03-13", status: "aprobado", notes: "Proveedor confirmado" },
-      { department: "Calidad", approvedBy: "Sofia Morales", approvedAt: "2025-03-14", status: "aprobado", notes: "" },
+      { department: "Ingenieria", approvedBy: "Roberto Silva", approvedAt: "2026-03-11", status: "aprobado", notes: "" },
+      { department: "Manufactura", approvedBy: "Laura Garcia", approvedAt: "2026-03-12", status: "aprobado", notes: "" },
+      { department: "Compras", approvedBy: "Ana Torres", approvedAt: "2026-03-13", status: "aprobado", notes: "Proveedor confirmado" },
+      { department: "Calidad", approvedBy: "Sofia Morales", approvedAt: "2026-03-14", status: "aprobado", notes: "" },
     ],
     effectivity: "A partir del folio 4522",
-    appliedAt: "2025-03-15",
+    appliedAt: "2026-03-15",
     appliedBy: "Roberto Silva",
     changes: [
       { type: "modificar", articleId: "a1", articleCode: "ACB-6MM-001", field: "quantity", oldValue: "6", newValue: "8" },
     ],
     notifiedAreas: ["Maquinados", "Almacen", "Compras", "Produccion"],
-    createdAt: "2025-03-10",
-    updatedAt: "2025-03-15",
+    createdAt: "2026-03-10",
+    updatedAt: "2026-03-15",
   },
   {
     id: "ecn2",
-    code: "ECN-2025-002",
+    code: "ECN-2026-002",
     status: "aprobacion",
     requestedBy: "Fernando Diaz",
-    requestedAt: "2025-06-01",
+    requestedAt: "2026-06-01",
     justification: "Cambiar proveedor de cristales por obsolescencia del anterior - nuevo proveedor con mejor calidad",
     affectedBOMIds: ["bom3", "bom4"],
     affectedArticleIds: ["a4", "a5"],
     affectedFolios: [],
     inventoryImpact: "5 cristales en inventario del proveedor anterior - usar hasta agotar",
     approvals: [
-      { department: "Ingenieria", approvedBy: "Roberto Silva", approvedAt: "2025-06-02", status: "aprobado", notes: "" },
-      { department: "Manufactura", approvedBy: "Laura Garcia", approvedAt: "2025-06-03", status: "aprobado", notes: "" },
+      { department: "Ingenieria", approvedBy: "Roberto Silva", approvedAt: "2026-06-02", status: "aprobado", notes: "" },
+      { department: "Manufactura", approvedBy: "Laura Garcia", approvedAt: "2026-06-03", status: "aprobado", notes: "" },
       { department: "Compras", approvedBy: null, approvedAt: null, status: "pendiente", notes: "" },
       { department: "Calidad", approvedBy: null, approvedAt: null, status: "pendiente", notes: "" },
     ],
@@ -657,15 +657,15 @@ const ecns: ECN[] = [
       { type: "modificar", articleId: "a4", articleCode: "CB-DEL-NIII-001", field: "proveedor", oldValue: "Cristales Blindados SA", newValue: "Cristales Premium MX" },
     ],
     notifiedAreas: [],
-    createdAt: "2025-06-01",
-    updatedAt: "2025-06-03",
+    createdAt: "2026-06-01",
+    updatedAt: "2026-06-03",
   },
   {
     id: "ecn3",
-    code: "ECN-2025-003",
+    code: "ECN-2026-003",
     status: "solicitud",
     requestedBy: "Ana Torres",
-    requestedAt: "2025-06-10",
+    requestedAt: "2026-06-10",
     justification: "Agregar componente de refuerzo adicional en puertas traseras por requerimiento de cliente",
     affectedBOMIds: ["bom2"],
     affectedArticleIds: [],
@@ -679,8 +679,8 @@ const ecns: ECN[] = [
       { type: "agregar", articleId: "", articleCode: "NUEVO", field: "componente", oldValue: "", newValue: "Refuerzo puerta trasera" },
     ],
     notifiedAreas: [],
-    createdAt: "2025-06-10",
-    updatedAt: "2025-06-10",
+    createdAt: "2026-06-10",
+    updatedAt: "2026-06-10",
   },
 ]
 
@@ -694,19 +694,19 @@ const supplyKits: SupplyKit[] = [
     specificationId: "spec1",
     bomId: "bom1",
     items: [
-      { id: "ski1-1", articleId: "a1", articleCode: "ACB-6MM-001", articleDescription: "Placa de acero balistico 6mm", quantityBOM: 8, quantitySupplied: 8, quantityBackorder: 0, udm: "placa", scanned: true, scannedAt: "2025-06-10T10:30:00" },
-      { id: "ski1-2", articleId: "a2", articleCode: "ACB-8MM-001", articleDescription: "Placa de acero balistico 8mm", quantityBOM: 4, quantitySupplied: 4, quantityBackorder: 0, udm: "placa", scanned: true, scannedAt: "2025-06-10T10:32:00" },
-      { id: "ski1-3", articleId: "a8", articleCode: "KEV-R150-001", articleDescription: "Kevlar rollo 1.5m x 50m", quantityBOM: 2, quantitySupplied: 2, quantityBackorder: 0, udm: "rollo", scanned: true, scannedAt: "2025-06-10T10:35:00" },
+      { id: "ski1-1", articleId: "a1", articleCode: "ACB-6MM-001", articleDescription: "Placa de acero balistico 6mm", quantityBOM: 8, quantitySupplied: 8, quantityBackorder: 0, udm: "placa", scanned: true, scannedAt: "2026-06-10T10:30:00" },
+      { id: "ski1-2", articleId: "a2", articleCode: "ACB-8MM-001", articleDescription: "Placa de acero balistico 8mm", quantityBOM: 4, quantitySupplied: 4, quantityBackorder: 0, udm: "placa", scanned: true, scannedAt: "2026-06-10T10:32:00" },
+      { id: "ski1-3", articleId: "a8", articleCode: "KEV-R150-001", articleDescription: "Kevlar rollo 1.5m x 50m", quantityBOM: 2, quantitySupplied: 2, quantityBackorder: 0, udm: "rollo", scanned: true, scannedAt: "2026-06-10T10:35:00" },
     ],
     status: "entregado",
     preparedBy: "Miguel Hernandez",
-    preparedAt: "2025-06-10T10:00:00",
+    preparedAt: "2026-06-10T10:00:00",
     deliveredTo: "Juan Ramirez",
-    deliveredAt: "2025-06-10T10:45:00",
+    deliveredAt: "2026-06-10T10:45:00",
     supervisorConfirmed: true,
     hasBackorder: false,
     backorderNotes: "",
-    createdAt: "2025-06-10T09:00:00",
+    createdAt: "2026-06-10T09:00:00",
   },
   {
     id: "sk2",
@@ -716,19 +716,19 @@ const supplyKits: SupplyKit[] = [
     specificationId: "spec1",
     bomId: "bom1",
     items: [
-      { id: "ski2-1", articleId: "a4", articleCode: "CB-DEL-NIII-001", articleDescription: "Cristal blindado parabrisas delantero NIII", quantityBOM: 1, quantitySupplied: 1, quantityBackorder: 0, udm: "pieza", scanned: true, scannedAt: "2025-06-11T09:00:00" },
-      { id: "ski2-2", articleId: "a5", articleCode: "CB-LAT-NIII-001", articleDescription: "Cristal blindado lateral delantero NIII", quantityBOM: 1, quantitySupplied: 1, quantityBackorder: 0, udm: "par", scanned: true, scannedAt: "2025-06-11T09:05:00" },
+      { id: "ski2-1", articleId: "a4", articleCode: "CB-DEL-NIII-001", articleDescription: "Cristal blindado parabrisas delantero NIII", quantityBOM: 1, quantitySupplied: 1, quantityBackorder: 0, udm: "pieza", scanned: true, scannedAt: "2026-06-11T09:00:00" },
+      { id: "ski2-2", articleId: "a5", articleCode: "CB-LAT-NIII-001", articleDescription: "Cristal blindado lateral delantero NIII", quantityBOM: 1, quantitySupplied: 1, quantityBackorder: 0, udm: "par", scanned: true, scannedAt: "2026-06-11T09:05:00" },
       { id: "ski2-3", articleId: "a6", articleCode: "CB-TRAS-NIII-001", articleDescription: "Cristal blindado trasero NIII", quantityBOM: 1, quantitySupplied: 0, quantityBackorder: 1, udm: "pieza", scanned: false, scannedAt: null },
     ],
     status: "parcial",
     preparedBy: "Miguel Hernandez",
-    preparedAt: "2025-06-11T08:30:00",
+    preparedAt: "2026-06-11T08:30:00",
     deliveredTo: "Juan Ramirez",
-    deliveredAt: "2025-06-11T09:15:00",
+    deliveredAt: "2026-06-11T09:15:00",
     supervisorConfirmed: false,
     hasBackorder: true,
-    backorderNotes: "Cristal trasero en transito - llega 2025-06-12",
-    createdAt: "2025-06-11T08:00:00",
+    backorderNotes: "Cristal trasero en transito - llega 2026-06-12",
+    createdAt: "2026-06-11T08:00:00",
   },
   {
     id: "sk3",
@@ -750,7 +750,7 @@ const supplyKits: SupplyKit[] = [
     supervisorConfirmed: false,
     hasBackorder: false,
     backorderNotes: "",
-    createdAt: "2025-06-12T07:00:00",
+    createdAt: "2026-06-12T07:00:00",
   },
 ]
 
@@ -764,8 +764,8 @@ const cuttingKits: CuttingKit[] = [
     cncProgramUrl: "/programs/LC300-PUERTAS-v2.1.dxf",
     components: [],
     usedInFolios: ["4520", "4521"],
-    createdAt: "2025-01-20",
-    updatedAt: "2025-03-15",
+    createdAt: "2026-01-20",
+    updatedAt: "2026-03-15",
   },
   {
     id: "ck2",
@@ -775,8 +775,8 @@ const cuttingKits: CuttingKit[] = [
     cncProgramUrl: "/programs/LC300-TECHO-v1.3.dxf",
     components: [],
     usedInFolios: ["4520", "4521"],
-    createdAt: "2025-01-20",
-    updatedAt: "2025-02-10",
+    createdAt: "2026-01-20",
+    updatedAt: "2026-02-10",
   },
 ]
 

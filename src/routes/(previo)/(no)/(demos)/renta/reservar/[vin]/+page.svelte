@@ -333,8 +333,8 @@
 
   // Mock unavailable dates (in real app, this would come from API)
   const unavailableDates = [
-    new Date(2025, 11, 25), // Christmas 2025
-    new Date(2025, 11, 31), // New Year's Eve 2025
+    new Date(2026, 11, 25), // Christmas 2026
+    new Date(2026, 11, 31), // New Year's Eve 2026
     new Date(2026, 0, 1),   // New Year's Day 2026
   ];
 

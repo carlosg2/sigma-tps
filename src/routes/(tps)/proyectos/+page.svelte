@@ -10,6 +10,13 @@
 	} from '$lib/tps/constants.js';
 	import { formatCurrency, searchMatch } from '$lib/tps/utils.js';
 	import type { ProjectStatus } from '$lib/tps/types.js';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
+	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Progress } from '$lib/components/ui/progress/index.js';
 	import FolderKanban from '@lucide/svelte/icons/folder-kanban';
 	import Search from '@lucide/svelte/icons/search';
 	import TrendingUp from '@lucide/svelte/icons/trending-up';
@@ -43,110 +50,118 @@
 		const d = active.filter((p) => p.daysInProduction > 0);
 		return d.length > 0 ? Math.round(d.reduce((s, p) => s + p.daysInProduction, 0) / d.length) : 0;
 	});
+
+	const statusLabel = $derived(
+		statusFilter === 'activos'
+			? 'Solo activos'
+			: statusFilter === 'todos'
+				? 'Todos'
+				: PROJECT_STATUS_LABELS[statusFilter]
+	);
 </script>
 
-<div class="flex flex-col gap-6">
-	<div class="flex items-center justify-between">
-		<div>
-			<h1 class="text-foreground text-2xl font-bold">Proyectos / Trazabilidad</h1>
-			<p class="text-muted-foreground text-sm">{active.length} proyectos activos, {filtered.length} mostrados</p>
-		</div>
-		<a
-			href="/proyectos/nuevo"
-			class="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors"
-		>
-			<Plus class="h-3.5 w-3.5" /> Nuevo Proyecto
-		</a>
-	</div>
-
-	<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-		<StatCard label="Proyectos Activos" value={active.length} subtitle={`${inProd.length} en produccion`} icon={FolderKanban} />
-		<StatCard label="Pipeline de Venta" value={formatCurrency(totalRevenue)} subtitle="Valor total cotizado" icon={DollarSign} />
-		<StatCard label="Margen Promedio" value={`${avgMargin.toFixed(1)}%`} subtitle="Sobre proyectos activos" icon={TrendingUp} />
-		<StatCard label="Dias Promedio" value={avgDays} subtitle="En produccion" icon={Clock} />
-	</div>
-
-	<div class="flex flex-wrap items-center gap-3">
-		<div class="border-border bg-card flex max-w-sm min-w-[200px] flex-1 items-center gap-1.5 rounded-md border px-3 py-1.5">
-			<Search class="text-muted-foreground h-3.5 w-3.5" />
-			<input
-				type="text"
-				placeholder="Buscar por folio, modelo o cliente..."
-				bind:value={query}
-				class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent text-sm outline-none"
-			/>
-		</div>
-		<select
-			bind:value={statusFilter}
-			class="border-border bg-card text-foreground rounded-md border px-2 py-1.5 text-xs outline-none"
-		>
-			<option value="activos">Solo activos</option>
-			<option value="todos">Todos</option>
-			{#each Object.entries(PROJECT_STATUS_LABELS) as [k, v] (k)}
-				<option value={k}>{v}</option>
-			{/each}
-		</select>
-	</div>
-
-	<!-- Table -->
-	<div class="border-border bg-card overflow-hidden rounded-lg border">
-		<div class="overflow-x-auto">
-			<table class="w-full text-sm">
-				<thead>
-					<tr class="border-border bg-secondary/50 border-b text-left">
-						<th class="text-muted-foreground px-4 py-2.5 text-xs font-medium">Folio</th>
-						<th class="text-muted-foreground px-4 py-2.5 text-xs font-medium">Modelo</th>
-						<th class="text-muted-foreground px-4 py-2.5 text-xs font-medium">Nivel</th>
-						<th class="text-muted-foreground px-4 py-2.5 text-xs font-medium">Cliente</th>
-						<th class="text-muted-foreground px-4 py-2.5 text-xs font-medium">Planta</th>
-						<th class="text-muted-foreground px-4 py-2.5 text-xs font-medium">Estatus</th>
-						<th class="text-muted-foreground px-4 py-2.5 text-right text-xs font-medium">Dias</th>
-						<th class="text-muted-foreground px-4 py-2.5 text-xs font-medium">Avance</th>
-						<th class="text-muted-foreground px-4 py-2.5 text-right text-xs font-medium">Cotizacion</th>
-						<th class="text-muted-foreground px-4 py-2.5 text-right text-xs font-medium">Costo</th>
-						<th class="text-muted-foreground px-4 py-2.5 text-right text-xs font-medium">Margen</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each filtered as project (project.id)}
-						<tr class="border-border/50 hover:bg-secondary/30 border-b transition-colors">
-							<td class="px-4 py-2">
-								<a href="/proyectos/{project.id}" class="text-primary font-mono text-sm font-bold hover:underline">{project.folioTPS}</a>
-							</td>
-							<td class="text-card-foreground px-4 py-2">{project.vehicleModel}</td>
-							<td class="text-muted-foreground px-4 py-2 text-xs">{ARMOR_LEVEL_LABELS[project.armorLevel]}</td>
-							<td class="text-card-foreground max-w-[150px] truncate px-4 py-2">{project.clientName}</td>
-							<td class="text-muted-foreground px-4 py-2 text-xs">{PLANT_LABELS[project.plant]}</td>
-							<td class="px-4 py-2">
-								<StatusBadge label={PROJECT_STATUS_LABELS[project.status]} colorClass={PROJECT_STATUS_COLORS[project.status]} />
-							</td>
-							<td class="text-card-foreground px-4 py-2 text-right font-mono text-xs">
-								{project.daysInProduction > 0 ? `${project.daysInProduction}d` : '---'}
-							</td>
-							<td class="px-4 py-2">
-								<div class="flex items-center gap-2">
-									<div class="bg-secondary h-1.5 w-14 rounded-full">
-										<div class="bg-primary h-1.5 rounded-full transition-all" style="width: {project.progressPercent}%"></div>
-									</div>
-									<span class="text-muted-foreground font-mono text-xs">{project.progressPercent}%</span>
-								</div>
-							</td>
-							<td class="text-card-foreground px-4 py-2 text-right font-mono text-xs">{formatCurrency(project.quotationAmount)}</td>
-							<td class="text-card-foreground px-4 py-2 text-right font-mono text-xs">{formatCurrency(project.totalCost)}</td>
-							<td class="px-4 py-2 text-right font-mono text-xs">
-								<span class={project.estimatedMargin >= 20 ? 'text-primary' : project.estimatedMargin >= 10 ? 'text-chart-4' : 'text-destructive'}>
-									{project.estimatedMargin > 0 ? `${project.estimatedMargin.toFixed(1)}%` : '---'}
-								</span>
-							</td>
-						</tr>
-					{/each}
-					{#if filtered.length === 0}
-						<tr>
-							<td colspan="11" class="text-muted-foreground px-4 py-8 text-center text-sm">No se encontraron proyectos.</td>
-						</tr>
-					{/if}
-				</tbody>
-			</table>
-		</div>
-	</div>
+<!-- Header -->
+<div class="flex flex-wrap items-center justify-between gap-3">
+	<p class="text-muted-foreground text-sm">{active.length} proyectos activos · {filtered.length} mostrados</p>
+	<Button href="/proyectos/nuevo" size="sm">
+		<Plus data-icon="inline-start" /> Nuevo Proyecto
+	</Button>
 </div>
+
+<!-- Stats -->
+<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+	<StatCard label="Proyectos Activos" value={active.length} subtitle={`${inProd.length} en produccion`} icon={FolderKanban} />
+	<StatCard label="Pipeline de Venta" value={formatCurrency(totalRevenue)} subtitle="Valor total cotizado" icon={DollarSign} />
+	<StatCard label="Margen Promedio" value={`${avgMargin.toFixed(1)}%`} subtitle="Sobre proyectos activos" icon={TrendingUp} />
+	<StatCard label="Dias Promedio" value={avgDays} subtitle="En produccion" icon={Clock} />
+</div>
+
+<!-- Table card -->
+<Card.Root>
+	<Card.Header>
+		<Card.Title>Proyectos</Card.Title>
+		<Card.Description>Busca y filtra los proyectos de trazabilidad.</Card.Description>
+	</Card.Header>
+	<Card.Content class="flex flex-col gap-4">
+		<!-- Filters -->
+		<div class="flex flex-wrap items-center gap-2">
+			<div class="relative w-full max-w-sm flex-1">
+				<Search class="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
+				<Input placeholder="Buscar por folio, modelo o cliente..." bind:value={query} class="pl-8" />
+			</div>
+			<Select.Root type="single" bind:value={statusFilter}>
+				<Select.Trigger size="sm" class="w-44">{statusLabel}</Select.Trigger>
+				<Select.Content>
+					<Select.Item value="activos">Solo activos</Select.Item>
+					<Select.Item value="todos">Todos</Select.Item>
+					{#each Object.entries(PROJECT_STATUS_LABELS) as [k, v] (k)}
+						<Select.Item value={k}>{v}</Select.Item>
+					{/each}
+				</Select.Content>
+			</Select.Root>
+		</div>
+
+		<!-- Table -->
+		<Table.Root>
+			<Table.Header>
+				<Table.Row>
+					<Table.Head>Folio</Table.Head>
+					<Table.Head>Modelo</Table.Head>
+					<Table.Head>Nivel</Table.Head>
+					<Table.Head>Cliente</Table.Head>
+					<Table.Head>Planta</Table.Head>
+					<Table.Head>Estatus</Table.Head>
+					<Table.Head class="text-right">Dias</Table.Head>
+					<Table.Head>Avance</Table.Head>
+					<Table.Head class="text-right">Cotizacion</Table.Head>
+					<Table.Head class="text-right">Costo</Table.Head>
+					<Table.Head class="text-right">Margen</Table.Head>
+				</Table.Row>
+			</Table.Header>
+			<Table.Body>
+				{#each filtered as project (project.id)}
+					<Table.Row>
+						<Table.Cell>
+							<a href="/proyectos/{project.id}" class="text-primary font-mono text-sm font-bold hover:underline">{project.folioTPS}</a>
+						</Table.Cell>
+						<Table.Cell>{project.vehicleModel}</Table.Cell>
+						<Table.Cell class="text-muted-foreground text-xs">{ARMOR_LEVEL_LABELS[project.armorLevel]}</Table.Cell>
+						<Table.Cell class="max-w-37.5 truncate">{project.clientName}</Table.Cell>
+						<Table.Cell class="text-muted-foreground text-xs">{PLANT_LABELS[project.plant]}</Table.Cell>
+						<Table.Cell>
+							<StatusBadge label={PROJECT_STATUS_LABELS[project.status]} colorClass={PROJECT_STATUS_COLORS[project.status]} />
+						</Table.Cell>
+						<Table.Cell class="text-right font-mono text-xs tabular-nums">
+							{project.daysInProduction > 0 ? `${project.daysInProduction}d` : '---'}
+						</Table.Cell>
+						<Table.Cell>
+							<div class="flex items-center gap-2">
+								<Progress value={project.progressPercent} max={100} class="h-1.5 w-14" />
+								<span class="text-muted-foreground font-mono text-xs tabular-nums">{project.progressPercent}%</span>
+							</div>
+						</Table.Cell>
+						<Table.Cell class="text-right font-mono text-xs tabular-nums">{formatCurrency(project.quotationAmount)}</Table.Cell>
+						<Table.Cell class="text-right font-mono text-xs tabular-nums">{formatCurrency(project.totalCost)}</Table.Cell>
+						<Table.Cell class="text-right font-mono text-xs tabular-nums">
+							<span class={project.estimatedMargin >= 20 ? 'text-primary' : project.estimatedMargin >= 10 ? 'text-chart-4' : 'text-destructive'}>
+								{project.estimatedMargin > 0 ? `${project.estimatedMargin.toFixed(1)}%` : '---'}
+							</span>
+						</Table.Cell>
+					</Table.Row>
+				{/each}
+			</Table.Body>
+		</Table.Root>
+
+		{#if filtered.length === 0}
+			<Empty.Root class="border-0">
+				<Empty.Header>
+					<Empty.Media variant="icon">
+						<FolderKanban />
+					</Empty.Media>
+					<Empty.Title>Sin resultados</Empty.Title>
+					<Empty.Description>No se encontraron proyectos con los filtros seleccionados.</Empty.Description>
+				</Empty.Header>
+			</Empty.Root>
+		{/if}
+	</Card.Content>
+</Card.Root>

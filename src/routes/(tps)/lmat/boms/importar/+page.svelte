@@ -1,7 +1,11 @@
 <script lang="ts">
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Alert from '$lib/components/ui/alert/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import FileSpreadsheet from '@lucide/svelte/icons/file-spreadsheet';
 	import Download from '@lucide/svelte/icons/download';
+	import Info from '@lucide/svelte/icons/info';
 
 	function downloadTemplate() {
 		const csv = `Codigo Especificacion,Modelo,Nivel Blindaje,Planta,Codigo Articulo,Cantidad,UdM,Celda,Operacion\nESP-EJEMPLO-001,Toyota Land Cruiser 300,NIII,planta_1,ACB-6MM-001,8,placa,Celda 1,Corte y formado`;
@@ -15,37 +19,46 @@
 	}
 </script>
 
-<div class="flex max-w-3xl flex-col gap-6">
+<div class="mx-auto flex w-full max-w-5xl flex-col gap-6">
 	<div class="flex items-center gap-3">
-		<a href="/lmat/boms" class="border-border hover:bg-secondary flex h-8 w-8 items-center justify-center rounded-md border transition-colors">
-			<ArrowLeft class="text-foreground h-4 w-4" />
-		</a>
-		<div>
-			<h1 class="text-foreground text-xl font-bold">Importar BOMs</h1>
-			<p class="text-muted-foreground text-sm">Importacion masiva de listas de materiales desde CSV</p>
-		</div>
+		<Button href="/lmat/boms" variant="outline" size="icon">
+			<ArrowLeft />
+		</Button>
+		<p class="text-muted-foreground text-sm">Importacion masiva de listas de materiales desde CSV</p>
 	</div>
 
-	<div class="border-border bg-card rounded-lg border p-6">
-		<div class="mb-4 flex items-center gap-4">
-			<FileSpreadsheet class="text-primary h-10 w-10" />
-			<div>
-				<h3 class="text-card-foreground text-sm font-semibold">Importacion desde CSV</h3>
-				<p class="text-muted-foreground text-xs">La importacion de BOMs desde formato Excel sera habilitada cuando subas un ejemplo del formato real de tus plantas.</p>
+	<Card.Root>
+		<Card.Header>
+			<div class="flex items-center gap-4">
+				<div class="bg-primary/10 text-primary flex size-12 items-center justify-center rounded-lg">
+					<FileSpreadsheet class="size-6" />
+				</div>
+				<div class="grid gap-0.5">
+					<Card.Title>Importacion desde CSV</Card.Title>
+					<Card.Description>
+						La importacion de BOMs desde formato Excel sera habilitada cuando subas un ejemplo del formato real de tus plantas.
+					</Card.Description>
+				</div>
 			</div>
-		</div>
-		<p class="text-muted-foreground mb-4 text-sm">
-			Mientras tanto, puedes descargar la plantilla CSV base y usarla como punto de partida.
-			Cada fila representa un componente del BOM. Los componentes con el mismo codigo de especificacion se agruparan automaticamente.
-		</p>
-		<button onclick={downloadTemplate} class="border-border text-foreground hover:bg-secondary flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs transition-colors">
-			<Download class="h-3.5 w-3.5" /> Descargar Plantilla CSV
-		</button>
-	</div>
+		</Card.Header>
+		<Card.Content class="flex flex-col gap-4">
+			<p class="text-muted-foreground text-sm">
+				Mientras tanto, puedes descargar la plantilla CSV base y usarla como punto de partida.
+				Cada fila representa un componente del BOM. Los componentes con el mismo codigo de especificacion se agruparan automaticamente.
+			</p>
+			<div>
+				<Button variant="outline" size="sm" onclick={downloadTemplate}>
+					<Download data-icon="inline-start" /> Descargar Plantilla CSV
+				</Button>
+			</div>
+		</Card.Content>
+	</Card.Root>
 
-	<div class="border-chart-4/30 bg-chart-4/5 rounded-lg border p-4">
-		<p class="text-chart-4 text-sm">
-			Nota: Cuando subas un ejemplo real del formato Excel de Planta 1 (SolidWorks) o Planta 2 (AutoCAD 2D), ajustaremos este importador para leer directamente ese formato.
-		</p>
-	</div>
+	<Alert.Root>
+		<Info />
+		<Alert.Title>Formato pendiente de definir</Alert.Title>
+		<Alert.Description>
+			Cuando subas un ejemplo real del formato Excel de Planta 1 (SolidWorks) o Planta 2 (AutoCAD 2D), ajustaremos este importador para leer directamente ese formato.
+		</Alert.Description>
+	</Alert.Root>
 </div>

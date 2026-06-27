@@ -1,11 +1,19 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { useStore } from '$lib/tps/store.svelte.js';
-	import { UDM_LABELS, ARTICLE_GROUPS, ABC_LABELS } from '$lib/tps/constants.js';
+	import { UDM_LABELS, ARTICLE_GROUPS, ABC_LABELS, PLANT_LABELS } from '$lib/tps/constants.js';
 	import { generateId } from '$lib/tps/utils.js';
 	import type { Article, UdM, Plant, ABCClass } from '$lib/tps/types.js';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
+	import * as Alert from '$lib/components/ui/alert/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import Save from '@lucide/svelte/icons/save';
+	import AlertTriangle from '@lucide/svelte/icons/triangle-alert';
 
 	const store = useStore();
 	const app = $derived(store.state);
@@ -125,264 +133,234 @@
 	}
 </script>
 
-<div class="flex max-w-3xl flex-col gap-6">
-	<div class="flex items-center gap-3">
-		<a
-			href="/articulos"
-			class="border-border hover:bg-secondary flex h-8 w-8 items-center justify-center rounded-md border transition-colors"
-		>
-			<ArrowLeft class="text-foreground h-4 w-4" />
-		</a>
-		<div>
-			<h1 class="text-foreground text-xl font-bold">Nuevo Articulo</h1>
-			<p class="text-muted-foreground text-sm">Completa los campos obligatorios para crear el articulo</p>
-		</div>
+<div class="mx-auto flex w-full max-w-4xl flex-col gap-6">
+	<div class="flex flex-wrap items-center justify-between gap-3">
+		<Button href="/articulos" variant="outline" size="sm">
+			<ArrowLeft data-icon="inline-start" /> Volver
+		</Button>
+		<p class="text-muted-foreground text-sm">Completa los campos obligatorios para crear el articulo</p>
 	</div>
 
 	{#if errors.length > 0}
-		<div class="border-destructive/30 bg-destructive/10 rounded-md border p-3">
-			{#each errors as e, i (i)}
-				<p class="text-destructive-foreground text-sm">{e}</p>
-			{/each}
-		</div>
+		<Alert.Root variant="destructive">
+			<AlertTriangle />
+			<Alert.Title>Revisa los siguientes campos</Alert.Title>
+			<Alert.Description>
+				<ul class="list-disc pl-4">
+					{#each errors as e, i (i)}
+						<li>{e}</li>
+					{/each}
+				</ul>
+			</Alert.Description>
+		</Alert.Root>
 	{/if}
 
-	<div class="flex flex-col gap-4">
-		<!-- Datos Basicos -->
-		<div class="border-border bg-card rounded-lg border">
-			<div class="border-border border-b px-4 py-2.5">
-				<h3 class="text-card-foreground text-sm font-semibold">Datos Basicos</h3>
+	<!-- Datos Basicos -->
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>Datos Basicos</Card.Title>
+		</Card.Header>
+		<Card.Content class="flex flex-col gap-4">
+			<div class="grid gap-4 md:grid-cols-2">
+				<div class="grid gap-2">
+					<Label for="code">Codigo *</Label>
+					<Input id="code" bind:value={form.code} placeholder="e.g. ACB-6MM-002" />
+				</div>
+				<div class="grid gap-2">
+					<Label for="description">Descripcion *</Label>
+					<Input id="description" bind:value={form.description} placeholder="Descripcion detallada del articulo" />
+				</div>
 			</div>
-			<div class="flex flex-col gap-3 p-4">
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Codigo *</label>
-					<div class="flex-1">
-						<input class="form-input" bind:value={form.code} placeholder="e.g. ACB-6MM-002" />
-					</div>
-				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Descripcion *</label>
-					<div class="flex-1">
-						<input class="form-input" bind:value={form.description} placeholder="Descripcion detallada del articulo" />
-					</div>
-				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Grupo</label>
-					<div class="flex-1">
-						<select class="form-input" bind:value={form.group}>
+			<div class="grid gap-4 md:grid-cols-2">
+				<div class="grid gap-2">
+					<Label>Grupo</Label>
+					<Select.Root type="single" bind:value={form.group}>
+						<Select.Trigger class="w-full">{form.group}</Select.Trigger>
+						<Select.Content>
 							{#each ARTICLE_GROUPS as g (g)}
-								<option value={g}>{g}</option>
+								<Select.Item value={g}>{g}</Select.Item>
 							{/each}
-						</select>
-					</div>
+						</Select.Content>
+					</Select.Root>
 				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">UdM Base</label>
-					<div class="flex-1">
-						<select class="form-input" bind:value={form.udmBase}>
+				<div class="grid gap-2">
+					<Label>UdM Base</Label>
+					<Select.Root type="single" bind:value={form.udmBase}>
+						<Select.Trigger class="w-full">{UDM_LABELS[form.udmBase]}</Select.Trigger>
+						<Select.Content>
 							{#each Object.entries(UDM_LABELS) as [k, v] (k)}
-								<option value={k}>{v}</option>
+								<Select.Item value={k}>{v}</Select.Item>
 							{/each}
-						</select>
-					</div>
-				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Planta</label>
-					<div class="flex-1">
-						<select class="form-input" bind:value={form.plant}>
-							<option value="planta_1">Planta 1</option>
-							<option value="planta_2">Planta 2</option>
-							<option value="almacen_servicios">Almacen Servicios</option>
-						</select>
-					</div>
-				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Dibujo / Plano</label>
-					<div class="flex-1">
-						<input class="form-input" bind:value={form.drawingRef} />
-					</div>
-				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Codigo P5</label>
-					<div class="flex-1">
-						<input class="form-input" bind:value={form.p5Code} />
-					</div>
+						</Select.Content>
+					</Select.Root>
 				</div>
 			</div>
-		</div>
+			<div class="grid gap-4 md:grid-cols-2">
+				<div class="grid gap-2">
+					<Label>Planta</Label>
+					<Select.Root type="single" bind:value={form.plant}>
+						<Select.Trigger class="w-full">{PLANT_LABELS[form.plant]}</Select.Trigger>
+						<Select.Content>
+							<Select.Item value="planta_1">Planta 1</Select.Item>
+							<Select.Item value="planta_2">Planta 2</Select.Item>
+							<Select.Item value="almacen_servicios">Almacen Servicios</Select.Item>
+						</Select.Content>
+					</Select.Root>
+				</div>
+				<div class="grid gap-2">
+					<Label for="drawingRef">Dibujo / Plano</Label>
+					<Input id="drawingRef" bind:value={form.drawingRef} />
+				</div>
+			</div>
+			<div class="grid gap-2">
+				<Label for="p5Code">Codigo P5</Label>
+				<Input id="p5Code" bind:value={form.p5Code} />
+			</div>
+		</Card.Content>
+	</Card.Root>
 
-		<!-- Compras -->
-		<div class="border-border bg-card rounded-lg border">
-			<div class="border-border border-b px-4 py-2.5">
-				<h3 class="text-card-foreground text-sm font-semibold">Compras</h3>
+	<!-- Compras -->
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>Compras</Card.Title>
+		</Card.Header>
+		<Card.Content class="flex flex-col gap-4">
+			<div class="grid gap-2">
+				<Label>Proveedor</Label>
+				<Select.Root type="single" bind:value={form.supplierId}>
+					<Select.Trigger class="w-full">{app.suppliers.find((s) => s.id === form.supplierId)?.name ?? 'Sin asignar'}</Select.Trigger>
+					<Select.Content>
+						<Select.Item value="">Sin asignar</Select.Item>
+						{#each app.suppliers as s (s.id)}
+							<Select.Item value={s.id}>{s.name}</Select.Item>
+						{/each}
+					</Select.Content>
+				</Select.Root>
 			</div>
-			<div class="flex flex-col gap-3 p-4">
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Proveedor</label>
-					<div class="flex-1">
-						<select class="form-input" bind:value={form.supplierId}>
-							<option value="">Sin asignar</option>
-							{#each app.suppliers as s (s.id)}
-								<option value={s.id}>{s.name}</option>
-							{/each}
-						</select>
+			<div class="grid gap-4 md:grid-cols-2">
+				<div class="grid gap-2">
+					<Label for="price">Precio</Label>
+					<div class="flex gap-2">
+						<Input id="price" type="number" class="flex-1" bind:value={form.price} />
+						<Select.Root type="single" bind:value={form.currency}>
+							<Select.Trigger class="w-24">{form.currency}</Select.Trigger>
+							<Select.Content>
+								<Select.Item value="MXN">MXN</Select.Item>
+								<Select.Item value="USD">USD</Select.Item>
+							</Select.Content>
+						</Select.Root>
 					</div>
 				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Precio</label>
-					<div class="flex-1">
-						<div class="flex gap-2">
-							<input type="number" class="form-input flex-1" bind:value={form.price} />
-							<select class="form-input w-20" bind:value={form.currency}>
-								<option value="MXN">MXN</option>
-								<option value="USD">USD</option>
-							</select>
-						</div>
-					</div>
-				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">UdM Compra</label>
-					<div class="flex-1">
-						<select class="form-input" bind:value={form.udmPurchase}>
+				<div class="grid gap-2">
+					<Label>UdM Compra</Label>
+					<Select.Root type="single" bind:value={form.udmPurchase}>
+						<Select.Trigger class="w-full">{UDM_LABELS[form.udmPurchase]}</Select.Trigger>
+						<Select.Content>
 							{#each Object.entries(UDM_LABELS) as [k, v] (k)}
-								<option value={k}>{v}</option>
+								<Select.Item value={k}>{v}</Select.Item>
 							{/each}
-						</select>
-					</div>
-				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Lead Time (dias)</label>
-					<div class="flex-1">
-						<input type="number" class="form-input" bind:value={form.leadTimeDays} />
-					</div>
+						</Select.Content>
+					</Select.Root>
 				</div>
 			</div>
-		</div>
+			<div class="grid gap-2">
+				<Label for="leadTimeDays">Lead Time (dias)</Label>
+				<Input id="leadTimeDays" type="number" bind:value={form.leadTimeDays} />
+			</div>
+		</Card.Content>
+	</Card.Root>
 
-		<!-- Almacen -->
-		<div class="border-border bg-card rounded-lg border">
-			<div class="border-border border-b px-4 py-2.5">
-				<h3 class="text-card-foreground text-sm font-semibold">Almacen</h3>
-			</div>
-			<div class="flex flex-col gap-3 p-4">
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Ubicacion</label>
-					<div class="flex-1">
-						<input class="form-input" bind:value={form.location} placeholder="e.g. A-01-01" />
-					</div>
+	<!-- Almacen -->
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>Almacen</Card.Title>
+		</Card.Header>
+		<Card.Content class="flex flex-col gap-4">
+			<div class="grid gap-4 md:grid-cols-2">
+				<div class="grid gap-2">
+					<Label for="location">Ubicacion</Label>
+					<Input id="location" bind:value={form.location} placeholder="e.g. A-01-01" />
 				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">UdM Almacenamiento</label>
-					<div class="flex-1">
-						<select class="form-input" bind:value={form.udmStorage}>
+				<div class="grid gap-2">
+					<Label>UdM Almacenamiento</Label>
+					<Select.Root type="single" bind:value={form.udmStorage}>
+						<Select.Trigger class="w-full">{UDM_LABELS[form.udmStorage]}</Select.Trigger>
+						<Select.Content>
 							{#each Object.entries(UDM_LABELS) as [k, v] (k)}
-								<option value={k}>{v}</option>
+								<Select.Item value={k}>{v}</Select.Item>
 							{/each}
-						</select>
-					</div>
-				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Stock Minimo</label>
-					<div class="flex-1">
-						<input type="number" class="form-input" bind:value={form.minStock} />
-					</div>
-				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Stock Maximo</label>
-					<div class="flex-1">
-						<input type="number" class="form-input" bind:value={form.maxStock} />
-					</div>
-				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Clasificacion ABC</label>
-					<div class="flex-1">
-						<select class="form-input" bind:value={form.abcClass}>
-							{#each Object.entries(ABC_LABELS) as [k, v] (k)}
-								<option value={k}>{v}</option>
-							{/each}
-						</select>
-					</div>
+						</Select.Content>
+					</Select.Root>
 				</div>
 			</div>
-		</div>
+			<div class="grid gap-4 md:grid-cols-2">
+				<div class="grid gap-2">
+					<Label for="minStock">Stock Minimo</Label>
+					<Input id="minStock" type="number" bind:value={form.minStock} />
+				</div>
+				<div class="grid gap-2">
+					<Label for="maxStock">Stock Maximo</Label>
+					<Input id="maxStock" type="number" bind:value={form.maxStock} />
+				</div>
+			</div>
+			<div class="grid gap-2">
+				<Label>Clasificacion ABC</Label>
+				<Select.Root type="single" bind:value={form.abcClass}>
+					<Select.Trigger class="w-full">{ABC_LABELS[form.abcClass]}</Select.Trigger>
+					<Select.Content>
+						{#each Object.entries(ABC_LABELS) as [k, v] (k)}
+							<Select.Item value={k}>{v}</Select.Item>
+						{/each}
+					</Select.Content>
+				</Select.Root>
+			</div>
+		</Card.Content>
+	</Card.Root>
 
-		<!-- Produccion / Calidad -->
-		<div class="border-border bg-card rounded-lg border">
-			<div class="border-border border-b px-4 py-2.5">
-				<h3 class="text-card-foreground text-sm font-semibold">Produccion / Calidad</h3>
-			</div>
-			<div class="flex flex-col gap-3 p-4">
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">UdM Produccion</label>
-					<div class="flex-1">
-						<select class="form-input" bind:value={form.udmProduction}>
+	<!-- Produccion / Calidad -->
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>Produccion / Calidad</Card.Title>
+		</Card.Header>
+		<Card.Content class="flex flex-col gap-4">
+			<div class="grid gap-4 md:grid-cols-2">
+				<div class="grid gap-2">
+					<Label>UdM Produccion</Label>
+					<Select.Root type="single" bind:value={form.udmProduction}>
+						<Select.Trigger class="w-full">{UDM_LABELS[form.udmProduction]}</Select.Trigger>
+						<Select.Content>
 							{#each Object.entries(UDM_LABELS) as [k, v] (k)}
-								<option value={k}>{v}</option>
+								<Select.Item value={k}>{v}</Select.Item>
 							{/each}
-						</select>
-					</div>
+						</Select.Content>
+					</Select.Root>
 				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Ruta</label>
-					<div class="flex-1">
-						<input class="form-input" bind:value={form.route} />
-					</div>
-				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Centro de Trabajo</label>
-					<div class="flex-1">
-						<input class="form-input" bind:value={form.workCenter} />
-					</div>
-				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Grupo Calidad</label>
-					<div class="flex-1">
-						<input class="form-input" bind:value={form.qualityGroup} />
-					</div>
-				</div>
-				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-					<label class="text-muted-foreground shrink-0 text-xs sm:w-36 sm:text-right">Inspeccion Requerida</label>
-					<div class="flex-1">
-						<select
-							class="form-input"
-							onchange={(e) => (form.inspectionRequired = e.currentTarget.value === 'true')}
-						>
-							<option value="false" selected={!form.inspectionRequired}>No</option>
-							<option value="true" selected={form.inspectionRequired}>Si</option>
-						</select>
-					</div>
+				<div class="grid gap-2">
+					<Label for="route">Ruta</Label>
+					<Input id="route" bind:value={form.route} />
 				</div>
 			</div>
-		</div>
-	</div>
+			<div class="grid gap-4 md:grid-cols-2">
+				<div class="grid gap-2">
+					<Label for="workCenter">Centro de Trabajo</Label>
+					<Input id="workCenter" bind:value={form.workCenter} />
+				</div>
+				<div class="grid gap-2">
+					<Label for="qualityGroup">Grupo Calidad</Label>
+					<Input id="qualityGroup" bind:value={form.qualityGroup} />
+				</div>
+			</div>
+			<div class="flex items-center gap-2">
+				<Checkbox id="inspectionRequired" bind:checked={form.inspectionRequired} />
+				<Label for="inspectionRequired">Inspeccion Requerida</Label>
+			</div>
+		</Card.Content>
+	</Card.Root>
 
-	<div class="flex items-center gap-3">
-		<a
-			href="/articulos"
-			class="border-border text-foreground hover:bg-secondary rounded-md border px-4 py-2 text-sm transition-colors"
-			>Cancelar</a
-		>
-		<button
-			onclick={handleSave}
-			class="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors"
-		>
-			<Save class="h-4 w-4" /> Crear Articulo
-		</button>
+	<div class="flex items-center justify-end gap-3">
+		<Button href="/articulos" variant="outline">Cancelar</Button>
+		<Button onclick={handleSave}>
+			<Save data-icon="inline-start" /> Crear Articulo
+		</Button>
 	</div>
 </div>
-
-<style>
-	.form-input {
-		width: 100%;
-		border-radius: 0.375rem;
-		border: 1px solid var(--border);
-		background: var(--secondary);
-		padding: 0.5rem 0.75rem;
-		font-size: 0.875rem;
-		color: var(--foreground);
-		outline: none;
-	}
-	.form-input:focus {
-		border-color: var(--primary);
-	}
-</style>

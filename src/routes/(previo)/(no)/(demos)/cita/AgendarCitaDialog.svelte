@@ -27,7 +27,7 @@
 	let isSendingToERP = $state(false);
 
 	// Datos del calendario
-	const bookedDates = Array.from({ length: 3 }, (_, i) => new CalendarDate(2025, 9, 10 + i));
+	const bookedDates = Array.from({ length: 3 }, (_, i) => new CalendarDate(2026, 9, 10 + i));
 	const timeSlots = Array.from({ length: 37 }, (_, i) => {
 		const totalMinutes = i * 15;
 		const hour = Math.floor(totalMinutes / 60) + 9;

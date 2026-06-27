@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { cn } from '$lib/utils.js';
+	import { Badge } from '$lib/components/ui/badge/index.js';
 
 	let {
 		label,
@@ -8,12 +9,6 @@
 	}: { label: string; colorClass: string; class?: string } = $props();
 </script>
 
-<span
-	class={cn(
-		'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
-		colorClass,
-		className
-	)}
->
+<Badge variant="outline" class={cn('border-transparent font-medium', colorClass, className)}>
 	{label}
-</span>
+</Badge>

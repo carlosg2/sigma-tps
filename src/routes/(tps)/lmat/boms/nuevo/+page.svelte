@@ -4,11 +4,21 @@
 	import { VEHICLE_MODELS, ARMOR_LEVEL_LABELS, PLANT_CELLS, UDM_LABELS } from '$lib/tps/constants.js';
 	import { generateId } from '$lib/tps/utils.js';
 	import type { BOM, BOMComponent, ArmorLevel, Plant } from '$lib/tps/types.js';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
+	import * as Alert from '$lib/components/ui/alert/index.js';
+	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import Save from '@lucide/svelte/icons/save';
 	import Plus from '@lucide/svelte/icons/plus';
 	import Trash2 from '@lucide/svelte/icons/trash-2';
 	import Search from '@lucide/svelte/icons/search';
+	import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
+	import PackageIcon from '@lucide/svelte/icons/package';
 
 	const store = useStore();
 	const app = $derived(store.state);
@@ -130,207 +140,196 @@
 	}
 </script>
 
-<div class="flex max-w-4xl flex-col gap-6">
+<div class="mx-auto flex w-full max-w-5xl flex-col gap-6">
 	<div class="flex items-center gap-3">
-		<a
-			href="/lmat/boms"
-			class="border-border hover:bg-secondary flex h-8 w-8 items-center justify-center rounded-md border transition-colors"
-		>
-			<ArrowLeft class="text-foreground h-4 w-4" />
-		</a>
-		<div>
-			<h1 class="text-foreground text-xl font-bold">Nuevo BOM</h1>
-			<p class="text-muted-foreground text-sm">Define la especificacion y sus componentes</p>
-		</div>
+		<Button href="/lmat/boms" variant="outline" size="icon">
+			<ArrowLeft />
+		</Button>
+		<p class="text-muted-foreground text-sm">Define la especificacion y sus componentes</p>
 	</div>
 
 	{#if errors.length > 0}
-		<div class="border-destructive/30 bg-destructive/10 rounded-md border p-3">
-			{#each errors as e, i (i)}
-				<p class="text-destructive-foreground text-sm">{e}</p>
-			{/each}
-		</div>
+		<Alert.Root variant="destructive">
+			<TriangleAlert />
+			<Alert.Title>Revisa los siguientes errores</Alert.Title>
+			<Alert.Description>
+				<ul class="list-disc pl-4">
+					{#each errors as e, i (i)}
+						<li>{e}</li>
+					{/each}
+				</ul>
+			</Alert.Description>
+		</Alert.Root>
 	{/if}
 
 	<!-- Header fields -->
-	<div class="border-border bg-card rounded-lg border p-4">
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-			<div>
-				<label class="text-muted-foreground mb-1 block text-xs">Codigo de Especificacion *</label>
-				<input
-					class="border-border bg-secondary text-foreground w-full rounded-md border px-3 py-2 text-sm outline-none"
-					bind:value={form.specificationCode}
-					placeholder="e.g. ESP-LC300-NIII-P1"
-				/>
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>Datos del BOM</Card.Title>
+		</Card.Header>
+		<Card.Content>
+			<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+				<div class="grid gap-2">
+					<Label for="spec-code">Codigo de Especificacion *</Label>
+					<Input id="spec-code" bind:value={form.specificationCode} placeholder="e.g. ESP-LC300-NIII-P1" />
+				</div>
+				<div class="grid gap-2">
+					<Label>Modelo de Vehiculo</Label>
+					<Select.Root type="single" bind:value={form.vehicleModel}>
+						<Select.Trigger class="w-full">{form.vehicleModel}</Select.Trigger>
+						<Select.Content>
+							{#each VEHICLE_MODELS as m (m)}
+								<Select.Item value={m}>{m}</Select.Item>
+							{/each}
+						</Select.Content>
+					</Select.Root>
+				</div>
+				<div class="grid gap-2">
+					<Label>Nivel de Blindaje</Label>
+					<Select.Root type="single" bind:value={form.armorLevel}>
+						<Select.Trigger class="w-full">{ARMOR_LEVEL_LABELS[form.armorLevel]}</Select.Trigger>
+						<Select.Content>
+							{#each Object.entries(ARMOR_LEVEL_LABELS) as [k, v] (k)}
+								<Select.Item value={k}>{v}</Select.Item>
+							{/each}
+						</Select.Content>
+					</Select.Root>
+				</div>
+				<div class="grid gap-2">
+					<Label>Planta</Label>
+					<Select.Root type="single" bind:value={form.plant}>
+						<Select.Trigger class="w-full">{form.plant === 'planta_1' ? 'Planta 1' : 'Planta 2'}</Select.Trigger>
+						<Select.Content>
+							<Select.Item value="planta_1">Planta 1</Select.Item>
+							<Select.Item value="planta_2">Planta 2</Select.Item>
+						</Select.Content>
+					</Select.Root>
+				</div>
 			</div>
-			<div>
-				<label class="text-muted-foreground mb-1 block text-xs">Modelo de Vehiculo</label>
-				<select
-					class="border-border bg-secondary text-foreground w-full rounded-md border px-3 py-2 text-sm outline-none"
-					bind:value={form.vehicleModel}
-				>
-					{#each VEHICLE_MODELS as m (m)}
-						<option value={m}>{m}</option>
-					{/each}
-				</select>
-			</div>
-			<div>
-				<label class="text-muted-foreground mb-1 block text-xs">Nivel de Blindaje</label>
-				<select
-					class="border-border bg-secondary text-foreground w-full rounded-md border px-3 py-2 text-sm outline-none"
-					bind:value={form.armorLevel}
-				>
-					{#each Object.entries(ARMOR_LEVEL_LABELS) as [k, v] (k)}
-						<option value={k}>{v}</option>
-					{/each}
-				</select>
-			</div>
-			<div>
-				<label class="text-muted-foreground mb-1 block text-xs">Planta</label>
-				<select
-					class="border-border bg-secondary text-foreground w-full rounded-md border px-3 py-2 text-sm outline-none"
-					bind:value={form.plant}
-				>
-					<option value="planta_1">Planta 1</option>
-					<option value="planta_2">Planta 2</option>
-				</select>
-			</div>
-		</div>
-	</div>
+		</Card.Content>
+	</Card.Root>
 
 	<!-- Components -->
-	<div class="border-border bg-card overflow-hidden rounded-lg border">
-		<div class="border-border flex items-center justify-between border-b px-4 py-3">
-			<h3 class="text-card-foreground text-sm font-semibold">Componentes ({components.length})</h3>
-			<button
-				onclick={() => (showSearch = !showSearch)}
-				class="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors"
-			>
-				<Plus class="h-3.5 w-3.5" /> Agregar
-			</button>
-		</div>
-
-		{#if showSearch}
-			<div class="border-border bg-secondary/30 border-b px-4 py-3">
-				<div class="border-border bg-secondary flex items-center gap-2 rounded-md border px-3 py-2">
-					<Search class="text-muted-foreground h-4 w-4" />
-					<input
-						type="text"
-						placeholder="Buscar articulo por codigo o descripcion..."
-						bind:value={searchQ}
-						class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent text-sm outline-none"
-					/>
-				</div>
-				{#if matchingArticles.length > 0}
-					<div class="border-border mt-1 flex max-h-48 flex-col overflow-hidden overflow-y-auto rounded-md border">
-						{#each matchingArticles as a (a.id)}
-							<button
-								onclick={() => addComponent(a.id)}
-								class="hover:bg-accent border-border/30 flex items-center gap-2 border-b px-3 py-1.5 text-left text-xs transition-colors last:border-0"
-							>
-								<span class="text-primary font-mono">{a.code}</span>
-								<span class="text-foreground flex-1 truncate">{a.description}</span>
-								{#if components.some((c) => c.articleId === a.id)}
-									<span class="text-muted-foreground text-xs">(ya agregado)</span>
-								{/if}
-							</button>
-						{/each}
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>Componentes ({components.length})</Card.Title>
+			<Card.Action>
+				<Button size="sm" onclick={() => (showSearch = !showSearch)}>
+					<Plus data-icon="inline-start" /> Agregar
+				</Button>
+			</Card.Action>
+		</Card.Header>
+		<Card.Content class="flex flex-col gap-4">
+			{#if showSearch}
+				<div class="flex flex-col gap-2">
+					<div class="relative w-full">
+						<Search class="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
+						<Input placeholder="Buscar articulo por codigo o descripcion..." bind:value={searchQ} class="pl-8" />
 					</div>
-				{/if}
-			</div>
-		{/if}
+					{#if matchingArticles.length > 0}
+						<div class="flex max-h-48 flex-col overflow-hidden overflow-y-auto rounded-md border">
+							{#each matchingArticles as a (a.id)}
+								<button
+									onclick={() => addComponent(a.id)}
+									class="hover:bg-accent border-border/30 flex items-center gap-2 border-b px-3 py-1.5 text-left text-xs transition-colors last:border-0"
+								>
+									<span class="text-primary font-mono">{a.code}</span>
+									<span class="text-foreground flex-1 truncate">{a.description}</span>
+									{#if components.some((c) => c.articleId === a.id)}
+										<span class="text-muted-foreground text-xs">(ya agregado)</span>
+									{/if}
+								</button>
+							{/each}
+						</div>
+					{/if}
+				</div>
+			{/if}
 
-		{#if components.length > 0}
-			<div class="overflow-x-auto">
-				<table class="w-full text-sm">
-					<thead>
-						<tr class="border-border border-b text-left">
-							<th class="text-muted-foreground px-3 py-2 text-xs font-medium">Codigo</th>
-							<th class="text-muted-foreground px-3 py-2 text-xs font-medium">Descripcion</th>
-							<th class="text-muted-foreground w-20 px-3 py-2 text-xs font-medium">Cant.</th>
-							<th class="text-muted-foreground w-28 px-3 py-2 text-xs font-medium">UdM</th>
-							<th class="text-muted-foreground w-28 px-3 py-2 text-xs font-medium">Celda</th>
-							<th class="text-muted-foreground px-3 py-2 text-xs font-medium">Operacion</th>
-							<th class="text-muted-foreground w-8 px-3 py-2 text-xs font-medium"></th>
-						</tr>
-					</thead>
-					<tbody>
+			{#if components.length > 0}
+				<Table.Root>
+					<Table.Header>
+						<Table.Row>
+							<Table.Head>Codigo</Table.Head>
+							<Table.Head>Descripcion</Table.Head>
+							<Table.Head class="w-20">Cant.</Table.Head>
+							<Table.Head class="w-28">UdM</Table.Head>
+							<Table.Head class="w-28">Celda</Table.Head>
+							<Table.Head>Operacion</Table.Head>
+							<Table.Head class="w-8"></Table.Head>
+						</Table.Row>
+					</Table.Header>
+					<Table.Body>
 						{#each components as comp (comp.id)}
-							<tr class="border-border/30 border-b">
-								<td class="text-primary px-3 py-1.5 font-mono text-xs">{comp.articleCode}</td>
-								<td class="text-card-foreground max-w-[180px] truncate px-3 py-1.5 text-xs">{comp.articleDescription}</td>
-								<td class="px-3 py-1.5">
-									<input
+							<Table.Row>
+								<Table.Cell>
+									<span class="text-primary font-mono text-xs">{comp.articleCode}</span>
+								</Table.Cell>
+								<Table.Cell class="max-w-45 truncate text-xs">{comp.articleDescription}</Table.Cell>
+								<Table.Cell>
+									<Input
 										type="number"
 										min="0.01"
 										step="0.01"
 										value={comp.quantity}
 										oninput={(e) => updateComponent(comp.id, 'quantity', parseFloat(e.currentTarget.value) || 0)}
-										class="border-border bg-secondary text-foreground w-full rounded border px-2 py-1 text-xs outline-none"
+										class="h-8"
 									/>
-								</td>
-								<td class="px-3 py-1.5">
-									<select
-										value={comp.udm}
-										onchange={(e) => updateComponent(comp.id, 'udm', e.currentTarget.value)}
-										class="border-border bg-secondary text-foreground w-full rounded border px-1 py-1 text-xs outline-none"
-									>
-										{#each Object.entries(UDM_LABELS) as [k, v] (k)}
-											<option value={k}>{v}</option>
-										{/each}
-									</select>
-								</td>
-								<td class="px-3 py-1.5">
-									<select
-										value={comp.cell}
-										onchange={(e) => updateComponent(comp.id, 'cell', e.currentTarget.value)}
-										class="border-border bg-secondary text-foreground w-full rounded border px-1 py-1 text-xs outline-none"
-									>
-										{#each cells as c (c)}
-											<option value={c}>{c}</option>
-										{/each}
-									</select>
-								</td>
-								<td class="px-3 py-1.5">
-									<input
+								</Table.Cell>
+								<Table.Cell>
+									<Select.Root type="single" value={comp.udm} onValueChange={(v) => updateComponent(comp.id, 'udm', v)}>
+										<Select.Trigger size="sm" class="w-full">{UDM_LABELS[comp.udm]}</Select.Trigger>
+										<Select.Content>
+											{#each Object.entries(UDM_LABELS) as [k, v] (k)}
+												<Select.Item value={k}>{v}</Select.Item>
+											{/each}
+										</Select.Content>
+									</Select.Root>
+								</Table.Cell>
+								<Table.Cell>
+									<Select.Root type="single" value={comp.cell} onValueChange={(v) => updateComponent(comp.id, 'cell', v)}>
+										<Select.Trigger size="sm" class="w-full">{comp.cell}</Select.Trigger>
+										<Select.Content>
+											{#each cells as c (c)}
+												<Select.Item value={c}>{c}</Select.Item>
+											{/each}
+										</Select.Content>
+									</Select.Root>
+								</Table.Cell>
+								<Table.Cell>
+									<Input
 										value={comp.operation}
 										oninput={(e) => updateComponent(comp.id, 'operation', e.currentTarget.value)}
-										class="border-border bg-secondary text-foreground w-full rounded border px-2 py-1 text-xs outline-none"
 										placeholder="Operacion..."
+										class="h-8"
 									/>
-								</td>
-								<td class="px-3 py-1.5">
-									<button
-										onclick={() => removeComponent(comp.id)}
-										class="text-destructive-foreground hover:text-destructive transition-colors"
-									>
-										<Trash2 class="h-3.5 w-3.5" />
-									</button>
-								</td>
-							</tr>
+								</Table.Cell>
+								<Table.Cell>
+									<Button variant="ghost" size="icon" class="size-8" onclick={() => removeComponent(comp.id)}>
+										<Trash2 />
+									</Button>
+								</Table.Cell>
+							</Table.Row>
 						{/each}
-					</tbody>
-				</table>
-			</div>
-		{:else}
-			<div class="text-muted-foreground px-4 py-8 text-center text-sm">
-				Agrega componentes al BOM usando el boton de arriba.
-			</div>
-		{/if}
-	</div>
+					</Table.Body>
+				</Table.Root>
+			{:else}
+				<Empty.Root class="border-0">
+					<Empty.Header>
+						<Empty.Media variant="icon">
+							<PackageIcon />
+						</Empty.Media>
+						<Empty.Title>Sin componentes</Empty.Title>
+						<Empty.Description>Agrega componentes al BOM usando el boton de arriba.</Empty.Description>
+					</Empty.Header>
+				</Empty.Root>
+			{/if}
+		</Card.Content>
+	</Card.Root>
 
 	<div class="flex items-center gap-3">
-		<a
-			href="/lmat/boms"
-			class="border-border text-foreground hover:bg-secondary rounded-md border px-4 py-2 text-sm transition-colors"
-		>
-			Cancelar
-		</a>
-		<button
-			onclick={handleSave}
-			class="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors"
-		>
-			<Save class="h-4 w-4" /> Crear BOM
-		</button>
+		<Button href="/lmat/boms" variant="outline">Cancelar</Button>
+		<Button onclick={handleSave}>
+			<Save data-icon="inline-start" /> Crear BOM
+		</Button>
 	</div>
 </div>

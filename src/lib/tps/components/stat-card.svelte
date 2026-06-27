@@ -1,6 +1,10 @@
 <script lang="ts">
 	import type { Component } from 'svelte';
 	import { cn } from '$lib/utils.js';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import { Badge } from '$lib/components/ui/badge/index.js';
+	import TrendingUpIcon from '@lucide/svelte/icons/trending-up';
+	import TrendingDownIcon from '@lucide/svelte/icons/trending-down';
 
 	let {
 		label,
@@ -21,31 +25,26 @@
 	const Icon = $derived(icon);
 </script>
 
-<div class={cn('bg-card rounded-lg border p-4', className)}>
-	<div class="flex items-start justify-between">
-		<div class="flex flex-col gap-1">
-			<span class="text-muted-foreground text-xs font-medium">{label}</span>
-			<span class="text-card-foreground text-2xl font-bold">{value}</span>
-			{#if subtitle}
-				<span class="text-muted-foreground text-xs">{subtitle}</span>
-			{/if}
+<Card.Root class={cn('@container/card', className)}>
+	<Card.Header>
+		<Card.Description>{label}</Card.Description>
+		<Card.Title class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+			{value}
+		</Card.Title>
+		<Card.Action>
 			{#if trend}
-				<span
-					class={cn(
-						'text-xs font-medium',
-						trend.positive ? 'text-primary' : 'text-destructive'
-					)}
-				>
+				<Badge variant="outline">
+					{#if trend.positive}<TrendingUpIcon />{:else}<TrendingDownIcon />{/if}
 					{trend.value}
-				</span>
+				</Badge>
+			{:else if Icon}
+				<Icon class="text-muted-foreground size-5" />
 			{/if}
-		</div>
-		{#if Icon}
-			<div
-				class="bg-primary/10 text-primary flex h-9 w-9 items-center justify-center rounded-md"
-			>
-				<Icon class="size-5" />
-			</div>
-		{/if}
-	</div>
-</div>
+		</Card.Action>
+	</Card.Header>
+	{#if subtitle}
+		<Card.Footer class="text-muted-foreground text-sm">
+			{subtitle}
+		</Card.Footer>
+	{/if}
+</Card.Root>
