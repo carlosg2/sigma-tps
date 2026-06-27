@@ -1,0 +1,52 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "d6050b22bc33",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/lib/tps/components/app-sidebar.svelte",
+    "src/lib/tps/components/header.svelte",
+    "src/lib/tps/components/site-header.svelte",
+    "src/lib/tps/components/stat-card.svelte",
+    "src/lib/tps/components/status-badge.svelte",
+    "src/routes/(tps)/+layout.svelte",
+    "src/routes/(tps)/+page.svelte",
+    "src/routes/(tps)/articulos/+page.svelte",
+    "src/routes/(tps)/articulos/[id]/+page.svelte",
+    "src/routes/(tps)/articulos/importar/+page.svelte",
+    "src/routes/(tps)/articulos/nuevo/+page.svelte",
+    "src/routes/(tps)/lmat/+page.svelte",
+    "src/routes/(tps)/lmat/boms/+page.svelte",
+    "src/routes/(tps)/lmat/boms/[id]/+page.svelte",
+    "src/routes/(tps)/lmat/boms/cambio-masivo/+page.svelte",
+    "src/routes/(tps)/lmat/boms/importar/+page.svelte",
+    "src/routes/(tps)/lmat/boms/nuevo/+page.svelte",
+    "src/routes/(tps)/lmat/ecn/+page.svelte",
+    "src/routes/(tps)/lmat/ecn/[id]/+page.svelte",
+    "src/routes/(tps)/lmat/especificaciones/+page.svelte",
+    "src/routes/(tps)/lmat/especificaciones/[id]/+page.svelte",
+    "src/routes/(tps)/lmat/kits/+page.svelte",
+    "src/routes/(tps)/lmat/kits/[id]/+page.svelte",
+    "src/routes/(tps)/lmat/validacion/+page.svelte",
+    "src/routes/(tps)/lmat/where-used/+page.svelte",
+    "src/routes/(tps)/proyectos/+page.svelte",
+    "src/routes/(tps)/proyectos/[id]/+page.svelte",
+    "src/routes/(tps)/proyectos/nuevo/+page.svelte"
+  ],
+  "sessions": [
+    {
+      "metadata": "/d6/050b22bc33/0/metadata.json",
+      "transcript": "/d6/050b22bc33/0/full.jsonl",
+      "content_hash": "/d6/050b22bc33/0/content_hash.txt",
+      "prompt": "/d6/050b22bc33/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  }
+}
