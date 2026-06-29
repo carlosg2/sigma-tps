@@ -1,0 +1,1 @@
+explora todas las rutas de tps y crea un documento (dento del folder documentacion) en el que describa que hace ruta y cual es el user flow para que un usuario lo siga y pueda entender de que se trata cada pantalla y que hace y como lo puede probar
