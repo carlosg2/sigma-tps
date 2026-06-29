@@ -179,6 +179,7 @@ export const ARMOR_LEVEL_LABELS: Record<ArmorLevel, string> = {
   NV: "Nivel V",
   NVI: "Nivel VI",
   NVII: "Nivel VII",
+  B7_plus: "B7 PLUS",
 }
 
 // --- LMAT 2.0: Estatus de Madurez del BOM (Seccion 2.1) ---

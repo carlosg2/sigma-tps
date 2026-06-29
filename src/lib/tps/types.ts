@@ -64,7 +64,7 @@ export type UdM =
   | "cubeta"
   | "tramo"
 
-export type ArmorLevel = "NIII" | "NIII_plus" | "NIV" | "NIV_plus" | "NV" | "NVI" | "NVII"
+export type ArmorLevel = "NIII" | "NIII_plus" | "NIV" | "NIV_plus" | "NV" | "NVI" | "NVII" | "B7_plus"
 
 // LMAT 2.0: Tipo de articulo (Seccion 8.1)
 export type ArticleType = "compra" | "fabricacion" | "ambas"

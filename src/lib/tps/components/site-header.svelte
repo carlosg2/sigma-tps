@@ -18,6 +18,7 @@
 		'/implementacion': 'Dashboard General',
 		'/articulos': 'Catalogo de Articulos',
 		'/lmat': 'LMAT',
+		'/especificaciones-v2': 'Especificaciones v2',
 		'/proyectos': 'Proyectos'
 	};
 
@@ -25,6 +26,7 @@
 		const path = page.url.pathname;
 		if (titles[path]) return titles[path];
 		if (path.startsWith('/articulos')) return 'Articulos';
+		if (path.startsWith('/especificaciones-v2')) return 'Especificaciones v2';
 		if (path.startsWith('/lmat')) return 'LMAT';
 		if (path.startsWith('/proyectos')) return 'Proyectos';
 		return 'TPS ERP';

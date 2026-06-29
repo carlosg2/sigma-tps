@@ -19,6 +19,7 @@
 	import Users from '@lucide/svelte/icons/users';
 	import Car from '@lucide/svelte/icons/car';
 	import ArrowRightLeft from '@lucide/svelte/icons/arrow-right-left';
+	import ClipboardList from '@lucide/svelte/icons/clipboard-list';
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 
@@ -37,6 +38,7 @@
 				{ label: 'Importar BOMs', href: '/lmat/boms/importar', icon: FileUp },
 				{ label: 'Cambio Masivo', href: '/lmat/boms/cambio-masivo', icon: ArrowRightLeft },
 				{ label: 'Especificaciones', href: '/lmat/especificaciones', icon: Car },
+				{ label: 'Especificaciones v2', href: '/especificaciones-v2', icon: ClipboardList },
 				{ label: 'ECN', href: '/lmat/ecn', icon: GitBranch },
 				{ label: 'Kits Surtimiento', href: '/lmat/kits', icon: Boxes },
 				{ label: 'Validacion', href: '/lmat/validacion', icon: Users },
