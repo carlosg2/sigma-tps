@@ -19,7 +19,7 @@
 			<Card.Title>Observability Plus is replacing Monitoring</Card.Title>
 			<Card.Description>
 				Switch to the improved way to explore your data, with natural language. Monitoring
-				will no longer be available on the Pro plan in November, 2026
+				will no longer be available on the Pro plan in November, 2025
 			</Card.Description>
 		</Card.Header>
 		<Card.Footer>

@@ -9,20 +9,20 @@
 
 	const billingItems = [
 		{
-			month: "November 2026",
-			invoiceDate: new CalendarDate(2026, 11, 5),
+			month: "November 2025",
+			invoiceDate: new CalendarDate(2025, 11, 5),
 			amount: "$10.00",
 			status: "Paid" as const,
 		},
 		{
-			month: "October 2026",
-			invoiceDate: new CalendarDate(2026, 10, 4),
+			month: "October 2025",
+			invoiceDate: new CalendarDate(2025, 10, 4),
 			amount: "$10.00",
 			status: "Paid" as const,
 		},
 		{
-			month: "September 2026",
-			invoiceDate: new CalendarDate(2026, 9, 4),
+			month: "September 2025",
+			invoiceDate: new CalendarDate(2025, 9, 4),
 			amount: "$10.00",
 			status: "Paid" as const,
 		},

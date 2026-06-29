@@ -44,7 +44,7 @@
 		Mov: "Cotizacion",
 		MovID: "10",
 		Concepto: "Solo Blindaje", 
-		FechaEmision: "2026-09-07T00:00:00",
+		FechaEmision: "2025-09-07T00:00:00",
 		Estatus: "CONFIRMAR",
 		Cliente: "C01446",
 		Nombre: "DANIEL ROLDAN SORIA",

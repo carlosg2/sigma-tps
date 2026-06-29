@@ -936,7 +936,7 @@
             Cliente: 'C01446', // TODO: Obtener del cliente real
             FehaRentaD: fechaRentaD,
             FehaRentaA: fechaRentaA,
-            Referencia: quotationData.quotationNumber, // aqui debe ir la cotizacion ej: #COT-20260902-5467 de quotationData.quotationNumber
+            Referencia: quotationData.quotationNumber, // aqui debe ir la cotizacion ej: #COT-20250902-5467 de quotationData.quotationNumber
             json: JSON.stringify(jsonData)
           }),
           headers: {

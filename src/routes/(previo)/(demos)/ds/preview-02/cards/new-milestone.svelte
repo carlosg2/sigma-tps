@@ -25,7 +25,7 @@
 				</Field.Field>
 				<Field.Field>
 					<Field.Label for="target-date">Fecha objetivo</Field.Label>
-					<Input id="target-date" value="Dec 2026" />
+					<Input id="target-date" value="Dec 2025" />
 				</Field.Field>
 			</div>
 		</Field.Group>

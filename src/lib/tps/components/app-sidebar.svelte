@@ -18,6 +18,7 @@
 	import Boxes from '@lucide/svelte/icons/boxes';
 	import Users from '@lucide/svelte/icons/users';
 	import Car from '@lucide/svelte/icons/car';
+	import ArrowRightLeft from '@lucide/svelte/icons/arrow-right-left';
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 
@@ -28,14 +29,13 @@
 
 	const navigation: NavGroup[] = [
 		{
-			label: 'Inicio',
-			items: [{ label: 'Dashboard', href: '/', icon: LayoutDashboard }]
-		},
-		{
-			label: 'LMAT',
+			label: 'Ingeniería',
 			items: [
 				{ label: 'Dashboard', href: '/lmat', icon: Layers },
 				{ label: 'BOMs', href: '/lmat/boms', icon: FileStack },
+				{ label: 'Nuevo BOM', href: '/lmat/boms/nuevo', icon: Plus },
+				{ label: 'Importar BOMs', href: '/lmat/boms/importar', icon: FileUp },
+				{ label: 'Cambio Masivo', href: '/lmat/boms/cambio-masivo', icon: ArrowRightLeft },
 				{ label: 'Especificaciones', href: '/lmat/especificaciones', icon: Car },
 				{ label: 'ECN', href: '/lmat/ecn', icon: GitBranch },
 				{ label: 'Kits Surtimiento', href: '/lmat/kits', icon: Boxes },
@@ -57,6 +57,10 @@
 				{ label: 'Dashboard', href: '/proyectos', icon: FolderKanban },
 				{ label: 'Nuevo Proyecto', href: '/proyectos/nuevo', icon: Plus }
 			]
+		},
+		{
+			label: 'Implementacion',
+			items: [{ label: 'Dashboard', href: '/implementacion', icon: LayoutDashboard }]
 		}
 	];
 

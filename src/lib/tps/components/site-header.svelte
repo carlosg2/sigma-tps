@@ -15,6 +15,7 @@
 
 	const titles: Record<string, string> = {
 		'/': 'Dashboard General',
+		'/implementacion': 'Dashboard General',
 		'/articulos': 'Catalogo de Articulos',
 		'/lmat': 'LMAT',
 		'/proyectos': 'Proyectos'
