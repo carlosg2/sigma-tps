@@ -88,7 +88,7 @@
 </script>
 
 <!-- Stats Grid -->
-<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 {gradient}">
+<div class="grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-4 {gradient}">
 	<StatCard
 		label="Articulos en Catalogo"
 		value={totalArticles}
@@ -116,7 +116,7 @@
 </div>
 
 <!-- LMAT 2.0 Stats -->
-<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 {gradient}">
+<div class="grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-4 {gradient}">
 	<StatCard
 		label="Especificaciones Tecnicas"
 		value={specifications.length}
@@ -250,7 +250,7 @@
 </div>
 
 <!-- LMAT Quick Actions -->
-<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+<div class="grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-4">
 	{#each quickActions as action (action.href)}
 		{@const Icon = action.icon}
 		<a href={action.href} class="group">

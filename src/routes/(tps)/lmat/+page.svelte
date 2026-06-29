@@ -9,7 +9,7 @@
 	} from '$lib/tps/constants.js';
 	import { cn } from '$lib/utils.js';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Item from '$lib/components/ui/item/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Progress } from '$lib/components/ui/progress/index.js';
 	import type { Component } from 'svelte';
@@ -119,7 +119,7 @@
 </div>
 
 <!-- Quick Actions -->
-<div class="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-7">
+<div class="grid grid-cols-3 gap-3 md:grid-cols-4 lg:grid-cols-7">
 	{#each quickActions as a (a.href)}
 		{@const Icon = a.icon}
 		<a href={a.href} class="group">
@@ -146,35 +146,39 @@
 			</Card.Action>
 		</Card.Header>
 		<Card.Content>
-			<Table.Root>
-				<Table.Header>
-					<Table.Row>
-						<Table.Head>Modelo</Table.Head>
-						<Table.Head>Especificacion</Table.Head>
-						<Table.Head>Madurez</Table.Head>
-						<Table.Head>Salud</Table.Head>
-					</Table.Row>
-				</Table.Header>
-				<Table.Body>
-					{#each recentBOMs as bom (bom.id)}
-						<Table.Row>
-							<Table.Cell>
-								<a href="/lmat/boms/{bom.id}" class="font-medium hover:underline">{bom.vehicleModel}</a>
-							</Table.Cell>
-							<Table.Cell class="text-muted-foreground font-mono text-xs">{bom.specificationCode} · v{bom.version}</Table.Cell>
-							<Table.Cell>
-								<StatusBadge label={BOM_MATURITY_LABELS[bom.maturityStatus || 'en_desarrollo']} colorClass={BOM_MATURITY_COLORS[bom.maturityStatus || 'en_desarrollo']} />
-							</Table.Cell>
-							<Table.Cell>
-								<div class="flex items-center gap-2">
-									<Progress value={bom.healthPercent} max={100} class={cn('h-1.5 w-16', bom.healthPercent >= 80 ? '' : bom.healthPercent >= 50 ? '*:data-[slot=progress-indicator]:bg-chart-4' : '*:data-[slot=progress-indicator]:bg-destructive')} />
-									<span class="text-muted-foreground w-8 text-right font-mono text-xs tabular-nums">{bom.healthPercent}%</span>
-								</div>
-							</Table.Cell>
-						</Table.Row>
-					{/each}
-				</Table.Body>
-			</Table.Root>
+			<Item.Group class="gap-2">
+				{#each recentBOMs as bom (bom.id)}
+					<Item.Root variant="outline">
+						{#snippet child({ props })}
+							<a href="/lmat/boms/{bom.id}" {...props}>
+								<Item.Media variant="icon">
+									<Layers />
+								</Item.Media>
+								<Item.Content>
+									<Item.Title>{bom.vehicleModel}</Item.Title>
+									<Item.Description class="font-mono">
+										{bom.specificationCode} · v{bom.version}
+									</Item.Description>
+								</Item.Content>
+								<Item.Actions class="gap-3">
+									<StatusBadge
+										label={BOM_MATURITY_LABELS[bom.maturityStatus || 'en_desarrollo']}
+										colorClass={BOM_MATURITY_COLORS[bom.maturityStatus || 'en_desarrollo']}
+									/>
+									<div class="hidden items-center gap-2 sm:flex">
+										<Progress
+											value={bom.healthPercent}
+											max={100}
+											class={cn('h-1.5 w-16', bom.healthPercent >= 80 ? '' : bom.healthPercent >= 50 ? '*:data-[slot=progress-indicator]:bg-chart-4' : '*:data-[slot=progress-indicator]:bg-destructive')}
+										/>
+										<span class="text-muted-foreground w-8 text-right font-mono text-xs tabular-nums">{bom.healthPercent}%</span>
+									</div>
+								</Item.Actions>
+							</a>
+						{/snippet}
+					</Item.Root>
+				{/each}
+			</Item.Group>
 		</Card.Content>
 	</Card.Root>
 

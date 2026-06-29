@@ -335,13 +335,13 @@
 		<div class="flex flex-wrap items-center justify-between gap-2">
 			<Tabs.List>
 				<Tabs.Trigger value="jerarquico" class="gap-1.5">
-					<ListTree class="size-4" /> Vista Jerarquica
+					<ListTree class="size-4" /> <span class="hidden sm:block" >Vista Jerarquica</span>
 				</Tabs.Trigger>
 				<Tabs.Trigger value="ingenieria" class="gap-1.5">
-					<List class="size-4" /> BOM Plano
+					<List class="size-4" /> <span class="hidden sm:block" >BOM Plano</span>
 				</Tabs.Trigger>
 				<Tabs.Trigger value="surtimiento" class="gap-1.5">
-					<Boxes class="size-4" /> Por Celda/Kit
+					<Boxes class="size-4" /> <span class="hidden sm:block" >	Por Celda/Kit</span>
 				</Tabs.Trigger>
 			</Tabs.List>
 			<Button variant={showRevisions ? 'default' : 'outline'} size="sm" onclick={() => (showRevisions = !showRevisions)}>

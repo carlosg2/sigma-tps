@@ -45,7 +45,7 @@
 </script>
 
 <header
-	class="bg-background sticky top-0 z-10 flex h-(--header-height) shrink-0 items-center gap-2 backdrop-blur-md rounded-t-2xl transition-[width,height] ease-linear"
+	class="bg-background sticky top-0 z-10 flex h-(--header-height) shrink-0 items-center gap-2 border-b rounded-t-2xl transition-[width,height] ease-linear"
 >
 	<div class="flex w-full items-center gap-2 px-4 lg:gap-2 lg:px-6">
 		<Sidebar.Trigger class="-ms-1" />
