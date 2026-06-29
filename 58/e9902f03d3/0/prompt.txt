@@ -1,0 +1,26 @@
+todas las rutas recreadas no usaron el sistema de shacn-svelte, toma como referencia el /dashboard-01 para mejorar el diseño y /ds (design sistem con ejemplos de todos los componentes, muchos golden nuggets en preview y prevoew2 ) y tienes un skill de shadcn-svelte. 
+
+La mison es refactoriza el dieño siguiendo el dashboard y los golden nuggets como referencias
+
+---
+
+WRITING TASK: refactor the DESIGN of existing SvelteKit pages to use shadcn-svelte components. Modify files in place: read current content, rewrite markup to shadcn, but KEEP the existing <script> logic intact (only add component imports + change markup).
+
+FIRST read fully:
+- /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/lib/tps/REFACTOR-GUIDE.md
+- /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/articulos/+page.svelte (reference)
+- /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/+page.svelte (reference)
+
+For EACH file: read CURRENT content, rewrite markup with shadcn-svelte. These are FORM and DETAIL pages: use Card for sections; Input/Textarea (bind:value), Select (type="single" bind:value + computed trigger label), Checkbox (bind:checked) for forms; Label from '$lib/components/ui/label/index.js' for field labels; Button for actions (href for links, data-icon for icons); Tabs.Root/List/Trigger/Content for any tabbed detail UI; Alert for callouts; Empty for empty states; Progress for bars; StatusBadge/StatCard already exist. Narrow forms/detail: wrap in `<div class="mx-auto flex w-full max-w-4xl flex-col gap-6">` (or max-w-5xl). Don't repeat the page title; the header shows it.
+
+1. /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/articulos/nuevo/+page.svelte (form)
+2. /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/articulos/importar/+page.svelte (CSV importer)
+3. /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/articulos/[id]/+page.svelte (detail w/ edit mode + tabs)
+4. /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/proyectos/nuevo/+page.svelte (form)
+5. /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/(tps)/proyectos/[id]/+page.svelte (detail: timeline, costs)
+
+Follow the Svelte 5 gotchas (no self-closing divs, no svelte:component, single <script>, real lucide icon names). Keep all logic and Spanish text exactly. Report each file path when done.
+
+---
+
+el "BOMs Recientes" en /lmat antes del rediseño se veia mejor, se debio usar el componente item del /ds (design system)
