@@ -29,5 +29,7 @@ export function generateId(): string {
 
 export function searchMatch(text: string, query: string): boolean {
   if (!query) return true
-  return text.toLowerCase().includes(query.toLowerCase())
+  const t = text.toLowerCase()
+  // Coincidencia por tokens: todas las palabras deben aparecer, sin importar el orden
+  return query.toLowerCase().split(/\s+/).filter(Boolean).every((tok) => t.includes(tok))
 }

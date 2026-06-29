@@ -103,6 +103,11 @@
 		store.dispatch({ type: 'REORDER_BOM_COMPONENTS', payload: { bomId: bom.id, components: updatedComponents } });
 	}
 
+	function handleCellChange(componentId: string, cell: string) {
+		if (!bom) return;
+		store.dispatch({ type: 'UPDATE_BOM_COMPONENT', payload: { bomId: bom.id, componentId, updates: { cell } } });
+	}
+
 	function handleCreateVersion() {
 		if (!bom || !newVersionReason.trim()) return;
 		store.dispatch({ type: 'CREATE_BOM_VERSION', payload: { bomId: bom.id, reason: newVersionReason.trim() } });
@@ -412,6 +417,8 @@
 						components={bom.components}
 						onReorder={handleReorder}
 						readOnly={bom.status === 'aprobado' || bom.status === 'obsoleto'}
+						{cells}
+						onCellChange={handleCellChange}
 					/>
 				</Card.Content>
 			</Card.Root>
@@ -448,7 +455,20 @@
 									<Table.Cell class="text-right font-mono tabular-nums">{comp.quantity}</Table.Cell>
 									<Table.Cell class="text-muted-foreground text-xs">{UDM_LABELS[comp.udm]}</Table.Cell>
 									<Table.Cell class="text-muted-foreground text-xs">{comp.operation || '---'}</Table.Cell>
-									<Table.Cell class="text-muted-foreground text-xs">{comp.cell}</Table.Cell>
+									<Table.Cell class="text-muted-foreground text-xs">
+										{#if bom.status === 'aprobado' || bom.status === 'obsoleto'}
+											{comp.cell}
+										{:else}
+											<select
+												value={comp.cell}
+												onchange={(e) => handleCellChange(comp.id, e.currentTarget.value)}
+												class="border-border bg-background text-foreground w-24 rounded border px-1 py-0.5 text-xs"
+											>
+												{#each cells as c (c)}<option value={c}>{c}</option>{/each}
+												{#if !cells.includes(comp.cell)}<option value={comp.cell}>{comp.cell}</option>{/if}
+											</select>
+										{/if}
+									</Table.Cell>
 									<Table.Cell>
 										{#if comp.hasCompleteData}
 											<CircleCheckBig class="text-primary size-4" />

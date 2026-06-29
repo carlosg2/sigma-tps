@@ -14,8 +14,10 @@
 	let {
 		node,
 		depth,
-		ctrl
-	}: { node: TreeNode; depth: number; ctrl: BomTreeController } = $props();
+		ctrl,
+		cells = [],
+		onCellChange
+	}: { node: TreeNode; depth: number; ctrl: BomTreeController; cells?: string[]; onCellChange?: (componentId: string, cell: string) => void } = $props();
 
 	const hasChildren = $derived(node.children.length > 0 || node.isKit);
 	const isExpanded = $derived(ctrl.expanded.has(node.id));
@@ -98,7 +100,18 @@
 		{/if}
 
 		<!-- Cell -->
-		<span class="text-muted-foreground w-16 shrink-0 text-xs">{node.cell}</span>
+		{#if !node.isKit && !ctrl.readOnly && cells.length > 0 && onCellChange}
+			<select
+				value={node.cell}
+				onclick={(e) => e.stopPropagation()}
+				onchange={(e) => onCellChange(node.id, e.currentTarget.value)}
+				class="border-border bg-background text-foreground w-20 shrink-0 rounded border px-1 py-0.5 text-xs"
+			>
+				{#each cells as c (c)}<option value={c}>{c}</option>{/each}
+			</select>
+		{:else}
+			<span class="text-muted-foreground w-16 shrink-0 text-xs">{node.cell}</span>
+		{/if}
 
 		<!-- Data status -->
 		{#if !node.isKit}
@@ -116,7 +129,7 @@
 	{#if hasChildren && isExpanded}
 		<div>
 			{#each node.children as child (child.id)}
-				<Self node={child} depth={depth + 1} {ctrl} />
+				<Self node={child} depth={depth + 1} {ctrl} {cells} {onCellChange} />
 			{/each}
 		</div>
 	{/if}

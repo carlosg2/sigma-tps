@@ -8,11 +8,15 @@
 	let {
 		components,
 		onReorder,
-		readOnly = false
+		readOnly = false,
+		cells = [],
+		onCellChange
 	}: {
 		components: BOMComponent[];
 		onReorder: (components: BOMComponent[]) => void;
 		readOnly?: boolean;
+		cells?: string[];
+		onCellChange?: (componentId: string, cell: string) => void;
 	} = $props();
 
 	const ctrl = new BomTreeController(() => components, onReorder, readOnly);
@@ -51,7 +55,7 @@
 	<div class="min-h-50">
 		{#if tree.length > 0}
 			{#each tree as node (node.id)}
-				<BomTreeNode {node} depth={0} {ctrl} />
+				<BomTreeNode {node} depth={0} {ctrl} {cells} {onCellChange} />
 			{/each}
 		{:else}
 			<div class="text-muted-foreground flex items-center justify-center py-8 text-sm">
