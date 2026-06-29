@@ -379,6 +379,11 @@ export interface ECN {
   affectedArticleIds: string[]
   affectedFolios: string[] // vehiculos en linea afectados
   inventoryImpact: string // hay inventario del componente anterior?
+  // Impacto cuantificado (LMAT 2.0)
+  costImpact?: number // impacto en costo (MXN)
+  timeImpact?: number // impacto en tiempo (horas)
+  additiveLabor?: number // horas de mano de obra para aditiva
+  additiveMaterials?: number // materiales para aditiva (MXN)
   // Aprobaciones
   approvals: ECNApproval[]
   // Aplicacion

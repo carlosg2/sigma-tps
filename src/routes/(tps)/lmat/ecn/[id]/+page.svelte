@@ -3,6 +3,7 @@
 	import { useStore } from '$lib/tps/store.svelte.js';
 	import { ECN_STATUS_LABELS, ECN_STATUS_COLORS } from '$lib/tps/constants.js';
 	import { formatDate } from '$lib/tps/utils.js';
+	import { formatCurrency } from '$lib/tps/utils.js';
 	import type { ECNStatus } from '$lib/tps/types.js';
 	import StatusBadge from '$lib/tps/components/status-badge.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -296,6 +297,27 @@
 								<p class="text-xs">{ecn.inventoryImpact}</p>
 							</div>
 						{/if}
+
+						<!-- Costo y tiempo -->
+						<Separator />
+						<div class="grid grid-cols-2 gap-2">
+							<div class="rounded-md border p-2">
+								<span class="text-muted-foreground text-xs">Impacto Costo</span>
+								<p class="text-sm font-mono tabular-nums">{ecn.costImpact ? formatCurrency(ecn.costImpact, 'MXN') : 'Por definir'}</p>
+							</div>
+							<div class="rounded-md border p-2">
+								<span class="text-muted-foreground text-xs">Impacto Tiempo</span>
+								<p class="text-sm font-mono tabular-nums">{ecn.timeImpact ? `${ecn.timeImpact} h` : 'Por definir'}</p>
+							</div>
+							<div class="rounded-md border p-2">
+								<span class="text-muted-foreground text-xs">MO Aditiva</span>
+								<p class="text-sm font-mono tabular-nums">{ecn.additiveLabor ? `${ecn.additiveLabor} h` : '-'}</p>
+							</div>
+							<div class="rounded-md border p-2">
+								<span class="text-muted-foreground text-xs">Materiales Aditiva</span>
+								<p class="text-sm font-mono tabular-nums">{ecn.additiveMaterials ? formatCurrency(ecn.additiveMaterials, 'MXN') : '-'}</p>
+							</div>
+						</div>
 					</Card.Content>
 				</Card.Root>
 

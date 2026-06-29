@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 	import { useStore } from '$lib/tps/store.svelte.js';
 	import {
 		BOM_STATUS_LABELS,
@@ -35,6 +36,9 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { cn } from '$lib/utils.js';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
+	import Copy from '@lucide/svelte/icons/copy';
+	import Download from '@lucide/svelte/icons/download';
+	import Printer from '@lucide/svelte/icons/printer';
 	import GitBranch from '@lucide/svelte/icons/git-branch';
 	import ListTree from '@lucide/svelte/icons/list-tree';
 	import Boxes from '@lucide/svelte/icons/boxes';
@@ -104,6 +108,44 @@
 		store.dispatch({ type: 'CREATE_BOM_VERSION', payload: { bomId: bom.id, reason: newVersionReason.trim() } });
 		newVersionReason = '';
 		showNewVersionModal = false;
+	}
+
+	function handleClone() {
+		if (!bom) return;
+		const newId = `bom-${Date.now()}`;
+		const components = bom.components.map((c, i) => ({ ...c, id: `${newId}-c${i}` }));
+		store.dispatch({
+			type: 'ADD_BOM',
+			payload: {
+				...bom,
+				id: newId,
+				specificationCode: `${bom.specificationCode}-COPIA`,
+				version: 1,
+				status: 'borrador',
+				maturityStatus: 'en_desarrollo',
+				components,
+				revisions: [],
+				specificationId: null,
+				createdAt: new Date().toISOString().split('T')[0],
+				updatedAt: new Date().toISOString().split('T')[0],
+				createdBy: app.currentUser.name
+			}
+		});
+		goto(`/lmat/boms/${newId}`);
+	}
+
+	function exportBOM() {
+		if (!bom) return;
+		const headers = ['Codigo', 'Descripcion', 'Cantidad', 'UdM', 'Celda', 'Operacion', 'Nivel'];
+		const rows = bom.components.map((c) => [c.articleCode, c.articleDescription, c.quantity, c.udm, c.cell, c.operation, c.level]);
+		const csv = [headers, ...rows].map((r) => r.map((v) => `"${v}"`).join(',')).join('\n');
+		const blob = new Blob([csv], { type: 'text/csv' });
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement('a');
+		link.href = url;
+		link.download = `BOM_${bom.specificationCode}.csv`;
+		link.click();
+		URL.revokeObjectURL(url);
 	}
 
 	function deptStatusIcon(status: string) {
@@ -191,6 +233,15 @@
 			</div>
 		</div>
 		<div class="flex items-center gap-2">
+			<Button size="sm" variant="outline" onclick={handleClone}>
+				<Copy data-icon="inline-start" /> Clonar
+			</Button>
+			<Button size="sm" variant="outline" onclick={exportBOM}>
+				<Download data-icon="inline-start" /> Excel
+			</Button>
+			<Button size="sm" variant="outline" onclick={() => window.print()}>
+				<Printer data-icon="inline-start" /> Imprimir
+			</Button>
 			<Button size="sm" onclick={() => (showNewVersionModal = true)}>
 				<Plus data-icon="inline-start" /> Crear Version
 			</Button>

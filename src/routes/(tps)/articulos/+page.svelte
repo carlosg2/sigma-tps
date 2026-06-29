@@ -27,6 +27,8 @@
 	import FileUp from '@lucide/svelte/icons/file-up';
 	import Plus from '@lucide/svelte/icons/plus';
 	import PackageIcon from '@lucide/svelte/icons/package';
+	import TableIcon from '@lucide/svelte/icons/table';
+	import LayoutGrid from '@lucide/svelte/icons/layout-grid';
 
 	type SortField = 'code' | 'description' | 'price' | 'completeness' | 'leadTimeDays' | 'status';
 	type SortDir = 'asc' | 'desc';
@@ -40,6 +42,7 @@
 	let groupFilter = $state<string>('todos');
 	let sortField = $state<SortField>('code');
 	let sortDir = $state<SortDir>('asc');
+	let viewMode = $state<'tabla' | 'tarjetas'>('tabla');
 
 	const filtered = $derived.by(() => {
 		let items = app.articles;
@@ -194,9 +197,14 @@
 					{/each}
 				</Select.Content>
 			</Select.Root>
+			<div class="ml-auto flex items-center gap-1 rounded-md border p-0.5">
+				<Button variant={viewMode === 'tabla' ? 'secondary' : 'ghost'} size="icon" class="size-7" onclick={() => (viewMode = 'tabla')}><TableIcon class="size-4" /></Button>
+				<Button variant={viewMode === 'tarjetas' ? 'secondary' : 'ghost'} size="icon" class="size-7" onclick={() => (viewMode = 'tarjetas')}><LayoutGrid class="size-4" /></Button>
+			</div>
 		</div>
 
 		<!-- Table -->
+		{#if viewMode === 'tabla'}
 		<Table.Root>
 			<Table.Header>
 				<Table.Row>
@@ -278,6 +286,33 @@
 				{/each}
 			</Table.Body>
 		</Table.Root>
+		{:else}
+			<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+				{#each filtered as article (article.id)}
+					<a href="/articulos/{article.id}" class="group">
+						<Card.Root class="h-full transition-colors hover:bg-muted/50">
+							<Card.Header>
+								<Card.Description class="font-mono text-xs">{article.code}</Card.Description>
+								<Card.Title class="line-clamp-2 text-sm">{article.description}</Card.Title>
+								<Card.Action>
+									<StatusBadge label={ARTICLE_STATUS_LABELS[article.status]} colorClass={ARTICLE_STATUS_COLORS[article.status]} />
+								</Card.Action>
+							</Card.Header>
+							<Card.Content class="space-y-2">
+								<div class="flex items-center justify-between text-xs">
+									<span class="text-muted-foreground">{article.supplierName || 'Sin proveedor'}</span>
+									<span class="font-mono tabular-nums">{article.price > 0 ? formatCurrency(article.price, article.currency) : '---'}</span>
+								</div>
+								<div class="flex items-center gap-2">
+									<Progress value={article.completeness} max={100} class="h-1.5" />
+									<span class="text-muted-foreground text-xs tabular-nums">{article.completeness}%</span>
+								</div>
+							</Card.Content>
+						</Card.Root>
+					</a>
+				{/each}
+			</div>
+		{/if}
 
 		{#if filtered.length === 0}
 			<Empty.Root class="border-0">

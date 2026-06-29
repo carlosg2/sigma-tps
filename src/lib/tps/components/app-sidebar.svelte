@@ -19,6 +19,9 @@
 	import Users from '@lucide/svelte/icons/users';
 	import Car from '@lucide/svelte/icons/car';
 	import ArrowRightLeft from '@lucide/svelte/icons/arrow-right-left';
+	import Scissors from '@lucide/svelte/icons/scissors';
+	import Wand from '@lucide/svelte/icons/wand-sparkles';
+	import Tablet from '@lucide/svelte/icons/tablet';
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 
@@ -40,7 +43,10 @@
 				{ label: 'ECN', href: '/lmat/ecn', icon: GitBranch },
 				{ label: 'Kits Surtimiento', href: '/lmat/kits', icon: Boxes },
 				{ label: 'Validacion', href: '/lmat/validacion', icon: Users },
-				{ label: 'Where-Used', href: '/lmat/where-used', icon: Search }
+				{ label: 'Where-Used', href: '/lmat/where-used', icon: Search },
+				{ label: 'Wizard Producto', href: '/lmat/wizard', icon: Wand },
+				{ label: 'Trazabilidad Corte', href: '/lmat/corte', icon: Scissors },
+				{ label: 'Recepcion Vehiculos', href: '/lmat/recepcion', icon: Tablet }
 			]
 		},
 		{
