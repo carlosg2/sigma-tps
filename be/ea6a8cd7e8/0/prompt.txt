@@ -1,0 +1,11 @@
+En el sidebar mueve el menu de Inicio con el elemento Dashboard hasta el final y renombralo a que se llame Implementacion en vez de Inicio. 
+
+la pantalla principal en la ruta de "/" debe ser /lmat
+
+tienes dudas?
+
+---
+
+en el sidebar, dentro del grupo LMAT del sidebar falta las rutas de importar y cambio masivo
+
+y el grupo LMAT se deberia de lammar Ingeniería
