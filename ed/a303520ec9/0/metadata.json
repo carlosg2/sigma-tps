@@ -1,0 +1,76 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "eda303520ec9",
+  "session_id": "7793df3a-6b88-4273-aeaa-9c3a3a2c987a",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-29T10:20:42.537902Z",
+  "branch": "main",
+  "checkpoints_count": 4,
+  "save_step_count": 3,
+  "files_touched": [
+    "src/lib/tps/components/app-sidebar.svelte",
+    "src/lib/tps/components/site-header.svelte",
+    "src/lib/tps/types.ts",
+    "src/routes/(tps)/articulos/+page.svelte",
+    "src/routes/(tps)/lmat/boms/[id]/+page.svelte",
+    "src/routes/(tps)/lmat/corte/+page.svelte",
+    "src/routes/(tps)/lmat/ecn/[id]/+page.svelte",
+    "src/routes/(tps)/lmat/recepcion/+page.svelte",
+    "src/routes/(tps)/lmat/wizard/+page.svelte"
+  ],
+  "agent": "Copilot CLI",
+  "model": "",
+  "turn_id": "8512936f5f32",
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-29T10:20:42.527733Z",
+    "agent_lines": 515,
+    "agent_removed": 3,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 515,
+    "total_lines_changed": 518,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 402,
+      "agent_lines_removed": 3
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 515,
+      "agent_lines_removed": 3
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 515,
+      "agent_lines_removed": 3
+    }
+  ]
+}

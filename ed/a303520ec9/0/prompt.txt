@@ -1,0 +1,85 @@
+evalua estos gaps e identifica lo que falta por eimplementar en el prooyecto sigma-tps:
+
+No,Codigo,Area,Nombre,Descripcion,Capacidades,Referencias Minutas,Alcance
+33,GAP-ING-001,Ingenieria,Explorador de Listas de Materiales (BOM),"Desarrollo de una pantalla interactiva para la consulta, creacion y mantenimiento de Listas de Materiales.","a) Navegacion jerarquica tipo arbol expandible (Ensamble -> Sub-ensamble -> Componente) para BOMs de hasta 800+ lineas
+b) Separacion de BOM de Ingenieria y BOM de Surtimiento (distribucion por kits/celdas para Almacen) en vista de doble capa conmutable
+c) Control de revisiones con historial, comparativo entre versiones y adjunto de documentos PDF
+d) Estatus de madurez del BOM (Borrador, En desarrollo, Estabilizacion, Liberado, Obsoleto)
+e) Herramienta de cambios masivos con propagacion automatica de versiones
+f) Duplicacion/clonacion de BOMs existentes para generar variantes rapidas
+g) Vinculacion de archivos de diseno (DXF, STEP, PDF) almacenados en la nube
+h) Visualizacion selectiva configurable para ocultar sub-componentes de corte
+i) Exportacion a Excel e impresion con formato configurable
+j) Consulta de trazabilidad inversa ('Donde se usa?') desde cualquier componente","Ingenieria 1 (1.1-1.8); Ingenieria 2 (1.3, 1.4, 1.8, 1.12); Ingenieria P3 1 (1.2, 1.4, 1.8, 1.9, 1.12); Ingenieria P3 2 (1.1, 1.4, 1.7, 1.8, 1.11)",Maqueta funcional elaborada (Pantalla_Explorador_BOM.html)
+34,GAP-ING-002,Ingenieria,Motor de Busqueda Semantica en Catalogos,Desarrollo de un buscador inteligente para el catalogo de articulos y especificaciones tecnicas.,"a) Busqueda por descripcion libre, independiente del orden de palabras, con coincidencia semantica (no solo exacta)
+b) Filtros jerarquicos anidados por Marca, Modelo, Ano y Nivel de blindaje, con cascadeo automatico
+c) Resultados en vista de tabla y vista de tarjetas, con panel de detalle lateral
+d) Autocompletado predictivo con sugerencias contextuales
+e) Soporte para busqueda por numero de parte, codigo alterno de proveedor o descripcion del articulo","Ingenieria 1 (1.1, GAP #2); Ingenieria P3 2 (1.6)",Maqueta funcional elaborada (Pantalla_Buscador_Catalogo.html)
+35,GAP-ING-003,Ingenieria,Formulario de Solicitud de Cambio de Ingenieria (ECN/ECO),Desarrollo de un formulario integrado al Explorador de BOM (GAP-ING-001) para gestionar cambios de ingenieria y aditivas en linea de produccion.,"a) Registro formal de Engineering Change Notice (ECN) vinculado al BOM y al VIN cuando aplique
+b) Identificacion de areas impactadas con notificacion automatica a los responsables
+c) Calculo y registro del impacto en costo y tiempo por cada cambio o aditiva
+d) Flujo de autorizacion electronica con aprobadores por area
+e) Registro separado de horas y materiales para aditivas de accesorios (sirenas, camaras, interiores)
+f) Registro de efectividad del cambio (a partir de que folio/unidad aplica)","Ingenieria 1 (1.6); Produccion (1.7, 1.9); Manufactura (1.7); Calidad (1.8)","Se integra como modulo dentro del Explorador de BOM existente (GAP-ING-001), no requiere pantalla independiente"
+36,GAP-ING-004,Ingenieria,Workflow de Alta de Articulos Multi-Departamento,"Desarrollo de un flujo electronico para el alta de articulos nuevos en el catalogo, integrado al Buscador de Catalogos (GAP-ING-002).","a) Formulario de solicitud de alta con campos segmentados por departamento responsable (Ingenieria: especificaciones tecnicas; Compras: proveedor y precio; Almacen: ubicacion y unidades)
+b) Asignacion secuencial automatica: al completar una seccion, el sistema notifica al siguiente departamento
+c) Barra de progreso visible con estatus por etapa
+d) Notificaciones electronicas a los responsables de cada departamento cuando les toca completar su parte
+e) Trazabilidad del flujo completo con registro de fechas y responsables por etapa","Ingenieria P3 2 (1.3); Ingenieria 2 (1.10); Ingenieria P3 1 (1.5, 1.6)","Se integra como funcionalidad dentro del Buscador de Catalogos existente (GAP-ING-002), no requiere pantalla independiente"
+37,GAP-ING-005,Ingenieria,Pantalla de Trazabilidad de Corte por VIN,Desarrollo de una pantalla para uso en piso de produccion que permita trazabilidad de corte.,"a) Registrar al momento de fabricacion el numero de revision del programa de corte utilizado (ej. Rev. 04 - Corte Piso), vinculado al VIN de la unidad
+b) Asociar la distribucion de piezas en la placa de acero (nesting) a la version del programa y al folio de la unidad
+c) Consultar, dado un VIN, que revision de cada programa de corte se utilizo
+d) Consultar, dado un programa de corte, en que VINs se aplico cada revision
+e) Soporte para los dos metodos de corte existentes (por programa y por numero de parte)","Ingenieria P3 1 (1.8, GAP #8); Ingenieria 2 (1.8); Ingenieria P3 2 (1.7)",Pantalla independiente. Requiere maqueta
+38,GAP-ING-006,Ingenieria,Interfaz Unificada de Gestion de Producto (Wizard),Desarrollo de una interfaz tipo asistente (wizard) que consolide el flujo de alta y gestion de producto en una sola pantalla secuencial.,"a) Paso 1 - Datos tecnicos generales del producto (marca, modelo, version, ano)
+b) Paso 2 - Caratula de blindaje (niveles, materiales, certificaciones)
+c) Paso 3 - Detalle de componentes / BOM inicial
+d) Paso 4 - Validacion colaborativa por departamento: Ingenieria -> Manufactura -> Compras -> Almacen -> Ingenieria valida
+e) Indicadores de avance por seccion y por departamento responsable
+f) Eliminacion de la navegacion entre multiples modulos desconectados","Ingenieria P3 2 (1.9, 1.3); Ingenieria P3 1 (1.5); Ingenieria 1 (1.1)",Pantalla independiente. Requiere maqueta
+39,GAP-ING-007,Ingenieria,Aplicacion Movil de Recepcion y Evaluacion de Vehiculos,Desarrollo de una aplicacion para tablet destinada a la recepcion e inspeccion de vehiculos nuevos (prototipos) en planta.,"a) Checklist digital de recepcion configurable por tipo de vehiculo
+b) Registro fotografico de hallazgos vinculado a cada punto de inspeccion
+c) Llenado de designaciones (borradores de especificaciones para prototipos) directamente en el dispositivo
+d) Sincronizacion con el ERP para consulta de especificaciones y registro de resultados
+e) Firma electronica de recepcion","Ingenieria 1 (1.2, Nice to Have #1); Calidad (1.1); Manufactura (1.4)",Aplicacion independiente para dispositivo movil. Requiere maqueta
+
+--
+estos gaps hacen referencia a documentos de el proyecto presentacion. ahi puedes encontrar mas detalles si es necesario.
+
+---
+
+solo sigma-tps. tps-alpha no
+
+---
+
+si
+
+---
+
+si
+
+---
+
+GET http://localhost:5176/node_modules/.vite/deps/@lucide_svelte_icons_save.js?v=7199b412 net::ERR_ABORTED 504 (Outdated Optimize Dep)
+a1:62743 The next HMR update will cause the page to reload
+warn @ client.js?v=7199b412:3384
+handle_error @ client.js?v=7199b412:2173
+_hydrate @ client.js?v=7199b412:3032
+await in _hydrate
+start @ client.js?v=7199b412:399
+await in start
+(anonymous) @ a1:62743
+Promise.then
+(anonymous) @ a1:62742
+app.js:168 TypeError: Failed to fetch dynamically imported module: http://localhost:5176/.svelte-kit/generated/client/nodes/54.js?t=1782724120214
+(anonymous) @ app.js:168
+handle_error @ client.js?v=7199b412:2180
+_hydrate @ client.js?v=7199b412:3032
+await in _hydrate
+start @ client.js?v=7199b412:399
+await in start
+(anonymous) @ a1:62743
+Promise.then
+(anonymous) @ a1:62742
++page.svelte:34  GET http://localhost:5176/node_modules/.vite/deps/@lucide_svelte_icons_image.js?v=7199b412 net::ERR_ABORTED 504 (Outdated Optimize Dep)
