@@ -1,0 +1,17 @@
+se recibio un nuevo requirimientos para la ruta de /especificacions
+
+las especificaciones tendran sus propio catalogo de articulos (diferentes a los articulos del BOM) y debe ser capar de editar, clonar, etc. similar a lo que se hace con los BOMs.
+
+clona la ruta actual en una ruta que se llame /especificaciones-v2
+
+y refactoriza para que cumbra los requirimientos del nuevo catalogo de especificaciones. (anexado) y tambien debe de tener la capacidad de tener autorizaciones y descargar pdf y exportar a pdf.
+
+tienes dudas?
+
+---
+
+incluye el ejemplo real de especificacion que se encuentra en este pdf
+
+---
+
+recibi un nuevo pdf con una nueva especificacion en pdf para ser agregada tambien. agregala completa

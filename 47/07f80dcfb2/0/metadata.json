@@ -1,0 +1,93 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "4707f80dcfb2",
+  "session_id": "ec083a94-3f52-4c85-a9eb-0f7ed8617fb0",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-29T23:05:47.887481Z",
+  "branch": "main",
+  "checkpoints_count": 3,
+  "save_step_count": 3,
+  "files_touched": [
+    "scripts/gen-spec-v2-catalog.ts",
+    "src/lib/tps/components/app-sidebar.svelte",
+    "src/lib/tps/components/site-header.svelte",
+    "src/lib/tps/constants.ts",
+    "src/lib/tps/spec-v2/catalog-grupos.ts",
+    "src/lib/tps/spec-v2/catalog-sections.ts",
+    "src/lib/tps/spec-v2/constants.ts",
+    "src/lib/tps/spec-v2/pdf.ts",
+    "src/lib/tps/spec-v2/seed.ts",
+    "src/lib/tps/spec-v2/store.svelte.ts",
+    "src/lib/tps/spec-v2/types.ts",
+    "src/lib/tps/types.ts",
+    "src/routes/(tps)/especificaciones-v2/+layout.svelte",
+    "src/routes/(tps)/especificaciones-v2/+page.svelte",
+    "src/routes/(tps)/especificaciones-v2/[id]/+page.svelte",
+    "src/routes/(tps)/especificaciones-v2/articulos/+page.svelte",
+    "src/routes/(tps)/especificaciones-v2/nueva/+page.svelte"
+  ],
+  "agent": "Copilot CLI",
+  "model": "",
+  "turn_id": "1fad1a2d9e67",
+  "checkpoint_transcript_start": 2426,
+  "transcript_lines_at_start": 2426,
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "session_metrics": {
+    "turn_count": 11
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-29T23:05:47.826928Z",
+    "agent_lines": 5492,
+    "agent_removed": 0,
+    "human_added": 635,
+    "human_modified": 14,
+    "human_removed": 0,
+    "total_committed": 6134,
+    "total_lines_changed": 6141,
+    "agent_percentage": 89.431688650057,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 760,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "documentacion/especificaciones/Observaciones.txt": 760
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 6497,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 240,
+      "user_lines_removed": 7,
+      "agent_lines_added": 6497,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "src/lib/tps/spec-v2/pdf.ts": 38,
+        "src/lib/tps/spec-v2/seed.ts": 136,
+        "src/lib/tps/spec-v2/store.svelte.ts": 1,
+        "src/lib/tps/spec-v2/types.ts": 13,
+        "src/routes/(tps)/especificaciones-v2/[id]/+page.svelte": 52
+      },
+      "user_removed_per_file": {
+        "src/lib/tps/spec-v2/pdf.ts": 6,
+        "src/lib/tps/spec-v2/store.svelte.ts": 1
+      }
+    }
+  ]
+}
