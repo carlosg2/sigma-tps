@@ -18,7 +18,7 @@
 	<Picker.Root {submenu}>
 		<Picker.Trigger {submenu}>
 			<div class="flex flex-col justify-start text-left">
-				<div class="text-muted-foreground text-xs">Radius</div>
+				<div class="text-muted-foreground text-xs">Radio</div>
 				<div class="text-foreground text-sm font-medium">{currentRadius?.label}</div>
 			</div>
 			<div

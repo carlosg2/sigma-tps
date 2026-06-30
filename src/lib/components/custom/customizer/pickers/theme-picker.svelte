@@ -29,7 +29,7 @@
 	<Picker.Root {submenu}>
 		<Picker.Trigger {submenu}>
 			<div class="flex flex-col justify-start text-left">
-				<div class="text-muted-foreground text-xs">Theme</div>
+				<div class="text-muted-foreground text-xs">Tema</div>
 				<div class="text-foreground text-sm font-medium">{currentTheme?.title}</div>
 			</div>
 			{#if currentTheme}
@@ -60,7 +60,7 @@
 									{/if}
 									<div class="flex flex-col">
 										<div>{theme.title}</div>
-										<div class="text-muted-foreground text-xs">Match base color</div>
+										<div class="text-muted-foreground text-xs">Coincidir con el color base</div>
 									</div>
 								</div>
 							</Picker.RadioItem>

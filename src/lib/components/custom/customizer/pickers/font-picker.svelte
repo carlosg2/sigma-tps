@@ -39,7 +39,7 @@
 	const currentBodyFont = $derived(FONTS.find((f) => f.value === designSystem.font));
 	const inheritsBodyFont = $derived(param === "fontHeading" && currentValue === "inherit");
 	const displayFontName = $derived(inheritsBodyFont ? currentBodyFont?.name : currentFont?.name);
-	const inheritFontLabel = $derived(currentBodyFont ? currentBodyFont.name : "Body font");
+	const inheritFontLabel = $derived(currentBodyFont ? currentBodyFont.name : "Fuente del cuerpo");
 	const previewFontFamily = $derived(
 		currentFont?.font?.style?.fontFamily ?? currentBodyFont?.font?.style?.fontFamily
 	);

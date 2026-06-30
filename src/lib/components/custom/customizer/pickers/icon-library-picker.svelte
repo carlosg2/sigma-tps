@@ -20,7 +20,7 @@
 	<Picker.Root {submenu}>
 		<Picker.Trigger {submenu}>
 			<div class="flex flex-col justify-start text-left">
-				<div class="text-muted-foreground text-xs">Icons</div>
+				<div class="text-muted-foreground text-xs">Iconos</div>
 				<div class="text-foreground text-sm font-medium capitalize">{currentIconLibrary?.name}</div>
 			</div>
 		</Picker.Trigger>

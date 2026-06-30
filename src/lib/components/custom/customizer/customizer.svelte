@@ -30,10 +30,10 @@
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger
 		class={cn(buttonVariants({ variant: "ghost", size: "icon" }), "size-8")}
-		title="Customize"
+		title="Personalizar"
 	>
 		<SlidersHorizontalIcon class="size-4" />
-		<span class="sr-only">Customizer</span>
+		<span class="sr-only">Personalizador</span>
 	</DropdownMenu.Trigger>
 
 	<DropdownMenu.Content align="end" class="dark min-w-64 p-0" preventScroll={false}>
@@ -43,8 +43,8 @@
 			<ThemePicker submenu />
 			<ChartColorPicker submenu />
 			<IconLibraryPicker submenu />
-			<FontPicker submenu label="Heading" param="fontHeading" />
-			<FontPicker submenu label="Font" param="font" />
+			<FontPicker submenu label="Encabezado" param="fontHeading" />
+			<FontPicker submenu label="Fuente" param="font" />
 			<FontScalePicker submenu />
 			<RadiusPicker submenu />
 			<MenuColorPicker submenu />
@@ -63,9 +63,9 @@
 				class="justify-between"
 			>
 				<div class="flex flex-col justify-start text-left">
-					<div class="text-muted-foreground text-xs">Mode</div>
+					<div class="text-muted-foreground text-xs">Modo</div>
 					<div class="text-foreground text-sm font-medium">
-						Switch to {mode.current === "dark" ? "Light" : "Dark"} Mode
+						Cambiar a modo {mode.current === "dark" ? "claro" : "oscuro"}
 					</div>
 				</div>
 				{#if mode.current === "dark"}
@@ -88,7 +88,7 @@
 			>
 				<div class="flex items-center gap-2">
 					<UndoIcon class="size-4" />
-					<span>Undo</span>
+					<span>Deshacer</span>
 				</div>
 				<div class="hidden items-center gap-1 md:flex">
 					<kbd class="bg-foreground/10 text-foreground rounded px-1.5 py-0.5 text-xs">{isMac.cmdOrCtrl}</kbd>
@@ -103,7 +103,7 @@
 			>
 				<div class="flex items-center gap-2">
 					<RedoIcon class="size-4" />
-					<span>Redo</span>
+					<span>Rehacer</span>
 				</div>
 				<div class="hidden items-center gap-1 md:flex">
 					<kbd class="bg-foreground/10 text-foreground rounded px-1.5 py-0.5 text-xs">⇧</kbd>

@@ -41,7 +41,7 @@
 	<Picker.Root {submenu}>
 		<Picker.Trigger {submenu}>
 			<div class="flex flex-col justify-start text-left">
-				<div class="text-muted-foreground text-xs">Chart Color</div>
+				<div class="text-muted-foreground text-xs">Color de gráficas</div>
 				<div class="text-foreground text-sm font-medium">{currentChartColor?.title}</div>
 			</div>
 			{#if mode.current && currentChartColor}

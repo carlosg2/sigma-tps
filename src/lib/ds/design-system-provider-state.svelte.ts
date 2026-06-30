@@ -514,8 +514,17 @@ function randomItem<T>(array: readonly T[]): T {
 
 export const DesignSystemContext = new Context<DesignSystemState>("DesignSystemContext");
 
+let fallbackDesignSystemState: IDesignSystemState | null = null;
+
 export function useDesignSystem(): IDesignSystemState {
-	return DesignSystemContext.get();
+	try {
+		return DesignSystemContext.get();
+	} catch {
+		if (!fallbackDesignSystemState) {
+			fallbackDesignSystemState = new DesignSystemState();
+		}
+		return fallbackDesignSystemState;
+	}
 }
 
 export function setupDesignSystem(): IDesignSystemState {

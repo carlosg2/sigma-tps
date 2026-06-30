@@ -21,7 +21,7 @@
 	<Picker.Root {submenu}>
 		<Picker.Trigger {submenu}>
 			<div class="flex flex-col justify-start text-left">
-				<div class="text-muted-foreground text-xs">Style</div>
+				<div class="text-muted-foreground text-xs">Estilo</div>
 				<div class="text-foreground text-sm font-medium">{currentStyle?.title}</div>
 			</div>
 		</Picker.Trigger>

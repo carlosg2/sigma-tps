@@ -49,7 +49,7 @@
 {#if axesEntries.length > 0}
 	<div class="flex flex-col gap-3 px-3 py-2">
 		<div class="flex items-center justify-between">
-			<span class="text-muted-foreground text-xs font-medium">Variable Axes</span>
+			<span class="text-muted-foreground text-xs font-medium">Ejes variables</span>
 			{#if hasNonDefaultValues}
 				<Button
 					variant="ghost"
@@ -57,7 +57,7 @@
 					class="text-muted-foreground h-auto px-1 py-0 text-[10px]"
 					onclick={() => handleReset()}
 				>
-					Reset
+					Restablecer
 				</Button>
 			{/if}
 		</div>

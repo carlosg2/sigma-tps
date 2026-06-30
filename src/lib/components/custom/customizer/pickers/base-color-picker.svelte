@@ -21,7 +21,7 @@
 	<Picker.Root {submenu}>
 		<Picker.Trigger {submenu}>
 			<div class="flex flex-col justify-start text-left">
-				<div class="text-muted-foreground text-xs">Base Color</div>
+				<div class="text-muted-foreground text-xs">Color base</div>
 				<div class="text-foreground text-sm font-medium">{currentBaseColor?.title}</div>
 			</div>
 			<div
@@ -58,7 +58,7 @@
 				<Picker.Separator />
 				<Picker.Group>
 					<Picker.Item closeOnSelect={false} onclick={() => setMode(mode.current === "dark" ? "light" : "dark")}>
-						Switch to {mode.current === "dark" ? "Light" : "Dark"} Mode
+						Cambiar a modo {mode.current === "dark" ? "claro" : "oscuro"}
 					</Picker.Item>
 				</Picker.Group>
 			</Picker.RadioGroup>

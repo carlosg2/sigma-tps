@@ -17,8 +17,8 @@
 		class="border-foreground/10 bg-muted/50 h-[calc(--spacing(13.5))] w-35 touch-manipulation justify-between rounded-xl border select-none focus-visible:border-transparent focus-visible:ring-1 sm:rounded-lg md:w-full md:rounded-lg md:border-transparent md:bg-transparent md:pr-3.5! md:pl-2!"
 	>
 		<div class="flex flex-col justify-start text-left">
-			<div class="text-muted-foreground text-xs">Reset</div>
-			<div class="text-foreground text-sm font-medium">Start Over</div>
+			<div class="text-muted-foreground text-xs">Restablecer</div>
+			<div class="text-foreground text-sm font-medium">Empezar de nuevo</div>
 		</div>
 		<Undo2Icon class="size-4" />
 	</DropdownMenu.Item>
@@ -30,8 +30,8 @@
 		class="border-foreground/10 bg-muted/50 h-[calc(--spacing(13.5))] w-35 touch-manipulation justify-between rounded-xl border select-none focus-visible:border-transparent focus-visible:ring-1 sm:rounded-lg md:flex-none md:border-transparent md:bg-transparent md:pr-3.5! md:pl-2!"
 	>
 		<div class="flex flex-col justify-start text-left">
-			<div class="text-muted-foreground text-xs">Reset</div>
-			<div class="text-foreground text-sm font-medium">Start Over</div>
+			<div class="text-muted-foreground text-xs">Restablecer</div>
+			<div class="text-foreground text-sm font-medium">Empezar de nuevo</div>
 		</div>
 		<Undo2Icon class="size-4" />
 	</Button>

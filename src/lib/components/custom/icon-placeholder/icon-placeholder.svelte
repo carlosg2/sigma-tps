@@ -34,38 +34,46 @@
 		...restProps
 	}: Props & Omit<SvgProps, "class"> = $props();
 
-	const designSystem = useDesignSystem();
+	const designSystem = (() => {
+		try {
+			return useDesignSystem();
+		} catch {
+			return null;
+		}
+	})();
+
+	const iconLibrary = designSystem?.iconLibrary ?? "lucide";
 </script>
 
 {#snippet PlaceholderIcon()}
 	<SquareIcon class={className} {...restProps as unknown as object} />
 {/snippet}
 
-{#if designSystem.iconLibrary === "hugeicons"}
+{#if iconLibrary === "hugeicons"}
 	<HugeiconsIcon icon={hugeicons} {className} {...restProps as unknown as object}>
 		{#snippet placeholder()}
 			{@render PlaceholderIcon()}
 		{/snippet}
 	</HugeiconsIcon>
-{:else if designSystem.iconLibrary === "lucide"}
+{:else if iconLibrary === "lucide"}
 	<LucideIcon icon={lucide} class={className} {...restProps as unknown as object}>
 		{#snippet placeholder()}
 			{@render PlaceholderIcon()}
 		{/snippet}
 	</LucideIcon>
-{:else if designSystem.iconLibrary === "tabler"}
+{:else if iconLibrary === "tabler"}
 	<TablerIcon icon={tabler} class={className} {...restProps as unknown as object}>
 		{#snippet placeholder()}
 			{@render PlaceholderIcon()}
 		{/snippet}
 	</TablerIcon>
-{:else if designSystem.iconLibrary === "phosphor"}
+{:else if iconLibrary === "phosphor"}
 	<PhosphorIcon icon={phosphor} class={className} {...restProps as unknown as object}>
 		{#snippet placeholder()}
 			{@render PlaceholderIcon()}
 		{/snippet}
 	</PhosphorIcon>
-{:else if designSystem.iconLibrary === "remixicon"}
+{:else if iconLibrary === "remixicon"}
 	<RemixiconIcon icon={remixicon} class={className} {...restProps as unknown as object}>
 		{#snippet placeholder()}
 			{@render PlaceholderIcon()}
