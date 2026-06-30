@@ -1,0 +1,76 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "117eb21f3cd2",
+  "session_id": "ce4b5b42-257f-478c-a94b-6532876e30e7",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-30T02:13:48.111687Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/lib/components/custom/customizer/customizer.svelte",
+    "src/lib/components/custom/customizer/pickers/base-color-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/chart-color-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/font-axes-sliders.svelte",
+    "src/lib/components/custom/customizer/pickers/font-features-toggles.svelte",
+    "src/lib/components/custom/customizer/pickers/font-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/font-scale-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/icon-library-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/menu-accent-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/menu-color-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/radius-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/random-button.svelte",
+    "src/lib/components/custom/customizer/pickers/reset-button.svelte",
+    "src/lib/components/custom/customizer/pickers/style-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/theme-picker.svelte"
+  ],
+  "agent": "Copilot CLI",
+  "model": "",
+  "turn_id": "d35514af54fe",
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-30T02:13:48.106646Z",
+    "agent_lines": 24,
+    "agent_removed": 31,
+    "human_added": 17,
+    "human_modified": 7,
+    "human_removed": 0,
+    "total_committed": 48,
+    "total_lines_changed": 86,
+    "agent_percentage": 63.95348837209303,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 24,
+      "user_lines_removed": 7,
+      "agent_lines_added": 31,
+      "agent_lines_removed": 31,
+      "user_added_per_file": {
+        "src/lib/components/custom/icon-placeholder/icon-placeholder.svelte": 14,
+        "src/lib/ds/design-system-provider-state.svelte.ts": 10
+      },
+      "user_removed_per_file": {
+        "src/lib/components/custom/icon-placeholder/icon-placeholder.svelte": 6,
+        "src/lib/ds/design-system-provider-state.svelte.ts": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+traduce el customizer del design system. Ejemplo Style > Estilo, Base Color > Color Base, Graph Color > Color de Gráficas, etc..

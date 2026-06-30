@@ -1,0 +1,39 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "117eb21f3cd2",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/lib/components/custom/customizer/customizer.svelte",
+    "src/lib/components/custom/customizer/pickers/base-color-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/chart-color-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/font-axes-sliders.svelte",
+    "src/lib/components/custom/customizer/pickers/font-features-toggles.svelte",
+    "src/lib/components/custom/customizer/pickers/font-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/font-scale-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/icon-library-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/menu-accent-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/menu-color-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/radius-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/random-button.svelte",
+    "src/lib/components/custom/customizer/pickers/reset-button.svelte",
+    "src/lib/components/custom/customizer/pickers/style-picker.svelte",
+    "src/lib/components/custom/customizer/pickers/theme-picker.svelte"
+  ],
+  "sessions": [
+    {
+      "metadata": "/11/7eb21f3cd2/0/metadata.json",
+      "transcript": "/11/7eb21f3cd2/0/full.jsonl",
+      "content_hash": "/11/7eb21f3cd2/0/content_hash.txt",
+      "prompt": "/11/7eb21f3cd2/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  }
+}
