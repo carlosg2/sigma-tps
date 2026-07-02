@@ -1,0 +1,9 @@
+tenemos esta nueva aplicacion html que necesitamos implementar en nuestro proyecto tps, asegurate de replicar la funcionalidad con nuestro sistema shadcn-svelte customizado (layout, golden nuggets, design system, etc) y agregar las pantallas baso un grupo que se llame Compras en el sidebar
+
+si tiernes dudas, pregunta.
+
+---
+
+todas nuevas rutas recreadas no usaron el sistema de shacn-svelte por completo, veo muchas incosistencias, toma como referencia el /dashboard-01 para mejorar el diseño y /ds (design sistem con ejemplos de todos los componentes, muchos golden nuggets en preview, preview2, asi como ejemplos de cada componente ) y tienes un skill de shadcn-svelte. 
+
+La mison es refactoriza el dieño siguiendo el dashboard donde aplique y todos los golden nuggets como referencias

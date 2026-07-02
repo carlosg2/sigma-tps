@@ -1,0 +1,71 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "741b162f524a",
+  "session_id": "ec083a94-3f52-4c85-a9eb-0f7ed8617fb0",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-02T22:18:18.575377Z",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "save_step_count": 2,
+  "files_touched": [
+    "src/lib/tps/components/app-sidebar.svelte",
+    "src/lib/tps/components/site-header.svelte",
+    "src/lib/tps/compras/constants.ts",
+    "src/lib/tps/compras/seed.ts",
+    "src/lib/tps/compras/store.svelte.ts",
+    "src/lib/tps/compras/types.ts",
+    "src/routes/(tps)/compras/+layout.svelte",
+    "src/routes/(tps)/compras/+page.svelte",
+    "src/routes/(tps)/compras/alertas/+page.svelte",
+    "src/routes/(tps)/compras/bandeja/+page.svelte",
+    "src/routes/(tps)/compras/bitacora/+page.svelte",
+    "src/routes/(tps)/compras/configuracion/+page.svelte",
+    "src/routes/(tps)/compras/requisiciones/+page.svelte"
+  ],
+  "agent": "Copilot CLI",
+  "model": "",
+  "turn_id": "c314d6d65ca3",
+  "checkpoint_transcript_start": 2855,
+  "transcript_lines_at_start": 2855,
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "session_metrics": {
+    "turn_count": 13
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-02T22:18:18.515208Z",
+    "agent_lines": 1374,
+    "agent_removed": 1,
+    "human_added": 2801,
+    "human_modified": 219,
+    "human_removed": 0,
+    "total_committed": 4394,
+    "total_lines_changed": 4395,
+    "agent_percentage": 31.285551763367465,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 1028,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "documentacion/compras/Compras.html": 1028
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2389,
+      "agent_lines_removed": 1
+    }
+  ]
+}
