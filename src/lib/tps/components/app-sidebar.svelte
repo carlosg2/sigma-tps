@@ -20,6 +20,17 @@
 	import Car from '@lucide/svelte/icons/car';
 	import ArrowRightLeft from '@lucide/svelte/icons/arrow-right-left';
 	import ClipboardList from '@lucide/svelte/icons/clipboard-list';
+	import ShoppingCart from '@lucide/svelte/icons/shopping-cart';
+	import Inbox from '@lucide/svelte/icons/inbox';
+	import History from '@lucide/svelte/icons/history';
+	import SlidersHorizontal from '@lucide/svelte/icons/sliders-horizontal';
+	import ListChecks from '@lucide/svelte/icons/list-checks';
+	import Bell from '@lucide/svelte/icons/bell';
+	import Warehouse from '@lucide/svelte/icons/warehouse';
+	import CartFlatbed from '@lucide/svelte/icons/truck';
+	import QrCode from '@lucide/svelte/icons/qr-code';
+	import Zap from '@lucide/svelte/icons/zap';
+	import ClipboardCheck from '@lucide/svelte/icons/clipboard-check';
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 
@@ -58,6 +69,28 @@
 			items: [
 				{ label: 'Dashboard', href: '/proyectos', icon: FolderKanban },
 				{ label: 'Nuevo Proyecto', href: '/proyectos/nuevo', icon: Plus }
+			]
+		},
+		{
+			label: 'Compras',
+			items: [
+				{ label: 'Inicio', href: '/compras', icon: ShoppingCart },
+				{ label: 'Bandeja Autorización', href: '/compras/bandeja', icon: Inbox },
+				{ label: 'Bitácora de Autorizaciones', href: '/compras/bitacora', icon: History },
+				{ label: 'Config. Niveles', href: '/compras/configuracion', icon: SlidersHorizontal },
+				{ label: 'Requisiciones', href: '/compras/requisiciones', icon: ListChecks },
+				{ label: 'Alertas', href: '/compras/alertas', icon: Bell }
+			]
+		},
+		{
+			label: 'Inventarios',
+			items: [
+				{ label: 'Dashboard', href: '/inventarios', icon: Warehouse },
+				{ label: 'Picking por Folio', href: '/inventarios/picking', icon: ListChecks },
+				{ label: 'Carritos por Folio', href: '/inventarios/carritos', icon: CartFlatbed },
+				{ label: 'Confirmación de Kits', href: '/inventarios/confirmacion', icon: QrCode },
+				{ label: 'Linekeeper Digital', href: '/inventarios/linekeeper', icon: Zap },
+				{ label: 'Trazabilidad', href: '/inventarios/trazabilidad', icon: ClipboardCheck }
 			]
 		},
 		{

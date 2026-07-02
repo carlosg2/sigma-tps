@@ -1,0 +1,1348 @@
+?<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GAP-ALM-003 · Sistema de Kitting por Folio — TPS Blindajes</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<style>
+  :root{
+    --gold:#b8960c;
+    --gold-light:#d4af37;
+    --dark:#0d0d0d;
+    --dark2:#1a1a2e;
+    --dark3:#16213e;
+    --card-bg:#1e1e2e;
+    --border:#2a2a4a;
+    --text-muted:#8888aa;
+    --success:#00c896;
+    --warning:#ffb400;
+    --danger:#ff4d6d;
+    --info:#4fc3f7;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--dark2);color:#e0e0f0;font-family:'Segoe UI',sans-serif;min-height:100vh;}
+
+  /* —— SIDEBAR —— */
+  #sidebar{
+    width:260px;min-width:260px;background:var(--dark);
+    display:flex;flex-direction:column;height:100vh;position:fixed;top:0;left:0;z-index:100;
+    border-right:1px solid var(--gold);
+  }
+  .brand{padding:22px 20px 18px;border-bottom:1px solid var(--border);}
+  .brand img{width:38px;margin-right:10px;}
+  .brand-title{font-size:.78rem;font-weight:700;letter-spacing:2px;color:var(--gold-light);text-transform:uppercase;}
+  .brand-sub{font-size:.65rem;color:var(--text-muted);letter-spacing:1px;}
+  .nav-section{padding:10px 16px 4px;font-size:.62rem;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;}
+  .sidebar-nav{flex:1;overflow-y:auto;padding:8px 0;}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:11px 22px;cursor:pointer;
+    font-size:.84rem;color:#ccc;transition:all .2s;border-left:3px solid transparent;}
+  .nav-item:hover{background:rgba(184,150,12,.08);color:var(--gold-light);border-left-color:var(--gold);}
+  .nav-item.active{background:rgba(184,150,12,.15);color:var(--gold-light);border-left-color:var(--gold);font-weight:600;}
+  .nav-item i{width:20px;text-align:center;font-size:.9rem;}
+  .badge-count{margin-left:auto;background:var(--danger);color:#fff;border-radius:10px;
+    padding:1px 7px;font-size:.68rem;font-weight:700;}
+  .sidebar-footer{padding:16px 20px;border-top:1px solid var(--border);font-size:.72rem;color:var(--text-muted);}
+
+  /* —— MAIN —— */
+  #main{margin-left:260px;min-height:100vh;display:flex;flex-direction:column;}
+  .topbar{background:var(--dark);border-bottom:1px solid var(--border);
+    padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+  .page-title{font-size:1.05rem;font-weight:700;color:var(--gold-light);letter-spacing:.5px;}
+  .topbar-right{display:flex;align-items:center;gap:16px;}
+  .topbar-right .btn-icon{background:none;border:1px solid var(--border);color:#ccc;
+    border-radius:8px;padding:6px 12px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+  .topbar-right .btn-icon:hover{border-color:var(--gold);color:var(--gold-light);}
+  .avatar{width:34px;height:34px;background:var(--gold);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-weight:700;color:#000;font-size:.8rem;}
+  .content{padding:28px;flex:1;}
+
+  /* —— CARDS —— */
+  .card-dark{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:20px;}
+  .card-dark.gold-border{border-color:var(--gold);}
+  .kpi-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;
+    padding:22px 20px;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden;}
+  .kpi-card::after{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--gold);}
+  .kpi-label{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;}
+  .kpi-value{font-size:2rem;font-weight:800;color:var(--gold-light);}
+  .kpi-sub{font-size:.72rem;color:var(--text-muted);}
+
+  /* —— TABLES —— */
+  .table-dark-custom{width:100%;border-collapse:separate;border-spacing:0;}
+  .table-dark-custom th{background:#111127;color:var(--gold-light);font-size:.72rem;
+    letter-spacing:1.5px;text-transform:uppercase;padding:12px 14px;border-bottom:1px solid var(--border);}
+  .table-dark-custom td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:.84rem;color:#d0d0e8;vertical-align:middle;}
+  .table-dark-custom tr:last-child td{border-bottom:none;}
+  .table-dark-custom tr:hover td{background:rgba(184,150,12,.06);}
+
+  /* —— BADGES —— */
+  .badge-status{border-radius:20px;padding:3px 10px;font-size:.7rem;font-weight:600;}
+  .bs-pendiente{background:rgba(255,180,0,.15);color:var(--warning);border:1px solid rgba(255,180,0,.3);}
+  .bs-proceso{background:rgba(79,195,247,.12);color:var(--info);border:1px solid rgba(79,195,247,.3);}
+  .bs-completado{background:rgba(0,200,150,.12);color:var(--success);border:1px solid rgba(0,200,150,.3);}
+  .bs-urgente{background:rgba(255,77,109,.15);color:var(--danger);border:1px solid rgba(255,77,109,.3);}
+  .bs-aditiva{background:rgba(184,150,12,.15);color:var(--gold-light);border:1px solid rgba(184,150,12,.3);}
+
+  /* —— BUTTONS —— */
+  .btn-gold{background:linear-gradient(135deg,#b8960c,#d4af37);color:#000;border:none;
+    font-weight:700;font-size:.8rem;border-radius:8px;padding:8px 18px;cursor:pointer;transition:all .2s;}
+  .btn-gold:hover{opacity:.85;transform:translateY(-1px);}
+  .btn-outline-gold{background:transparent;color:var(--gold-light);border:1px solid var(--gold);
+    font-size:.8rem;border-radius:8px;padding:7px 16px;cursor:pointer;transition:all .2s;}
+  .btn-outline-gold:hover{background:rgba(184,150,12,.12);}
+  .btn-sm-action{padding:5px 12px;font-size:.75rem;border-radius:6px;cursor:pointer;border:none;font-weight:600;transition:all .2s;}
+  .btn-sm-action:hover{opacity:.8;}
+  .btn-success-sm{background:rgba(0,200,150,.15);color:var(--success);border:1px solid rgba(0,200,150,.3);}
+  .btn-info-sm{background:rgba(79,195,247,.12);color:var(--info);border:1px solid rgba(79,195,247,.3);}
+  .btn-warn-sm{background:rgba(255,180,0,.12);color:var(--warning);border:1px solid rgba(255,180,0,.3);}
+  .btn-danger-sm{background:rgba(255,77,109,.12);color:var(--danger);border:1px solid rgba(255,77,109,.3);}
+
+  /* —— SCREENS —— */
+  .screen{display:none;}
+  .screen.active{display:block;}
+
+  /* —— PROGRESS CIRCLE —— */
+  .progress-ring{width:80px;height:80px;transform:rotate(-90deg);}
+  .progress-ring circle{fill:none;stroke-width:6;stroke-linecap:round;}
+  .progress-ring .track{stroke:#2a2a4a;}
+  .progress-ring .bar{stroke:var(--gold-light);stroke-dasharray:220;transition:stroke-dashoffset .6s ease;}
+
+  /* —— KIT CELL CARD —— */
+  .cell-card{background:#111127;border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px;}
+  .cell-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .cell-name{font-weight:700;color:var(--gold-light);font-size:.9rem;}
+  .bag-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;
+    background:#0d0d1e;margin-bottom:6px;font-size:.8rem;cursor:pointer;transition:all .2s;}
+  .bag-item:hover{background:#1a1a2e;}
+  .bag-item.confirmed{opacity:.6;text-decoration:line-through;}
+  .bag-check{width:18px;height:18px;border-radius:4px;border:2px solid var(--border);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+  .bag-check.checked{background:var(--success);border-color:var(--success);}
+
+  /* —— LINEKEEPER —— */
+  .notif-card{background:#111127;border:1px solid var(--border);border-radius:10px;padding:16px;
+    margin-bottom:10px;transition:all .3s;position:relative;}
+  .notif-card.urgente{border-color:var(--danger);}
+  .notif-card.aditiva{border-color:var(--gold);}
+  .notif-pulse{width:10px;height:10px;border-radius:50%;background:var(--danger);
+    animation:pulse 1.2s infinite;flex-shrink:0;}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,77,109,.6);}50%{box-shadow:0 0 0 6px rgba(255,77,109,0);}}
+
+  /* —— TOAST —— */
+  #toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+  .toast-msg{background:#1e1e2e;border:1px solid var(--gold);border-radius:10px;
+    padding:14px 18px;min-width:280px;display:flex;align-items:flex-start;gap:12px;
+    animation:slideIn .3s ease;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+  .toast-msg.danger{border-color:var(--danger);}
+  .toast-msg.success{border-color:var(--success);}
+  .toast-msg.info{border-color:var(--info);}
+  @keyframes slideIn{from{transform:translateX(120px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+  .toast-icon{font-size:1.1rem;margin-top:1px;}
+  .toast-body p{font-size:.8rem;color:#aaa;margin-top:2px;}
+  .toast-body strong{font-size:.85rem;color:#e0e0f0;}
+
+  /* —— MODAL —— */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;
+    display:none;align-items:center;justify-content:center;}
+  .modal-overlay.open{display:flex;}
+  .modal-box{background:var(--card-bg);border:1px solid var(--gold);border-radius:14px;
+    padding:28px;width:520px;max-width:96vw;animation:fadeUp .25s ease;}
+  @keyframes fadeUp{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  .modal-title{font-size:1rem;font-weight:700;color:var(--gold-light);margin-bottom:16px;}
+  .modal-close{float:right;background:none;border:none;color:#888;font-size:1.1rem;cursor:pointer;}
+
+  /* —— LABEL PRINT —— */
+  .label-preview{background:#fff;color:#000;border-radius:8px;padding:16px;
+    font-family:monospace;font-size:.75rem;line-height:1.6;}
+  .label-barcode{font-size:2rem;letter-spacing:4px;text-align:center;
+    font-family:'Courier New',monospace;border:2px solid #000;padding:6px;margin:10px 0;}
+
+  /* —— TIMELINE —— */
+  .timeline-item{display:flex;gap:14px;margin-bottom:18px;}
+  .timeline-dot{width:12px;height:12px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:4px;}
+  .timeline-line{width:2px;background:var(--border);margin:0 5px;}
+  .timeline-content{flex:1;font-size:.82rem;}
+  .timeline-content strong{color:#e0e0f0;}
+  .timeline-content span{color:var(--text-muted);font-size:.73rem;}
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar{width:6px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+  /* Grid helpers */
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  @media(max-width:1100px){.grid-4{grid-template-columns:repeat(2,1fr);}.grid-2{grid-template-columns:1fr;}}
+
+  .section-title{font-size:1rem;font-weight:700;color:#e0e0f0;margin-bottom:4px;}
+  .section-sub{font-size:.78rem;color:var(--text-muted);margin-bottom:20px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:22px 0;}
+  .chip{display:inline-block;background:#111127;border:1px solid var(--border);
+    border-radius:20px;padding:3px 10px;font-size:.72rem;color:var(--text-muted);margin-right:6px;}
+  .scan-anim{display:none;flex-direction:column;align-items:center;gap:10px;padding:20px;}
+  .scan-bar{width:180px;height:4px;background:linear-gradient(90deg,transparent,var(--gold-light),transparent);
+    animation:scanMove 0.8s ease-in-out 3;}
+  @keyframes scanMove{0%{transform:translateY(-40px);}50%{transform:translateY(40px);}100%{transform:translateY(-40px);}}
+</style>
+</head>
+<body>
+
+<!-- —————————— SIDEBAR —————————— -->
+<nav id="sidebar">
+  <div class="brand">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:38px;height:38px;background:linear-gradient(135deg,#b8960c,#d4af37);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        <i class="fas fa-shield-halved" style="color:#000;font-size:1.1rem;"></i>
+      </div>
+      <div>
+        <div class="brand-title">TPS Blindajes</div>
+        <div class="brand-sub">Kitting Digital · ALM-003</div>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">Principal</div>
+    <div class="nav-item active" onclick="showScreen('dashboard',this)">
+      <i class="fas fa-gauge-high"></i> Dashboard General
+    </div>
+    <div class="nav-section">Producción</div>
+    <div class="nav-item" onclick="showScreen('picking',this)">
+      <i class="fas fa-list-check"></i> Picking por Folio / VIN
+    </div>
+    <div class="nav-item" onclick="showScreen('carritos',this)">
+      <i class="fas fa-cart-flatbed"></i> Carritos por Folio
+    </div>
+    <div class="nav-item" onclick="showScreen('confirmacion',this)">
+      <i class="fas fa-qrcode"></i> Confirmación de Kits
+    </div>
+    <div class="nav-section">Alertas</div>
+    <div class="nav-item" onclick="showScreen('linekeeper',this)" id="nav-linekeeper">
+      <i class="fas fa-bell"></i> Linekeeper Digital
+      <span class="badge-count" id="notif-badge">3</span>
+    </div>
+    <div class="nav-section">Reportes</div>
+    <div class="nav-item" onclick="showScreen('trazabilidad',this)">
+      <i class="fas fa-clock-rotate-left"></i> Trazabilidad
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <i class="fas fa-circle" style="color:var(--success);font-size:.5rem;margin-right:6px;"></i>
+    Sistema en línea · v1.0.3-BETA<br/>
+    <span style="color:#555;">GAP-ALM-003 © TPS Intelisis</span>
+  </div>
+</nav>
+
+<!-- —————————— MAIN —————————— -->
+<div id="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="page-title" id="page-title">Dashboard General</div>
+    <div class="topbar-right">
+      <button class="btn-icon" onclick="openModal('modal-nuevo-folio')"><i class="fas fa-plus"></i> Nuevo Folio</button>
+      <button class="btn-icon" onclick="showToast('info','Sincronizando...','Actualizando datos con ERP Intelisis.')"><i class="fas fa-rotate"></i> Sync ERP</button>
+      <div style="position:relative;cursor:pointer;" onclick="showScreen('linekeeper',document.querySelector('[onclick*=linekeeper]'))">
+        <i class="fas fa-bell" style="font-size:1.1rem;color:#ccc;"></i>
+        <span id="topbar-badge" style="position:absolute;top:-5px;right:-6px;background:var(--danger);
+          color:#fff;border-radius:50%;width:16px;height:16px;font-size:.6rem;display:flex;
+          align-items:center;justify-content:center;font-weight:700;">3</span>
+      </div>
+      <div class="avatar">CM</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- —— 1. DASHBOARD —— -->
+    <div class="screen active" id="screen-dashboard">
+      <div class="section-title">Resumen Operativo</div>
+      <div class="section-sub">Turno activo · 2 jul 2026 — Línea Blindaje Alta Gama</div>
+
+      <div class="grid-4" style="margin-bottom:24px;">
+        <div class="kpi-card">
+          <div class="kpi-label"><i class="fas fa-folder-open" style="margin-right:6px;"></i>Folios Activos</div>
+          <div class="kpi-value">12</div>
+          <div class="kpi-sub">4 urgentes · 8 en proceso</div>
+        </div>
+        <div class="kpi-card" style="--gold:#00c896;">
+          <div class="kpi-label"><i class="fas fa-box-open" style="margin-right:6px;"></i>Kits Completados</div>
+          <div class="kpi-value" style="color:var(--success);">27</div>
+          <div class="kpi-sub">Hoy · meta: 32</div>
+        </div>
+        <div class="kpi-card" style="--gold:#ffb400;">
+          <div class="kpi-label"><i class="fas fa-triangle-exclamation" style="margin-right:6px;"></i>Aditivas Pendientes</div>
+          <div class="kpi-value" style="color:var(--warning);">3</div>
+          <div class="kpi-sub">Sin surtir · Linekeeper activo</div>
+        </div>
+        <div class="kpi-card" style="--gold:#4fc3f7;">
+          <div class="kpi-label"><i class="fas fa-car-side" style="margin-right:6px;"></i>Unidades en Proceso</div>
+          <div class="kpi-value" style="color:var(--info);">8</div>
+          <div class="kpi-sub">Suburban / GLS / X7 / GLE</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Folios recientes -->
+        <div class="card-dark">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <span style="font-weight:700;font-size:.9rem;">Folios Recientes</span>
+            <button class="btn-outline-gold" onclick="showScreen('picking',document.querySelector('[onclick*=picking]'))">Ver todos</button>
+          </div>
+          <table class="table-dark-custom">
+            <thead><tr>
+              <th>Folio</th><th>VIN / Unidad</th><th>Estatus</th><th>Progreso</th>
+            </tr></thead>
+            <tbody id="tb-folios">
+              <tr><td><b>F-2026-041</b></td><td>Suburban LTZ · <span style="color:#888">3HGGK...700421</span></td><td><span class="badge-status bs-urgente">Urgente</span></td><td><div class="progress" style="height:6px;background:#2a2a4a;border-radius:3px;"><div class="progress-bar" style="width:20%;background:var(--gold-light);border-radius:3px;"></div></div></td></tr>
+              <tr><td><b>F-2026-040</b></td><td>Mercedes GLS 600 · <span style="color:#888">WDC...00880</span></td><td><span class="badge-status bs-proceso">En Proceso</span></td><td><div class="progress" style="height:6px;background:#2a2a4a;border-radius:3px;"><div class="progress-bar" style="width:65%;background:var(--info);border-radius:3px;"></div></div></td></tr>
+              <tr><td><b>F-2026-039</b></td><td>BMW X7 Protection · <span style="color:#888">5UXCR...39910</span></td><td><span class="badge-status bs-completado">Completado</span></td><td><div class="progress" style="height:6px;background:#2a2a4a;border-radius:3px;"><div class="progress-bar" style="width:100%;background:var(--success);border-radius:3px;"></div></div></td></tr>
+              <tr><td><b>F-2026-038</b></td><td>Lexus LX 600 · <span style="color:#888">JTJHM...21038</span></td><td><span class="badge-status bs-proceso">En Proceso</span></td><td><div class="progress" style="height:6px;background:#2a2a4a;border-radius:3px;"><div class="progress-bar" style="width:45%;background:var(--info);border-radius:3px;"></div></div></td></tr>
+              <tr><td><b>F-2026-037</b></td><td>Mercedes GLE 53 · <span style="color:#888">4JGFB...07137</span></td><td><span class="badge-status bs-completado">Completado</span></td><td><div class="progress" style="height:6px;background:#2a2a4a;border-radius:3px;"><div class="progress-bar" style="width:100%;background:var(--success);border-radius:3px;"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Notificaciones Linekeeper -->
+        <div class="card-dark">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <span style="font-weight:700;font-size:.9rem;"><i class="fas fa-bolt" style="color:var(--gold-light);margin-right:6px;"></i>Linekeeper — Alertas Activas</span>
+            <button class="btn-outline-gold" onclick="showScreen('linekeeper',document.querySelector('[onclick*=linekeeper]'))">Ver bandeja</button>
+          </div>
+          <div class="notif-card urgente">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="notif-pulse"></div>
+              <div>
+                <div style="font-weight:700;font-size:.85rem;">Aditiva en F-2026-041</div>
+                <div style="font-size:.75rem;color:var(--text-muted);">Placa balística lateral adicional — Suburban LTZ</div>
+                <div style="font-size:.7rem;color:#666;margin-top:3px;"><i class="fas fa-clock"></i> Hace 4 min · Autoriza: Ing. Ramírez</div>
+              </div>
+            </div>
+          </div>
+          <div class="notif-card aditiva">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:10px;height:10px;border-radius:50%;background:var(--warning);flex-shrink:0;"></div>
+              <div>
+                <div style="font-weight:700;font-size:.85rem;">Cambio de vidrio en F-2026-040</div>
+                <div style="font-size:.75rem;color:var(--text-muted);">Nivel NIJ III-A — NIJ IV · GLS 600</div>
+                <div style="font-size:.7rem;color:#666;margin-top:3px;"><i class="fas fa-clock"></i> Hace 11 min · Autoriza: Ing. López</div>
+              </div>
+            </div>
+          </div>
+          <div class="notif-card">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:10px;height:10px;border-radius:50%;background:var(--info);flex-shrink:0;"></div>
+              <div>
+                <div style="font-weight:700;font-size:.85rem;">Aditiva en F-2026-038</div>
+                <div style="font-size:.75rem;color:var(--text-muted);">Piso balístico reforzado — Lexus LX 600</div>
+                <div style="font-size:.7rem;color:#666;margin-top:3px;"><i class="fas fa-clock"></i> Hace 28 min · Autoriza: Ing. Vargas</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Avance por celda -->
+      <hr class="divider"/>
+      <div class="section-title" style="margin-bottom:16px;">Avance por Celda de Trabajo — Turno Actual</div>
+      <div class="grid-4">
+        <div class="card-dark" style="text-align:center;">
+          <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;">CELDA A · Blindaje Lateral</div>
+          <svg class="progress-ring" viewBox="0 0 80 80" style="display:block;margin:0 auto;">
+            <circle class="track" cx="40" cy="40" r="35"/>
+            <circle class="bar" cx="40" cy="40" r="35" stroke-dashoffset="55" style="stroke:var(--gold-light);"/>
+          </svg>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--gold-light);margin-top:6px;">75%</div>
+          <div style="font-size:.72rem;color:#888;">6 / 8 kits</div>
+        </div>
+        <div class="card-dark" style="text-align:center;">
+          <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;">CELDA B · Vidrios Balísticos</div>
+          <svg class="progress-ring" viewBox="0 0 80 80" style="display:block;margin:0 auto;">
+            <circle class="track" cx="40" cy="40" r="35"/>
+            <circle class="bar" cx="40" cy="40" r="35" stroke-dashoffset="110" style="stroke:var(--info);"/>
+          </svg>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--info);margin-top:6px;">50%</div>
+          <div style="font-size:.72rem;color:#888;">4 / 8 kits</div>
+        </div>
+        <div class="card-dark" style="text-align:center;">
+          <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;">CELDA C · Arneses y Eléctrico</div>
+          <svg class="progress-ring" viewBox="0 0 80 80" style="display:block;margin:0 auto;">
+            <circle class="track" cx="40" cy="40" r="35"/>
+            <circle class="bar" cx="40" cy="40" r="35" stroke-dashoffset="28" style="stroke:var(--success);"/>
+          </svg>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--success);margin-top:6px;">87%</div>
+          <div style="font-size:.72rem;color:#888;">7 / 8 kits</div>
+        </div>
+        <div class="card-dark" style="text-align:center;">
+          <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;">CELDA D · Piso y Ruedas</div>
+          <svg class="progress-ring" viewBox="0 0 80 80" style="display:block;margin:0 auto;">
+            <circle class="track" cx="40" cy="40" r="35"/>
+            <circle class="bar" cx="40" cy="40" r="35" stroke-dashoffset="165" style="stroke:var(--warning);"/>
+          </svg>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--warning);margin-top:6px;">25%</div>
+          <div style="font-size:.72rem;color:#888;">2 / 8 kits</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- —— 2. PICKING —— -->
+    <div class="screen" id="screen-picking">
+      <div class="section-title">Lista de Picking por Folio / VIN</div>
+      <div class="section-sub">Selecciona un folio para generar la lista de materiales agrupada por celda</div>
+
+      <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+        <select id="sel-folio" class="form-select" style="width:220px;background:#111127;color:#e0e0f0;border:1px solid var(--border);border-radius:8px;font-size:.84rem;">
+          <option value="">— Seleccionar Folio —</option>
+          <option value="F-2026-041">F-2026-041 · Suburban LTZ</option>
+          <option value="F-2026-040">F-2026-040 · Mercedes GLS 600</option>
+          <option value="F-2026-039">F-2026-039 · BMW X7 Protection</option>
+          <option value="F-2026-038">F-2026-038 · Lexus LX 600</option>
+          <option value="F-2026-037">F-2026-037 · Mercedes GLE 53</option>
+        </select>
+        <button class="btn-gold" onclick="generarPicking()"><i class="fas fa-list-check"></i> Generar Picking</button>
+        <button class="btn-outline-gold" onclick="imprimirPicking()"><i class="fas fa-print"></i> Imprimir Lista</button>
+      </div>
+
+      <div id="picking-result" style="display:none;">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap;">
+          <div class="chip"><i class="fas fa-folder"></i> <span id="pk-folio"></span></div>
+          <div class="chip"><i class="fas fa-car"></i> <span id="pk-vin"></span></div>
+          <div class="chip"><i class="fas fa-user"></i> <span id="pk-resp"></span></div>
+          <div class="chip"><i class="fas fa-calendar"></i> <span id="pk-fecha"></span></div>
+          <span id="pk-badge" class="badge-status bs-pendiente" style="margin-left:auto;">Pendiente de surtir</span>
+        </div>
+        <div id="pk-celdas"></div>
+      </div>
+    </div>
+
+    <!-- —— 3. CARRITOS —— -->
+    <div class="screen" id="screen-carritos">
+      <div class="section-title">Gestión de Carritos por Folio</div>
+      <div class="section-sub">Vista de materiales embolsados y etiquetados por celda de trabajo</div>
+
+      <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+        <select id="sel-carrito" onchange="cargarCarrito()" class="form-select" style="width:270px;background:#111127;color:#e0e0f0;border:1px solid var(--border);border-radius:8px;font-size:.84rem;">
+          <option value="F-2026-041">F-2026-041 · Suburban LTZ</option>
+          <option value="F-2026-040">F-2026-040 · Mercedes GLS 600</option>
+          <option value="F-2026-039">F-2026-039 · BMW X7 Protection VR6</option>
+          <option value="F-2026-038">F-2026-038 · Lexus LX 600</option>
+          <option value="F-2026-037">F-2026-037 · Mercedes GLE 53 AMG</option>
+        </select>
+        <button class="btn-gold" onclick="cargarCarrito()"><i class="fas fa-cart-flatbed"></i> Ver Carrito</button>
+      </div>
+
+      <div id="carrito-result"><!-- contenido generado por JS al seleccionar folio --></div>
+    </div>
+
+    <!-- —— 4. CONFIRMACI?N —— -->
+    <div class="screen" id="screen-confirmacion">
+      <div class="section-title">Confirmación Electrónica de Kits</div>
+      <div class="section-sub">Escanea o confirma manualmente el armado de cada bolsa / celda</div>
+
+      <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+        <select id="sel-confirmacion" onchange="cargarConfirmacion()" class="form-select" style="width:270px;background:#111127;color:#e0e0f0;border:1px solid var(--border);border-radius:8px;font-size:.84rem;">
+          <option value="F-2026-041">F-2026-041 · Suburban LTZ</option>
+          <option value="F-2026-040" selected>F-2026-040 · Mercedes GLS 600</option>
+          <option value="F-2026-039">F-2026-039 · BMW X7 Protection VR6</option>
+          <option value="F-2026-038">F-2026-038 · Lexus LX 600</option>
+          <option value="F-2026-037">F-2026-037 · Mercedes GLE 53 AMG</option>
+        </select>
+        <button class="btn-gold" onclick="cargarConfirmacion()"><i class="fas fa-rotate"></i> Cargar Kit</button>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="card-dark" style="margin-bottom:16px;">
+            <div style="font-weight:700;margin-bottom:14px;font-size:.9rem;" id="conf-folio-title">
+              <i class="fas fa-qrcode" style="color:var(--gold-light);margin-right:8px;"></i>
+              Folio: F-2026-040 · Mercedes GLS 600
+            </div>
+
+            <!-- Scan zone -->
+            <div style="background:#0d0d1e;border:1px dashed var(--gold);border-radius:10px;padding:18px;text-align:center;margin-bottom:16px;cursor:pointer;" onclick="simularEscaneo()">
+              <i class="fas fa-qrcode" style="font-size:2rem;color:var(--gold-light);margin-bottom:8px;display:block;"></i>
+              <div style="font-size:.84rem;color:#aaa;">Haz clic aquí para simular escaneo de bolsa</div>
+              <div id="scan-anim" class="scan-anim" style="margin-top:10px;">
+                <div style="font-size:.78rem;color:var(--gold-light);letter-spacing:2px;">ESCANEANDO...</div>
+                <div class="scan-bar"></div>
+              </div>
+            </div>
+
+            <div id="kit-cells"><!-- celdas generadas por JS --></div>
+          </div>
+        </div>
+
+          <div>
+          <div class="card-dark" style="margin-bottom:16px;">
+            <div style="font-weight:700;margin-bottom:12px;font-size:.9rem;">Progreso del Kit</div>
+            <div id="kit-progress" style="display:flex;flex-direction:column;gap:10px;"><!-- barras generadas por JS --></div>
+            <hr class="divider" style="margin:14px 0;"/>
+            <button class="btn-gold" style="width:100%;" onclick="confirmarKitCompleto()"><i class="fas fa-circle-check"></i> Confirmar Kit Completo</button>
+          </div>
+          <div class="card-dark">
+            <div style="font-weight:700;margin-bottom:10px;font-size:.9rem;"><i class="fas fa-clock" style="color:var(--gold-light);margin-right:8px;"></i>Registro en tiempo real</div>
+            <div id="log-confirmacion" style="font-size:.78rem;color:#888;max-height:200px;overflow-y:auto;">
+              <div style="margin-bottom:6px;"><span style="color:#888;">—</span> Kit cargado — selecciona un folio</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- —— 5. LINEKEEPER —— -->
+    <div class="screen" id="screen-linekeeper">
+      <div class="section-title"><i class="fas fa-bolt" style="color:var(--gold-light);"></i> Linekeeper Digital</div>
+      <div class="section-sub">Notificaciones automáticas de aditivas y cambios autorizados por producción — sin WhatsApp, sin voz</div>
+
+      <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
+        <select id="lk-fil-folio" onchange="lkFiltrar()" class="form-select" style="width:200px;background:#111127;color:#e0e0f0;border:1px solid var(--border);border-radius:8px;font-size:.84rem;">
+          <option value="">Todos los folios</option>
+          <option value="F-2026-041">F-2026-041 · Suburban LTZ</option>
+          <option value="F-2026-040">F-2026-040 · Mercedes GLS 600</option>
+          <option value="F-2026-038">F-2026-038 · Lexus LX 600</option>
+        </select>
+        <select id="lk-fil-tipo" onchange="lkFiltrar()" class="form-select" style="width:160px;background:#111127;color:#e0e0f0;border:1px solid var(--border);border-radius:8px;font-size:.84rem;">
+          <option value="">Todos los tipos</option>
+          <option value="urgente">Urgente</option>
+          <option value="aditiva">Aditiva</option>
+          <option value="normal">Cambio</option>
+        </select>
+        <button class="btn-outline-gold" onclick="simularNuevaNotificacion()"><i class="fas fa-plus"></i> Simular nueva aditiva</button>
+        <span style="margin-left:auto;font-size:.8rem;color:var(--text-muted);">
+          <i class="fas fa-circle" style="color:var(--success);font-size:.5rem;margin-right:4px;"></i>
+          Linekeeper activo · recibiendo notificaciones
+        </span>
+      </div>
+
+      <div id="linekeeper-list">
+
+        <div class="notif-card urgente" id="lk-001">
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div class="notif-pulse" style="margin-top:4px;"></div>
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-weight:700;">?? ADITIVA URGENTE — F-2026-041 · Suburban LTZ</span>
+                <span class="badge-status bs-urgente">Sin surtir</span>
+              </div>
+              <div style="font-size:.82rem;color:#ccc;margin-bottom:4px;">
+                <b>Cambio solicitado:</b> Placa balística lateral adicional (lado conductor) — AR-500 6mm
+              </div>
+              <div style="font-size:.78rem;color:#888;">
+                <i class="fas fa-user"></i> Autorizado por: <b>Ing. Ramírez (Jefe de Producción)</b> &nbsp;·&nbsp;
+                <i class="fas fa-clock"></i> 09:31 · hace 4 min &nbsp;·&nbsp;
+                <i class="fas fa-hashtag"></i> Ref. Minuta 1.1
+              </div>
+              <div style="display:flex;gap:8px;margin-top:12px;">
+                <button class="btn-sm-action btn-danger-sm" onclick="surtirAhora('lk-001','001')"><i class="fas fa-bolt"></i> Surtir Ahora</button>
+                <button class="btn-sm-action btn-warn-sm" onclick="verDetalle('lk-001')"><i class="fas fa-eye"></i> Ver Detalle</button>
+                <button class="btn-sm-action btn-info-sm" onclick="openModal('modal-etiqueta-lk','A','Aditiva Lateral','F-2026-041')"><i class="fas fa-tag"></i> Generar Etiqueta</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="notif-card aditiva" id="lk-002">
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--warning);flex-shrink:0;margin-top:4px;"></div>
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-weight:700;">??? CAMBIO DE ESPECIFICACI?N — F-2026-040 · GLS 600</span>
+                <span class="badge-status bs-aditiva">Pendiente</span>
+              </div>
+              <div style="font-size:.82rem;color:#ccc;margin-bottom:4px;">
+                <b>Cambio solicitado:</b> Vidrio frontal nivel NIJ III-A — NIJ IV (vidrio laminado blindado 70mm)
+              </div>
+              <div style="font-size:.78rem;color:#888;">
+                <i class="fas fa-user"></i> Autorizado por: <b>Ing. López (Ingeniería)</b> &nbsp;·&nbsp;
+                <i class="fas fa-clock"></i> 09:24 · hace 11 min &nbsp;·&nbsp;
+                <i class="fas fa-hashtag"></i> Ref. Minuta 1.8
+              </div>
+              <div style="display:flex;gap:8px;margin-top:12px;">
+                <button class="btn-sm-action btn-danger-sm" onclick="surtirAhora('lk-002','002')"><i class="fas fa-bolt"></i> Surtir Ahora</button>
+                <button class="btn-sm-action btn-warn-sm" onclick="verDetalle('lk-002')"><i class="fas fa-eye"></i> Ver Detalle</button>
+                <button class="btn-sm-action btn-success-sm" onclick="showToast('success','Reclasificado','Cambio marcado como cambio menor.')"><i class="fas fa-check"></i> Marcar menor</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="notif-card" id="lk-003">
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--info);flex-shrink:0;margin-top:4px;"></div>
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-weight:700;">— ADITIVA — F-2026-038 · Lexus LX 600</span>
+                <span class="badge-status bs-pendiente">Pendiente</span>
+              </div>
+              <div style="font-size:.82rem;color:#ccc;margin-bottom:4px;">
+                <b>Cambio solicitado:</b> Piso balístico reforzado (Dyneema SK75 + acero 3mm) — área completa cabina
+              </div>
+              <div style="font-size:.78rem;color:#888;">
+                <i class="fas fa-user"></i> Autorizado por: <b>Ing. Vargas (Producción)</b> &nbsp;·&nbsp;
+                <i class="fas fa-clock"></i> 09:07 · hace 28 min &nbsp;·&nbsp;
+                <i class="fas fa-hashtag"></i> Ref. Minuta 1.10
+              </div>
+              <div style="display:flex;gap:8px;margin-top:12px;">
+                <button class="btn-sm-action btn-danger-sm" onclick="surtirAhora('lk-003','003')"><i class="fas fa-bolt"></i> Surtir Ahora</button>
+                <button class="btn-sm-action btn-warn-sm" onclick="verDetalle('lk-003')"><i class="fas fa-eye"></i> Ver Detalle</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- —— 6. TRAZABILIDAD —— -->
+    <div class="screen" id="screen-trazabilidad">
+      <div class="section-title">Registro y Trazabilidad de Surtidos</div>
+      <div class="section-sub">Historial completo con fecha, hora, responsable y folio</div>
+
+      <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+        <select id="fil-folio" class="form-select" style="width:210px;background:#111127;color:#e0e0f0;border:1px solid var(--border);border-radius:8px;font-size:.84rem;">
+          <option value="">Todos los folios</option>
+          <option value="F-2026-041">F-2026-041 · Suburban LTZ</option>
+          <option value="F-2026-040">F-2026-040 · Mercedes GLS 600</option>
+          <option value="F-2026-039">F-2026-039 · BMW X7 Protection</option>
+          <option value="F-2026-038">F-2026-038 · Lexus LX 600</option>
+          <option value="F-2026-037">F-2026-037 · Mercedes GLE 53</option>
+        </select>
+        <input type="date" id="fil-fecha" class="form-control" style="width:160px;background:#111127;color:#e0e0f0;border:1px solid var(--border);border-radius:8px;font-size:.84rem;" value="2026-07-02"/>
+        <select class="form-select" style="width:190px;background:#111127;color:#e0e0f0;border:1px solid var(--border);border-radius:8px;font-size:.84rem;" id="fil-celda">
+          <option value="">Todas las celdas</option>
+          <option>Celda A — Blindaje Lateral</option>
+          <option>Celda B — Vidrios Balísticos</option>
+          <option>Celda C — Arneses y Eléctrico</option>
+          <option>Celda D — Piso y Ruedas</option>
+        </select>
+        <select class="form-select" style="width:180px;background:#111127;color:#e0e0f0;border:1px solid var(--border);border-radius:8px;font-size:.84rem;" id="fil-resp">
+          <option value="">Todos los responsables</option>
+          <option>Carlos M.</option>
+          <option>Diana R.</option>
+          <option>Héctor L.</option>
+        </select>
+        <button class="btn-gold" onclick="filtrarTrazabilidad()"><i class="fas fa-filter"></i> Filtrar</button>
+        <button class="btn-outline-gold" onclick="exportarExcel()"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+      </div>
+
+      <div class="card-dark">
+        <table class="table-dark-custom" id="tb-trazabilidad">
+          <thead><tr>
+            <th>Folio</th><th>VIN / Unidad</th><th>Celda</th><th>Material Surtido</th><th>Cant.</th>
+            <th>Fecha / Hora</th><th>Responsable</th><th>Tipo</th><th>Acciones</th>
+          </tr></thead>
+          <tbody id="body-trazabilidad">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- —————————— MODALES —————————— -->
+
+<!-- Modal: Nuevo Folio -->
+<div class="modal-overlay" id="modal-nuevo-folio">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-nuevo-folio')"><i class="fas fa-times"></i></button>
+    <div class="modal-title"><i class="fas fa-folder-plus" style="color:var(--gold-light);margin-right:8px;"></i>Nuevo Folio de Producción</div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <label style="font-size:.78rem;color:var(--text-muted);">No. de Folio</label>
+        <input class="form-control mt-1" value="F-2026-042" style="background:#0d0d1e;color:#e0e0f0;border:1px solid var(--border);border-radius:8px;font-size:.84rem;"/>
+      </div>
+      <div>
+        <label style="font-size:.78rem;color:var(--text-muted);">VIN del Vehículo</label>
+        <input class="form-control mt-1" placeholder="Ej: WDC1670041A800042" style="background:#0d0d1e;color:#e0e0f0;border:1px solid var(--border);border-radius:8px;font-size:.84rem;"/>
+      </div>
+      <div>
+        <label style="font-size:.78rem;color:var(--text-muted);">Modelo</label>
+        <select class="form-select mt-1" style="background:#0d0d1e;color:#e0e0f0;border:1px solid var(--border);border-radius:8px;font-size:.84rem;">
+          <option>Chevrolet Suburban LTZ</option><option>Mercedes-Benz GLS 600</option>
+          <option>BMW X7 Protection VR6</option><option>Lexus LX 600</option>
+          <option>Mercedes-Benz GLE 53 AMG</option><option>RAM 1500 TRX</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:.78rem;color:var(--text-muted);">Nivel de Blindaje</label>
+        <select class="form-select mt-1" style="background:#0d0d1e;color:#e0e0f0;border:1px solid var(--border);border-radius:8px;font-size:.84rem;">
+          <option>NIJ Level III-A</option><option>NIJ Level III</option><option>NIJ Level IV</option><option>B6 (VPAM)</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:.78rem;color:var(--text-muted);">Responsable de Kitting</label>
+        <select class="form-select mt-1" style="background:#0d0d1e;color:#e0e0f0;border:1px solid var(--border);border-radius:8px;font-size:.84rem;">
+          <option>Carlos M.</option><option>Diana R.</option><option>Héctor L.</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button class="btn-gold" style="flex:1;" onclick="crearFolio()"><i class="fas fa-circle-check"></i> Crear Folio</button>
+        <button class="btn-outline-gold" style="flex:1;" onclick="closeModal('modal-nuevo-folio')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Etiqueta -->
+<div class="modal-overlay" id="modal-etiqueta">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-etiqueta')"><i class="fas fa-times"></i></button>
+    <div class="modal-title"><i class="fas fa-tag" style="color:var(--gold-light);margin-right:8px;"></i>Vista Previa de Etiqueta</div>
+    <div class="label-preview" id="label-content"></div>
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button class="btn-gold" style="flex:1;" onclick="imprimirEtiqueta()"><i class="fas fa-print"></i> Enviar a Zebra ZT230</button>
+      <button class="btn-outline-gold" style="flex:1;" onclick="closeModal('modal-etiqueta')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Etiqueta Linekeeper -->
+<div class="modal-overlay" id="modal-etiqueta-lk">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-etiqueta-lk')"><i class="fas fa-times"></i></button>
+    <div class="modal-title"><i class="fas fa-tag" style="color:var(--gold-light);margin-right:8px;"></i>Etiqueta — Aditiva Autorizada</div>
+    <div class="label-preview">
+      <div style="text-align:center;font-weight:700;font-size:.9rem;border-bottom:2px solid #000;padding-bottom:6px;margin-bottom:8px;">TPS BLINDAJES — ADITIVA</div>
+      <div>Folio: <b>F-2026-041</b> &nbsp;|&nbsp; Celda: <b>A — Blindaje Lateral</b></div>
+      <div>Material: <b>Placa AR-500 Lateral (Aditiva)</b></div>
+      <div>P/N: <b>BLD-AR500-LAT-ADD</b> &nbsp;|&nbsp; Cant: <b>1 pza</b></div>
+      <div class="label-barcode">|||| ||| || |||| ||| |</div>
+      <div style="text-align:center;font-size:.7rem;">F-2026-041-ADD-001 &nbsp;·&nbsp; Nivel NIJ III-A &nbsp;·&nbsp; 02/07/2026 09:35</div>
+      <div style="margin-top:6px;font-size:.72rem;">Autoriza: Ing. Ramírez &nbsp;|&nbsp; Almacén: Carlos M.</div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button class="btn-gold" style="flex:1;" onclick="imprimirEtiqueta()"><i class="fas fa-print"></i> Imprimir</button>
+      <button class="btn-outline-gold" style="flex:1;" onclick="closeModal('modal-etiqueta-lk')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Detalle Linekeeper -->
+<div class="modal-overlay" id="modal-detalle-lk">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-detalle-lk')"><i class="fas fa-times"></i></button>
+    <div class="modal-title"><i class="fas fa-circle-info" style="color:var(--gold-light);margin-right:8px;"></i>Detalle de Aditiva / Cambio</div>
+    <div style="font-size:.84rem;display:flex;flex-direction:column;gap:10px;">
+      <div style="background:#0d0d1e;border-radius:8px;padding:14px;">
+        <div style="color:var(--text-muted);font-size:.72rem;margin-bottom:4px;">FOLIO / UNIDAD</div>
+        <div id="lk-det-folio">—</div>
+      </div>
+      <div style="background:#0d0d1e;border-radius:8px;padding:14px;">
+        <div style="color:var(--text-muted);font-size:.72rem;margin-bottom:4px;">TIPO DE CAMBIO</div>
+        <div id="lk-det-tipo">—</div>
+      </div>
+      <div style="background:#0d0d1e;border-radius:8px;padding:14px;">
+        <div style="color:var(--text-muted);font-size:.72rem;margin-bottom:4px;">DESCRIPCI?N DEL CAMBIO</div>
+        <div id="lk-det-desc">—</div>
+      </div>
+      <div style="background:#0d0d1e;border-radius:8px;padding:14px;">
+        <div style="color:var(--text-muted);font-size:.72rem;margin-bottom:4px;">MATERIALES REQUERIDOS</div>
+        <div id="lk-det-mats">—</div>
+      </div>
+      <div style="background:#0d0d1e;border-radius:8px;padding:14px;">
+        <div style="color:var(--text-muted);font-size:.72rem;margin-bottom:4px;">AUTORIZACI?N</div>
+        <div id="lk-det-auth">—</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button id="btn-det-surtir" class="btn-gold" style="flex:1;"><i class="fas fa-bolt"></i> Surtir Ahora</button>
+      <button class="btn-outline-gold" style="flex:1;" onclick="closeModal('modal-detalle-lk')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- —— TOAST CONTAINER —— -->
+<div id="toast-container"></div>
+
+<!-- —————————— JAVASCRIPT —————————— -->
+<script>
+// —— Datos fake ——————————————————————————————————————————————————————————————
+const foliosData = {
+  'F-2026-041': {
+    num:'041', vin:'3HGGK5H59FM700421', unidad:'Chevrolet Suburban LTZ',
+    nivel:'NIJ III-A', resp:'Carlos M.', fecha:'02/07/2026', estatus:'urgente', horaInicio:'08:14',
+    celdas:[
+      { letra:'A', icon:'fa-shield-halved', nombre:'Celda A — Blindaje Lateral', materiales:[
+        {pn:'BLD-AR500-LAT-R', desc:'Placa AR-500 Lateral Der.', qty:2, um:'pza', lista:true},
+        {pn:'BLD-AR500-LAT-L', desc:'Placa AR-500 Lateral Izq.', qty:2, um:'pza', lista:true},
+        {pn:'KVL-29-R8M',      desc:'Relleno Kevlar 29',         qty:8, um:'m²',  lista:false},
+        {pn:'BLD-FRNT-UP',     desc:'Placa frontal superior',    qty:1, um:'pza', lista:false},
+      ]},
+      { letra:'B', icon:'fa-window-maximize', nombre:'Celda B — Vidrios Balísticos', materiales:[
+        {pn:'VDR-NIJIIA-FNT', desc:'Vidrio NIJ III-A Frontal', qty:1, um:'pza', lista:true},
+        {pn:'VDR-NIIIA-LAT',  desc:'Vidrio NIJ III-A Lateral', qty:4, um:'pza', lista:false},
+        {pn:'VDR-NIIIA-TSR',  desc:'Vidrio NIJ III-A Trasero', qty:1, um:'pza', lista:false},
+      ]},
+      { letra:'C', icon:'fa-bolt', nombre:'Celda C — Arneses y Eléctrico', materiales:[
+        {pn:'ARN-BLD-CC',  desc:'Arnés cortocircuito blindaje', qty:1, um:'jgo', lista:true},
+        {pn:'REL-PRO-SYS', desc:'Relay protección sistema',     qty:2, um:'pza', lista:true},
+        {pn:'FCA-LAT-REF', desc:'Facia lateral int. reforzada', qty:2, um:'pza', lista:true},
+      ]},
+      { letra:'D', icon:'fa-circle-dot', nombre:'Celda D — Piso y Ruedas', materiales:[
+        {pn:'PIZ-DYN-SK75', desc:'Piso Dyneema SK75',            qty:4, um:'m²',  lista:false},
+        {pn:'RDA-RNF-ACR',  desc:'Aro rueda reforzado acero',   qty:4, um:'pza', lista:false},
+        {pn:'NMT-RUN-FLAT', desc:'Neumático Run-Flat 275/50R22',qty:4, um:'pza', lista:false},
+      ]},
+    ]
+  },
+  'F-2026-040': {
+    num:'040', vin:'WDC1670041A800880', unidad:'Mercedes-Benz GLS 600',
+    nivel:'NIJ III-A — NIJ IV', resp:'Diana R.', fecha:'02/07/2026', estatus:'proceso', horaInicio:'07:58',
+    celdas:[
+      { letra:'A', icon:'fa-shield-halved', nombre:'Celda A — Blindaje Lateral', materiales:[
+        {pn:'BLD-AR500-GLS-R', desc:'Placa AR-500 GLS Lateral Der.', qty:3, um:'pza', lista:true},
+        {pn:'BLD-AR500-GLS-L', desc:'Placa AR-500 GLS Lateral Izq.', qty:3, um:'pza', lista:true},
+        {pn:'KVL-49-GLS',      desc:'Kevlar 49 aramid GLS',          qty:10, um:'m²', lista:false},
+        {pn:'BLD-TECHO-GLS',   desc:'Placa techo blindado GLS',       qty:1, um:'pza', lista:false},
+      ]},
+      { letra:'B', icon:'fa-window-maximize', nombre:'Celda B — Vidrios Balísticos', materiales:[
+        {pn:'VDR-NIJIV-FNT', desc:'Vidrio NIJ IV Frontal 70mm', qty:1, um:'pza', lista:false},
+        {pn:'VDR-NIJIV-LAT', desc:'Vidrio NIJ IV Lateral',       qty:4, um:'pza', lista:false},
+        {pn:'VDR-NIJIV-TSR', desc:'Vidrio NIJ IV Trasero',        qty:1, um:'pza', lista:false},
+      ]},
+      { letra:'C', icon:'fa-bolt', nombre:'Celda C — Arneses y Eléctrico', materiales:[
+        {pn:'ARN-GLS-CC',  desc:'Arnés cortocircuito GLS',  qty:1, um:'jgo', lista:true},
+        {pn:'REL-GLS-SYS', desc:'Relay GLS protección',      qty:2, um:'pza', lista:true},
+      ]},
+    ]
+  },
+  'F-2026-039': {
+    num:'039', vin:'5UXCR6C5XM9E39910', unidad:'BMW X7 Protection VR6',
+    nivel:'B6 (VPAM)', resp:'Héctor L.', fecha:'01/07/2026', estatus:'completado', horaInicio:'06:30',
+    celdas:[
+      { letra:'A', icon:'fa-shield-halved', nombre:'Celda A — Blindaje Lateral', materiales:[
+        {pn:'BLD-AR600-BMW-L', desc:'Placa acero balístico BMW', qty:4, um:'pza', lista:true},
+        {pn:'KVL-X7-SPEC',    desc:'Kevlar especial BMW X7',    qty:12, um:'m²', lista:true},
+        {pn:'BLD-BMW-DOOR',   desc:'Refuerzo puerta BMW X7',    qty:4, um:'pza', lista:true},
+      ]},
+      { letra:'B', icon:'fa-window-maximize', nombre:'Celda B — Vidrios Balísticos', materiales:[
+        {pn:'VDR-B6-FNT', desc:'Vidrio B6 VPAM Frontal', qty:1, um:'pza', lista:true},
+        {pn:'VDR-B6-LAT', desc:'Vidrio B6 VPAM Lateral', qty:4, um:'pza', lista:true},
+      ]},
+      { letra:'D', icon:'fa-circle-dot', nombre:'Celda D — Piso y Ruedas', materiales:[
+        {pn:'PIZ-BMW-X7',  desc:'Piso balístico BMW X7',       qty:4, um:'m²',  lista:true},
+        {pn:'NMT-BMW-RF',  desc:'Neumático Run-Flat BMW X7',   qty:4, um:'pza', lista:true},
+      ]},
+    ]
+  },
+  'F-2026-038': {
+    num:'038', vin:'JTJHM7BX5M4021038', unidad:'Lexus LX 600',
+    nivel:'NIJ III', resp:'Carlos M.', fecha:'02/07/2026', estatus:'proceso', horaInicio:'09:05',
+    celdas:[
+      { letra:'A', icon:'fa-shield-halved', nombre:'Celda A — Blindaje Lateral', materiales:[
+        {pn:'BLD-LX600-LAT', desc:'Placa blindaje LX 600', qty:4, um:'pza', lista:false},
+        {pn:'KVL-LX600',     desc:'Kevlar LX 600',          qty:8, um:'m²', lista:false},
+      ]},
+      { letra:'D', icon:'fa-circle-dot', nombre:'Celda D — Piso y Ruedas', materiales:[
+        {pn:'PIZ-DYN75-LX', desc:'Piso Dyneema LX 600',        qty:5, um:'m²',  lista:false},
+        {pn:'PIZ-ACR3-LX',  desc:'Placa piso acero 3mm',       qty:3, um:'m²',  lista:false},
+        {pn:'NMT-RF-LX600', desc:'Neumático Run-Flat LX 600',  qty:4, um:'pza', lista:false},
+      ]},
+    ]
+  },
+  'F-2026-037': {
+    num:'037', vin:'4JGFB4JB7LA107137', unidad:'Mercedes-Benz GLE 53 AMG',
+    nivel:'NIJ III-A', resp:'Diana R.', fecha:'01/07/2026', estatus:'completado', horaInicio:'06:15',
+    celdas:[
+      { letra:'A', icon:'fa-shield-halved', nombre:'Celda A — Blindaje Lateral', materiales:[
+        {pn:'BLD-GLE-LAT-R', desc:'Placa blindaje GLE Der.', qty:2, um:'pza', lista:true},
+        {pn:'BLD-GLE-LAT-L', desc:'Placa blindaje GLE Izq.', qty:2, um:'pza', lista:true},
+        {pn:'KVL-GLE-53',    desc:'Kevlar GLE 53',            qty:6, um:'m²', lista:true},
+      ]},
+      { letra:'B', icon:'fa-window-maximize', nombre:'Celda B — Vidrios Balísticos', materiales:[
+        {pn:'VDR-GLE-FNT', desc:'Vidrio blindado GLE Frontal', qty:1, um:'pza', lista:true},
+        {pn:'VDR-GLE-LAT', desc:'Vidrio blindado GLE Lateral', qty:4, um:'pza', lista:true},
+      ]},
+      { letra:'C', icon:'fa-bolt', nombre:'Celda C — Arneses y Eléctrico', materiales:[
+        {pn:'ARN-GLE-CC', desc:'Arnés GLE cortocircuito', qty:1, um:'jgo', lista:true},
+      ]},
+    ]
+  },
+};
+
+// Datos para modal "Ver Detalle" del Linekeeper
+const lkNotifData = {
+  'lk-001': {
+    folio:'F-2026-041', unidad:'Chevrolet Suburban LTZ', vin:'3HGGK5H59FM700421',
+    tipo:'Aditiva urgente',
+    desc:'Placa balística lateral adicional (lado conductor) — AR-500 calibre 6mm, 60x40cm',
+    mats:'— BLD-AR500-LAT-ADD · Placa AR-500 6mm · 1 pza · Rack A-12<br/>— KVL-29-ADD · Relleno Kevlar adicional · 0.5m² · Rack B-04',
+    autoriza:'Ing. Ramírez (Jefe de Producción) · 09:31 hrs · Minuta 1.1'
+  },
+  'lk-002': {
+    folio:'F-2026-040', unidad:'Mercedes-Benz GLS 600', vin:'WDC1670041A800880',
+    tipo:'Cambio de especificación',
+    desc:'Vidrio frontal nivel NIJ III-A — NIJ IV (vidrio laminado blindado 70mm)',
+    mats:'— VDR-NIJIV-FNT · Vidrio NIJ IV Frontal 70mm · 1 pza · Rack C-02<br/>— VDR-NIIIA-FNT · Retiro vidrio NIJ III-A (devolución)',
+    autoriza:'Ing. López (Ingeniería) · 09:24 hrs · Minuta 1.8'
+  },
+  'lk-003': {
+    folio:'F-2026-038', unidad:'Lexus LX 600', vin:'JTJHM7BX5M4021038',
+    tipo:'Aditiva',
+    desc:'Piso balístico reforzado (Dyneema SK75 + acero 3mm) — área completa cabina',
+    mats:'— PIZ-DYN75-ADD · Dyneema SK75 adicional · 2m² · Rack D-07<br/>— PIZ-ACR3-ADD · Placa acero 3mm adicional · 1m² · Rack D-08',
+    autoriza:'Ing. Vargas (Producción) · 09:07 hrs · Minuta 1.10'
+  },
+};
+const lkCardMeta = {
+  'lk-001': {folio:'F-2026-041', tipo:'urgente'},
+  'lk-002': {folio:'F-2026-040', tipo:'aditiva'},
+  'lk-003': {folio:'F-2026-038', tipo:'normal'},
+};
+let currentLkId = 'lk-001';
+
+const trazabilidadData = [
+  {folio:'F-2026-039',unidad:'BMW X7 Protection', celda:'Celda A',mat:'Placa AR-600 BMW (4 pzas)',    qty:4,hora:'08:55',resp:'Héctor L.',tipo:'Kit'},
+  {folio:'F-2026-039',unidad:'BMW X7 Protection', celda:'Celda B',mat:'Vidrio B6 Frontal (1 pza)',    qty:1,hora:'08:40',resp:'Héctor L.',tipo:'Kit'},
+  {folio:'F-2026-037',unidad:'Mercedes GLE 53',   celda:'Celda A',mat:'Placa GLE Lateral (4 pzas)',   qty:4,hora:'07:50',resp:'Diana R.', tipo:'Kit'},
+  {folio:'F-2026-037',unidad:'Mercedes GLE 53',   celda:'Celda C',mat:'Arnés blindaje (1 jgo)',        qty:1,hora:'07:30',resp:'Diana R.', tipo:'Kit'},
+  {folio:'F-2026-040',unidad:'Mercedes GLS 600',  celda:'Celda C',mat:'Relay protección (2 pzas)',     qty:2,hora:'09:10',resp:'Diana R.', tipo:'Kit'},
+  {folio:'F-2026-040',unidad:'Mercedes GLS 600',  celda:'Celda A',mat:'Placa AR-500 GLS (6 pzas)',     qty:6,hora:'08:20',resp:'Diana R.', tipo:'Kit'},
+  {folio:'F-2026-041',unidad:'Suburban LTZ',      celda:'Celda C',mat:'Facia lat. reforzada (2 pzas)', qty:2,hora:'09:22',resp:'Carlos M.',tipo:'Kit'},
+  {folio:'F-2026-038',unidad:'Lexus LX 600',      celda:'Celda D',mat:'Neumático Run-Flat (4 pzas)',   qty:4,hora:'07:15',resp:'Carlos M.',tipo:'Kit'},
+  {folio:'F-2026-041',unidad:'Suburban LTZ',      celda:'Celda A',mat:'Placa AR-500 ADD — Aditiva',    qty:1,hora:'09:36',resp:'Carlos M.',tipo:'Aditiva'},
+];
+
+// —— Helpers ——————————————————————————————————————————————————————————————————
+function pad(n){ return String(n).padStart(2,'0'); }
+
+// —— Navegación ———————————————————————————————————————————————————————————————
+const titles = {
+  dashboard:'Dashboard General',picking:'Lista de Picking por Folio / VIN',
+  carritos:'Gestión de Carritos por Folio',confirmacion:'Confirmación Electrónica de Kits',
+  linekeeper:'Linekeeper Digital',trazabilidad:'Registro y Trazabilidad',
+};
+function showScreen(id, el) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  document.getElementById('page-title').textContent = titles[id]||id;
+  if(id==='trazabilidad') renderTrazabilidad(trazabilidadData);
+  if(id==='carritos') cargarCarrito();
+  if(id==='confirmacion') cargarConfirmacion();
+}
+
+// —— Toast ————————————————————————————————————————————————————————————————————
+function showToast(type,title,body){
+  const c=document.getElementById('toast-container');
+  const icons={success:'fa-circle-check',danger:'fa-circle-xmark',warning:'fa-triangle-exclamation',info:'fa-circle-info'};
+  const colors={success:'var(--success)',danger:'var(--danger)',warning:'var(--warning)',info:'var(--info)'};
+  const t=document.createElement('div');
+  t.className='toast-msg '+(type==='danger'?'danger':type==='success'?'success':type==='info'?'info':'');
+  t.innerHTML='<i class="fas '+icons[type]+' toast-icon" style="color:'+colors[type]+';"></i><div class="toast-body"><strong>'+title+'</strong><p>'+body+'</p></div>';
+  c.appendChild(t);
+  setTimeout(()=>t.remove(),4500);
+}
+
+// —— Modales ——————————————————————————————————————————————————————————————————
+function openModal(id,celda,nombre,folio){
+  document.getElementById(id).classList.add('open');
+  if(id==='modal-etiqueta'&&celda){
+    const now=new Date();
+    const ts=pad(now.getDate())+'/'+pad(now.getMonth()+1)+'/'+now.getFullYear()+' '+pad(now.getHours())+':'+pad(now.getMinutes());
+    const d=foliosData[folio]||{};
+    document.getElementById('label-content').innerHTML=
+      '<div style="text-align:center;font-weight:700;font-size:.95rem;border-bottom:2px solid #000;padding-bottom:6px;margin-bottom:8px;">TPS BLINDAJES — ETIQUETA DE CELDA</div>'+
+      '<div>Folio: <b>'+folio+'</b></div>'+
+      '<div>Celda: <b>'+celda+' — '+nombre+'</b></div>'+
+      '<div>Unidad: <b>'+(d.unidad||'—')+'</b></div>'+
+      '<div>Nivel: <b>'+(d.nivel||'—')+'</b></div>'+
+      '<div class="label-barcode">|||| ||| || |||| ||| |</div>'+
+      '<div style="text-align:center;font-size:.7rem;">'+folio+'-'+celda+' · '+ts+'</div>'+
+      '<div style="margin-top:6px;font-size:.72rem;">Resp: '+(d.resp||'—')+' · Almacén TPS</div>';
+  }
+  if(id==='modal-detalle-lk'){
+    const lk=lkNotifData[currentLkId]||lkNotifData['lk-001'];
+    document.getElementById('lk-det-folio').innerHTML='<b>'+lk.folio+'</b> · '+lk.unidad+' · VIN '+lk.vin;
+    document.getElementById('lk-det-tipo').textContent=lk.tipo;
+    document.getElementById('lk-det-desc').textContent=lk.desc;
+    document.getElementById('lk-det-mats').innerHTML=lk.mats;
+    document.getElementById('lk-det-auth').textContent=lk.autoriza;
+    document.getElementById('btn-det-surtir').onclick=function(){closeModal('modal-detalle-lk');surtirAhora(currentLkId,'from-modal');};
+  }
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+function verDetalle(lkId){currentLkId=lkId;openModal('modal-detalle-lk');}
+
+// —— Picking ——————————————————————————————————————————————————————————————————
+function generarPicking(){
+  const sel=document.getElementById('sel-folio').value;
+  if(!sel){showToast('warning','Selecciona un folio','Elige un folio de la lista.');return;}
+  const d=foliosData[sel];
+  document.getElementById('pk-folio').textContent=sel;
+  document.getElementById('pk-vin').textContent=d.vin;
+  document.getElementById('pk-resp').textContent=d.resp;
+  document.getElementById('pk-fecha').textContent=d.fecha;
+  let html='';
+  d.celdas.forEach(c=>{
+    const rows=c.materiales.map((m,i)=>{
+      const uid='pk_'+sel.replace(/-/g,'')+'_'+m.pn.replace(/[^a-z0-9]/gi,'_');
+      return '<tr id="row-'+uid+'">'+
+        '<td><span style="font-size:.85rem;">??️</span> '+m.desc+'</td>'+
+        '<td style="font-family:monospace;font-size:.78rem;color:var(--gold-light);">'+m.pn+'</td>'+
+        '<td style="text-align:center;"><b>'+m.qty+'</b> '+m.um+'</td>'+
+        '<td id="est-'+uid+'"><span class="badge-status bs-pendiente">Pendiente</span></td>'+
+        '<td><button class="btn-sm-action btn-success-sm" onclick="surtirMaterial(this,\''+uid+'\')">— Surtir</button></td></tr>';
+    }).join('');
+    html+='<div style="margin-bottom:16px;">'+
+      '<div style="font-weight:700;color:var(--gold-light);font-size:.88rem;margin-bottom:8px;">'+
+        '<i class="fas fa-layer-group"></i> '+c.nombre+'</div>'+
+      '<table class="table-dark-custom"><thead><tr>'+
+        '<th>Material</th><th>P/N</th><th style="text-align:center;">Cant.</th>'+
+        '<th>Estado</th><th>Acción</th></tr></thead>'+
+      '<tbody>'+rows+'</tbody></table></div>';
+  });
+  document.getElementById('pk-celdas').innerHTML=html;
+  document.getElementById('picking-result').style.display='block';
+  const total=d.celdas.reduce((a,c)=>a+c.materiales.length,0);
+  showToast('success','Picking generado','Lista de '+total+' materiales · '+sel+' · '+d.unidad+'.');
+}
+
+function surtirMaterial(btn,uid){
+  btn.innerHTML='— Surtido';btn.disabled=true;btn.style.opacity='.5';
+  const est=document.getElementById('est-'+uid);
+  if(est) est.innerHTML='<span class="badge-status bs-completado">Surtido</span>';
+  showToast('success','Material surtido','Marcado como surtido correctamente.');
+}
+
+function imprimirPicking(){
+  const sel=document.getElementById('sel-folio').value;
+  if(!sel){showToast('warning','Sin folio','Genera primero una lista de picking.');return;}
+  showToast('info','Enviando a impresión','Lista de picking de '+sel+' enviada a impresora de oficina.');
+  setTimeout(()=>window.print(),300);
+}
+
+// —— Carritos —————————————————————————————————————————————————————————————————
+function cargarCarrito(){
+  const sel=document.getElementById('sel-carrito').value;
+  const d=foliosData[sel];
+  if(!d)return;
+  const totalBolsas=d.celdas.reduce((a,c)=>a+c.materiales.length,0);
+  const listas=d.celdas.reduce((a,c)=>a+c.materiales.filter(m=>m.lista).length,0);
+  const pendientes=totalBolsas-listas;
+  const conAditiva=sel==='F-2026-041'?1:0;
+  const estatusText=d.estatus==='completado'?'Completado':d.estatus==='urgente'?'Urgente':'En preparación';
+  const estatusClass=d.estatus==='completado'?'bs-completado':d.estatus==='urgente'?'bs-urgente':'bs-proceso';
+
+  let celdasHtml='';
+  d.celdas.forEach(c=>{
+    const celdaNombre=c.nombre.includes('—')?c.nombre.split('—')[1].trim():c.nombre;
+    let bolsasHtml='';
+    c.materiales.forEach((m,i)=>{
+      const emoji=c.letra==='B'?'??':'??️';
+      bolsasHtml+=
+        '<div class="bag-item">'+
+          '<span style="font-size:.9rem;">'+emoji+'</span>'+
+          '<div><div>Bolsa '+c.letra+'-'+pad(i+1)+' · '+m.desc+' ('+m.qty+' '+m.um+')</div>'+
+          '<div style="color:#888;font-size:.72rem;">P/N: '+m.pn+'</div></div>'+
+          '<span class="badge-status '+(m.lista?'bs-completado':'bs-pendiente')+'" style="margin-left:auto;">'+(m.lista?'Lista':'Pendiente')+'</span>'+
+        '</div>';
+    });
+    celdasHtml+=
+      '<div class="cell-card">'+
+        '<div class="cell-header">'+
+          '<span class="cell-name"><i class="fas '+c.icon+'"></i> '+c.nombre+'</span>'+
+          '<button class="btn-sm-action btn-info-sm" onclick="openModal(\'modal-etiqueta\',\''+c.letra+'\',\''+celdaNombre+'\',\''+sel+'\')">'+
+            '<i class="fas fa-tag"></i> Etiqueta</button>'+
+        '</div>'+bolsasHtml+'</div>';
+  });
+
+  document.getElementById('carrito-result').innerHTML=
+    '<div class="grid-2">'+
+      '<div>'+
+        '<div class="card-dark gold-border" style="margin-bottom:16px;">'+
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">'+
+            '<div>'+
+              '<div style="font-weight:700;font-size:.95rem;">Carrito #C-'+d.num+' — '+sel+'</div>'+
+              '<div style="font-size:.75rem;color:var(--text-muted);">'+d.unidad+' · VIN '+d.vin+'</div>'+
+            '</div>'+
+            '<span class="badge-status '+estatusClass+'">'+estatusText+'</span>'+
+          '</div>'+celdasHtml+
+        '</div>'+
+      '</div>'+
+      '<div>'+
+        '<div class="card-dark" style="margin-bottom:16px;">'+
+          '<div style="font-weight:700;margin-bottom:12px;font-size:.9rem;"><i class="fas fa-chart-pie" style="color:var(--gold-light);margin-right:8px;"></i>Estado del Carrito</div>'+
+          '<div style="display:flex;flex-direction:column;gap:8px;">'+
+            '<div style="display:flex;justify-content:space-between;font-size:.82rem;"><span>Total de bolsas</span><strong>'+totalBolsas+'</strong></div>'+
+            '<div style="display:flex;justify-content:space-between;font-size:.82rem;"><span>Listas</span><strong style="color:var(--success);">'+listas+'</strong></div>'+
+            '<div style="display:flex;justify-content:space-between;font-size:.82rem;"><span>Pendientes</span><strong style="color:var(--warning);">'+pendientes+'</strong></div>'+
+            '<div style="display:flex;justify-content:space-between;font-size:.82rem;"><span>Con aditiva</span><strong style="color:var(--danger);">'+conAditiva+'</strong></div>'+
+            '<hr class="divider" style="margin:8px 0;"/>'+
+            '<div style="display:flex;justify-content:space-between;font-size:.82rem;"><span>Nivel de blindaje</span><strong>'+d.nivel+'</strong></div>'+
+            '<div style="display:flex;justify-content:space-between;font-size:.82rem;"><span>Responsable</span><strong>'+d.resp+'</strong></div>'+
+            '<div style="display:flex;justify-content:space-between;font-size:.82rem;"><span>Inicio preparación</span><strong>'+d.horaInicio+' hrs</strong></div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="card-dark">'+
+          '<div style="font-weight:700;margin-bottom:12px;font-size:.9rem;"><i class="fas fa-print" style="color:var(--gold-light);margin-right:8px;"></i>Acciones del Carrito</div>'+
+          '<div style="display:flex;flex-direction:column;gap:8px;">'+
+            '<button class="btn-gold" style="width:100%;" onclick="showToast(\'success\',\'Etiquetas enviadas\',\''+totalBolsas+' etiquetas de '+sel+' enviadas a Zebra ZT230 · Almacén 2.\')">'+
+              '<i class="fas fa-print"></i> Imprimir Todas las Etiquetas ('+totalBolsas+')</button>'+
+            '<button class="btn-outline-gold" style="width:100%;" onclick="showToast(\'info\',\'Carrito asignado\',\'Carrito C-'+d.num+' · '+d.unidad+' enviado a línea de producción.\')">'+
+              '<i class="fas fa-arrow-right-to-bracket"></i> Enviar a Línea</button>'+
+            '<button class="btn-outline-gold" style="width:100%;" onclick="showToast(\'info\',\'Reporte generado\',\'PDF del Carrito C-'+d.num+' · '+sel+' disponible para descarga.\')">'+
+              '<i class="fas fa-file-pdf"></i> Exportar Reporte PDF</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+
+  showToast('success','Carrito cargado','Mostrando '+totalBolsas+' bolsas · '+sel+' · '+d.unidad+'.');
+}
+
+// —— Confirmación de Kit ——————————————————————————————————————————————————————
+let kitState={};
+
+function cargarConfirmacion(){
+  const sel=document.getElementById('sel-confirmacion').value;
+  const d=foliosData[sel];
+  if(!d)return;
+  document.getElementById('conf-folio-title').innerHTML=
+    '<i class="fas fa-qrcode" style="color:var(--gold-light);margin-right:8px;"></i>'+
+    'Folio: '+sel+' · '+d.unidad;
+  kitState={};
+  let cellsHtml='',progressHtml='';
+  d.celdas.forEach(c=>{
+    const confirmed=c.materiales.filter(m=>m.lista).length;
+    const total=c.materiales.length;
+    const pct=Math.round((confirmed/total)*100);
+    kitState['c'+c.letra]={total,done:confirmed};
+    const pctColor=pct===100?'var(--success)':pct>0?'var(--warning)':'var(--danger)';
+    const badgeClass=pct===100?'bs-completado':pct>0?'bs-proceso':'bs-pendiente';
+    let bolsasHtml='';
+    c.materiales.forEach((m,i)=>{
+      const bId='b'+sel.replace(/-/g,'')+'_'+c.letra+i;
+      bolsasHtml+=
+        '<div class="bag-item'+(m.lista?' confirmed':'')+'" id="bagel-'+bId+'" '+
+          'onclick="confirmarBolsa(\''+bId+'\',\'c'+c.letra+'\',\'badgec-'+c.letra+'\',\'barc-'+c.letra+'\',\'pctc-'+c.letra+'\')">'+
+          '<div class="bag-check'+(m.lista?' checked':'')+'" id="chk-'+bId+'">'+
+            (m.lista?'<i class="fas fa-check" style="font-size:.6rem;color:#fff;"></i>':'')+
+          '</div>'+
+          '<div><div>Bolsa '+c.letra+'-'+pad(i+1)+' · '+m.desc+'</div>'+
+          '<div style="color:#888;font-size:.72rem;">'+m.pn+' · '+m.qty+' '+m.um+'</div></div>'+
+        '</div>';
+    });
+    cellsHtml+=
+      '<div class="cell-card">'+
+        '<div class="cell-header">'+
+          '<span class="cell-name"><i class="fas '+c.icon+'"></i> '+c.nombre+'</span>'+
+          '<span class="badge-status '+badgeClass+'" id="badgec-'+c.letra+'">'+confirmed+'/'+total+' confirmadas</span>'+
+        '</div>'+bolsasHtml+'</div>';
+    progressHtml+=
+      '<div>'+
+        '<div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:4px;">'+
+          '<span>'+c.nombre+'</span><span id="pctc-'+c.letra+'">'+pct+'%</span>'+
+        '</div>'+
+        '<div class="progress" style="height:7px;background:#2a2a4a;border-radius:4px;">'+
+          '<div class="progress-bar" id="barc-'+c.letra+'" style="width:'+pct+'%;background:'+pctColor+';border-radius:4px;"></div>'+
+        '</div>'+
+      '</div>';
+  });
+  document.getElementById('kit-cells').innerHTML=cellsHtml;
+  document.getElementById('kit-progress').innerHTML=progressHtml;
+  document.getElementById('log-confirmacion').innerHTML=
+    '<div style="margin-bottom:6px;"><span style="color:#888;">—</span> '+
+    'Folio '+sel+' cargado · Resp: '+d.resp+'</div>';
+  showToast('info','Kit cargado',sel+' · '+d.unidad+' — '+d.celdas.reduce((a,c)=>a+c.materiales.length,0)+' bolsas.');
+}
+
+function confirmarBolsa(bId,celdaKey,badgeId,barId,pctId){
+  const el=document.getElementById('bagel-'+bId);
+  const chk=document.getElementById('chk-'+bId);
+  if(!el||el.classList.contains('confirmed'))return;
+  el.classList.add('confirmed');
+  chk.classList.add('checked');
+  chk.innerHTML='<i class="fas fa-check" style="font-size:.6rem;color:#fff;"></i>';
+  kitState[celdaKey].done++;
+  const {total,done}=kitState[celdaKey];
+  const pct=Math.round((done/total)*100);
+  const pctColor=pct===100?'var(--success)':pct>0?'var(--warning)':'var(--danger)';
+  const badgeClass=pct===100?'bs-completado':pct>0?'bs-proceso':'bs-pendiente';
+  const badge=document.getElementById(badgeId);
+  const bar=document.getElementById(barId);
+  const pctEl=document.getElementById(pctId);
+  if(badge){badge.textContent=done+'/'+total+' confirmadas';badge.className='badge-status '+badgeClass;}
+  if(bar){bar.style.width=pct+'%';bar.style.background=pctColor;}
+  if(pctEl)pctEl.textContent=pct+'%';
+  appendLog('Bolsa '+bId.slice(-2)+' — confirmada');
+  showToast('success','Bolsa confirmada','Marcada como verificada.');
+}
+
+function confirmarKitCompleto(){
+  if(!Object.keys(kitState).length){showToast('warning','Sin kit','Carga primero un folio.');return;}
+  const pendientes=Object.values(kitState).some(c=>c.done<c.total);
+  if(pendientes){showToast('warning','Kit incompleto','Aún hay bolsas pendientes de confirmar.');return;}
+  const sel=document.getElementById('sel-confirmacion').value;
+  showToast('success','¡Kit Completo!',sel+' confirmado. Notificación enviada a producción.');
+  appendLog('KIT COMPLETO confirmado — '+sel);
+}
+
+function appendLog(msg){
+  const log=document.getElementById('log-confirmacion');
+  if(!log)return;
+  const now=new Date();
+  const t=pad(now.getHours())+':'+pad(now.getMinutes());
+  log.innerHTML='<div style="margin-bottom:6px;"><span style="color:var(--success);">—</span> '+t+' — '+msg+'</div>'+log.innerHTML;
+}
+
+function simularEscaneo(){
+  const anim=document.getElementById('scan-anim');
+  anim.style.display='flex';
+  const pending=document.querySelector('#kit-cells .bag-item:not(.confirmed)');
+  setTimeout(()=>{
+    anim.style.display='none';
+    if(pending){pending.click();}
+    else{showToast('info','Escaneo','No hay bolsas pendientes.');}
+  },2400);
+}
+
+// —— Linekeeper ———————————————————————————————————————————————————————————————
+let notifCount=3;
+
+function lkFiltrar(){
+  const folFil=document.getElementById('lk-fil-folio').value;
+  const tipFil=document.getElementById('lk-fil-tipo').value;
+  let visible=0;
+  Object.entries(lkCardMeta).forEach(([id,data])=>{
+    const card=document.getElementById(id);
+    if(!card)return;
+    const matchFolio=!folFil||data.folio===folFil;
+    const matchTipo=!tipFil||data.tipo===tipFil;
+    card.style.display=(matchFolio&&matchTipo)?'':'none';
+    if(matchFolio&&matchTipo)visible++;
+  });
+  showToast('info','Filtro aplicado',visible+' notificaciones visibles.');
+}
+
+function surtirAhora(cardId,num){
+  const card=document.getElementById(cardId);
+  if(!card)return;
+  const badge=card.querySelector('.badge-status');
+  if(badge&&badge.textContent==='Surtido'){showToast('info','Ya surtido','Este material ya fue surtido.');return;}
+  if(badge){badge.textContent='En proceso';badge.className='badge-status bs-proceso';}
+  const dot=card.querySelector('.notif-pulse');
+  if(dot){dot.style.background='var(--info)';dot.style.animation='none';}
+  card.querySelectorAll('button').forEach(b=>{if(b.textContent.includes('Surtir')){b.innerHTML='<i class="fas fa-clock"></i> Surtiendo...';b.disabled=true;}});
+  notifCount=Math.max(0,notifCount-1);
+  document.getElementById('notif-badge').textContent=notifCount;
+  document.getElementById('topbar-badge').textContent=notifCount;
+  if(notifCount===0){document.getElementById('notif-badge').style.display='none';document.getElementById('topbar-badge').style.display='none';}
+  showToast('success','Surtido iniciado','Almacenista en camino. Notificación enviada a línea.');
+  const lk=lkNotifData[cardId]||{folio:'—',unidad:'—',desc:'Material aditiva'};
+  setTimeout(()=>{
+    if(badge){badge.textContent='Surtido';badge.className='badge-status bs-completado';}
+    card.querySelectorAll('button').forEach(b=>{if(b.textContent.includes('Surtiendo')){b.innerHTML='<i class="fas fa-check"></i> Completado';}});
+    showToast('success','Surtido completado','Aditiva entregada en línea. Registro guardado.');
+    const now=new Date();
+    trazabilidadData.unshift({folio:lk.folio,unidad:lk.unidad,celda:'Aditiva',mat:lk.desc.substring(0,40),qty:1,hora:pad(now.getHours())+':'+pad(now.getMinutes()),resp:'Carlos M.',tipo:'Aditiva'});
+  },3500);
+}
+
+function simularNuevaNotificacion(){
+  notifCount++;
+  document.getElementById('notif-badge').textContent=notifCount;
+  document.getElementById('topbar-badge').textContent=notifCount;
+  document.getElementById('notif-badge').style.display='';
+  document.getElementById('topbar-badge').style.display='';
+  const now=new Date();
+  const t=pad(now.getHours())+':'+pad(now.getMinutes());
+  const nid='lk-new-'+Date.now();
+  const nuevos=[
+    {folio:'F-2026-042',unidad:'RAM 1500 TRX',       desc:'Refuerzo techo balístico adicional — acero AR-500 4mm',autoriza:'Ing. Mora'},
+    {folio:'F-2026-038',unidad:'Lexus LX 600',        desc:'Arnés adicional sistema de comunicaciones blindado',   autoriza:'Ing. Castro'},
+    {folio:'F-2026-041',unidad:'Suburban LTZ',        desc:'Vidrio lateral adicional reforzado — NIJ IV',          autoriza:'Ing. Ramírez'},
+  ];
+  const n=nuevos[notifCount%nuevos.length];
+  lkCardMeta[nid]={folio:n.folio,tipo:'urgente'};
+  lkNotifData[nid]={folio:n.folio,unidad:n.unidad,vin:'—',tipo:'Aditiva urgente',desc:n.desc,
+    mats:'— Material pendiente de especificar · Almacén verificando stock',
+    autoriza:n.autoriza+' · '+t+' hrs · Minuta: Nueva'};
+  const div=document.createElement('div');
+  div.id=nid;div.className='notif-card urgente';
+  div.innerHTML=
+    '<div style="display:flex;align-items:flex-start;gap:14px;">'+
+    '<div class="notif-pulse" style="margin-top:4px;"></div>'+
+    '<div style="flex:1;">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">'+
+        '<span style="font-weight:700;">?? NUEVA ADITIVA — '+n.folio+' · '+n.unidad+'</span>'+
+        '<span class="badge-status bs-urgente">Sin surtir</span>'+
+      '</div>'+
+      '<div style="font-size:.82rem;color:#ccc;margin-bottom:4px;"><b>Cambio solicitado:</b> '+n.desc+'</div>'+
+      '<div style="font-size:.78rem;color:#888;"><i class="fas fa-user"></i> Autoriza: <b>'+n.autoriza+'</b> &nbsp;·&nbsp; <i class="fas fa-clock"></i> '+t+' · recién llegada</div>'+
+      '<div style="display:flex;gap:8px;margin-top:12px;">'+
+        '<button class="btn-sm-action btn-danger-sm" onclick="surtirAhora(\''+nid+'\',\'NEW\')"><i class="fas fa-bolt"></i> Surtir Ahora</button>'+
+        '<button class="btn-sm-action btn-warn-sm" onclick="verDetalle(\''+nid+'\')"><i class="fas fa-eye"></i> Ver Detalle</button>'+
+      '</div>'+
+    '</div></div>';
+  document.getElementById('linekeeper-list').prepend(div);
+  showToast('danger','Nueva aditiva recibida',n.folio+' · '+n.unidad+' — Requiere surtido urgente.');
+}
+
+// —— Trazabilidad —————————————————————————————————————————————————————————————
+function renderTrazabilidad(data){
+  const tipos={Kit:'bs-completado',Aditiva:'bs-aditiva'};
+  const body=document.getElementById('body-trazabilidad');
+  if(!data.length){body.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:24px;">Sin registros para los filtros seleccionados.</td></tr>';return;}
+  body.innerHTML=data.map(r=>
+    '<tr>'+
+      '<td><b>'+r.folio+'</b></td>'+
+      '<td style="font-size:.78rem;color:#aaa;">'+r.unidad+'</td>'+
+      '<td style="font-size:.78rem;">'+r.celda+'</td>'+
+      '<td>'+r.mat+'</td>'+
+      '<td style="text-align:center;"><b>'+r.qty+'</b></td>'+
+      '<td style="font-size:.78rem;">02/07/2026 &nbsp;<b>'+r.hora+'</b> hrs</td>'+
+      '<td style="font-size:.78rem;">'+r.resp+'</td>'+
+      '<td><span class="badge-status '+(tipos[r.tipo]||'bs-proceso')+'">'+r.tipo+'</span></td>'+
+      '<td><button class="btn-sm-action btn-info-sm" onclick="showToast(\'info\',\'Detalle de surtido\',\''+r.folio+' · '+r.celda+' · '+r.resp+'\')"><i class="fas fa-eye"></i></button></td>'+
+    '</tr>'
+  ).join('');
+}
+
+function filtrarTrazabilidad(){
+  const folio=document.getElementById('fil-folio').value;
+  const resp=document.getElementById('fil-resp').value;
+  const celda=document.getElementById('fil-celda').value;
+  let data=trazabilidadData;
+  if(folio) data=data.filter(r=>r.folio===folio);
+  if(resp)  data=data.filter(r=>r.resp===resp);
+  if(celda) data=data.filter(r=>r.celda===celda.split('—')[0].trim());
+  renderTrazabilidad(data);
+  showToast('info','Filtro aplicado',data.length+' registros encontrados.');
+}
+
+function exportarExcel(){
+  const rows=document.querySelectorAll('#body-trazabilidad tr').length;
+  showToast('info','Exportando Excel',rows+' registros exportados correctamente. Descarga iniciada.');
+}
+
+// —— Nuevo Folio ——————————————————————————————————————————————————————————————
+function crearFolio(){
+  const modelo=document.querySelector('#modal-nuevo-folio select').options[document.querySelector('#modal-nuevo-folio select').selectedIndex].value;
+  const folioInput=document.querySelector('#modal-nuevo-folio input');
+  const folio=folioInput.value||'F-2026-042';
+  closeModal('modal-nuevo-folio');
+  showToast('success','Folio creado',folio+' · '+modelo+' generado y asignado al plan de producción.');
+}
+
+function imprimirEtiqueta(){
+  closeModal('modal-etiqueta');
+  closeModal('modal-etiqueta-lk');
+  showToast('success','Etiqueta enviada','Etiqueta enviada a impresora Zebra ZT230 correctamente.');
+}
+
+// —— Init —————————————————————————————————————————————————————————————————————
+document.addEventListener('DOMContentLoaded',()=>{
+  renderTrazabilidad(trazabilidadData);
+  cargarCarrito();
+  cargarConfirmacion();
+  setTimeout(()=>showToast('info','Sistema activo','Linekeeper digital conectado · 3 notificaciones pendientes.'),800);
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

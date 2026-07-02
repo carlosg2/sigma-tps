@@ -19,7 +19,19 @@
 		'/articulos': 'Catalogo de Articulos',
 		'/lmat': 'LMAT',
 		'/especificaciones-v2': 'Especificaciones v2',
-		'/proyectos': 'Proyectos'
+		'/proyectos': 'Proyectos',
+		'/compras': 'Compras',
+		'/compras/bandeja': 'Bandeja de Autorización',
+		'/compras/bitacora': 'Bitácora de Autorizaciones',
+		'/compras/configuracion': 'Configuración de Niveles',
+		'/compras/requisiciones': 'Requisiciones',
+		'/compras/alertas': 'Alertas y Notificaciones',
+		'/inventarios': 'Inventarios · Kitting por Folio',
+		'/inventarios/picking': 'Lista de Picking por Folio / VIN',
+		'/inventarios/carritos': 'Gestión de Carritos por Folio',
+		'/inventarios/confirmacion': 'Confirmación Electrónica de Kits',
+		'/inventarios/linekeeper': 'Linekeeper Digital',
+		'/inventarios/trazabilidad': 'Registro y Trazabilidad'
 	};
 
 	const pageTitle = $derived.by(() => {
@@ -27,6 +39,8 @@
 		if (titles[path]) return titles[path];
 		if (path.startsWith('/articulos')) return 'Articulos';
 		if (path.startsWith('/especificaciones-v2')) return 'Especificaciones v2';
+		if (path.startsWith('/compras')) return 'Compras';
+		if (path.startsWith('/inventarios')) return 'Inventarios';
 		if (path.startsWith('/lmat')) return 'LMAT';
 		if (path.startsWith('/proyectos')) return 'Proyectos';
 		return 'TPS ERP';
