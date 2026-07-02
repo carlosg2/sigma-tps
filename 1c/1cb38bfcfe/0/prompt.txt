@@ -1,0 +1,9 @@
+necesitamos rimplementar esta proyecto de surtidos.html en el proyecto de sigma tps en el folder de tps, siguiendo el design sistem actual (tomando como referencia dashboard-01 y preview, preview-01,) y el skill de shadcn-svelte
+
+esto tambien pertenece al grupo de inventarios del sidebar  y ahi poner el acceso a todas las nuevas pantallas.
+
+recuerda seguir el design sistem. hay muchos ejemplos golden nuggets en la carpeta /ds
+
+todo debe ser funcional y es estrictamente usar solo componentes del design system.
+
+si tienes dudas. pregunta

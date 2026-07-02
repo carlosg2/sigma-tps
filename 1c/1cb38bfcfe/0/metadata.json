@@ -1,0 +1,87 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "1c1cb38bfcfe",
+  "session_id": "06bfe5b9-5dfc-4971-9d6a-c8b9b1b26546",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-02T23:21:35.839869Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "documentacion/inventarios/invetarios.html",
+    "src/lib/tps/components/app-sidebar.svelte",
+    "src/lib/tps/components/site-header.svelte",
+    "src/lib/tps/inventarios/seed.ts",
+    "src/lib/tps/inventarios/store.svelte.ts",
+    "src/lib/tps/inventarios/types.ts",
+    "src/routes/(tps)/inventarios/surtido/+page.svelte"
+  ],
+  "agent": "Copilot CLI",
+  "model": "",
+  "turn_id": "c2e1efab95fa",
+  "checkpoint_transcript_start": 571,
+  "transcript_lines_at_start": 571,
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "prompt-skill-copilot-cli-compras/bandeja-2026-07-02T21:53:24.503Z",
+      "event_type": "prompt_invocation",
+      "skill": {
+        "name": "compras/bandeja"
+      },
+      "source": {
+        "agent": "copilot-cli",
+        "signal": "prompt_slash_command",
+        "confidence": "explicit"
+      },
+      "turn_id": "9a5899454214",
+      "timestamp": "2026-07-02T21:53:24.503Z",
+      "native": {
+        "command": "/compras/bandeja"
+      },
+      "collapse": {
+        "target": "user_message",
+        "label": "/compras/bandeja",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-02T23:21:35.830235Z",
+    "agent_lines": 0,
+    "agent_removed": 4,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 1348,
+    "total_committed": 811,
+    "total_lines_changed": 1352,
+    "agent_percentage": 0.2958579881656805,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 2642,
+      "user_lines_removed": 1348,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "documentacion/Almacen/invetarios.html": 1348,
+        "documentacion/Almacen/surtido.html": 1294
+      },
+      "user_removed_per_file": {
+        "documentacion/inventarios/invetarios.html": 1348
+      }
+    }
+  ]
+}
