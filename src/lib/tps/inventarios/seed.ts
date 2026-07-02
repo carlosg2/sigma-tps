@@ -1,4 +1,4 @@
-import type { InventariosState, Folio, Notificacion, TrazaEntry } from './types';
+import type { InventariosState, Folio, Notificacion, TrazaEntry, LmatFolio } from './types';
 
 // Datos base portados de la maqueta GAP-ALM-003 (invetarios.html).
 // `surtido` proviene del campo `lista` original; `confirmada` arranca igual a `surtido`.
@@ -262,6 +262,78 @@ export function createInitialInventariosState(): InventariosState {
 		folios: structuredClone(folios),
 		notificaciones: structuredClone(notificaciones),
 		trazabilidad: structuredClone(trazabilidad),
+		lmatFolios: structuredClone(lmatFolios),
 		lastUpdated: new Date().toISOString()
 	};
 }
+
+// --- Surtido de Materiales (GAP-ALM-005) ---
+const lmatFolios: LmatFolio[] = [
+	{
+		id: 'LMAT-2026-001',
+		folioVehiculo: 'FV-2026-0089',
+		vehiculo: 'VH-007',
+		vehiculoDesc: 'Toyota Land Cruiser 300 — 2024 Platino',
+		numEspecificacion: 'ESP-2026-0142',
+		linea: 'Bahía 3',
+		maquina: 'EST-07',
+		prioridad: 'Alta',
+		estatus: 'proceso',
+		materiales: [
+			{ sku: 'MOT-20011', desc: 'Motor elevador puerta del. izq. 12V', ubic: 'MOT-C01', solicitado: 1, surtido: 0, status: 'pending' },
+			{ sku: 'SUS-30045', desc: 'Amortiguador reforzado del. izq. (par)', ubic: 'SUS-D01', solicitado: 2, surtido: 0, status: 'pending' },
+			{ sku: 'VID-10001', desc: 'Vidrio blindado lateral del. izq. NIJ-III', ubic: 'VID-A01', solicitado: 1, surtido: 1, status: 'done' },
+			{ sku: 'VID-10002', desc: 'Vidrio blindado lateral del. der. NIJ-III', ubic: 'VID-A02', solicitado: 1, surtido: 0, status: 'progress' },
+			{ sku: 'VID-10003', desc: 'Parabrisas blindado laminado NIJ-III', ubic: 'VID-B01', solicitado: 1, surtido: 0, status: 'pending' }
+		]
+	},
+	{
+		id: 'LMAT-2026-002',
+		folioVehiculo: 'FV-2026-0102',
+		vehiculo: 'VH-012',
+		vehiculoDesc: 'Mercedes-Benz GLS 450 — 2024 AMG Line',
+		numEspecificacion: 'ESP-2026-0098',
+		linea: 'Bahía 1',
+		maquina: 'EST-12',
+		prioridad: 'Media',
+		estatus: 'pendiente',
+		materiales: [
+			{ sku: 'MOT-20015', desc: 'Motor elevador puerta trasera der. 12V', ubic: 'MOT-C02', solicitado: 1, surtido: 0, status: 'pending' },
+			{ sku: 'SUS-30062', desc: 'Resorte suspensión trasero reforzado (par)', ubic: 'SUS-D02', solicitado: 2, surtido: 0, status: 'pending' },
+			{ sku: 'VID-10008', desc: 'Vidrio blindado lunar trasero NIJ-IIIA', ubic: 'VID-A03', solicitado: 1, surtido: 0, status: 'pending' }
+		]
+	},
+	{
+		id: 'LMAT-2026-003',
+		folioVehiculo: 'FV-2026-0071',
+		vehiculo: 'VH-003',
+		vehiculoDesc: 'BMW X7 xDrive40i — 2023 M Sport',
+		numEspecificacion: 'ESP-2026-0055',
+		linea: 'Bahía 5',
+		maquina: 'EST-03',
+		prioridad: 'Baja',
+		estatus: 'pendiente',
+		materiales: [
+			{ sku: 'MOT-20031', desc: 'Actuador puerta corrediza trasera izq.', ubic: 'MOT-C03', solicitado: 1, surtido: 0, status: 'pending' },
+			{ sku: 'SUS-30078', desc: 'Brazo de suspensión inferior del. der.', ubic: 'SUS-D03', solicitado: 1, surtido: 0, status: 'pending' },
+			{ sku: 'VID-10020', desc: 'Vidrio panorámico blindado techo NIJ-II', ubic: 'VID-B02', solicitado: 1, surtido: 0, status: 'pending' },
+			{ sku: 'VID-10021', desc: 'Vidrio blindado lateral trasero izq. NIJ-IIIA', ubic: 'VID-B03', solicitado: 1, surtido: 0, status: 'pending' }
+		]
+	},
+	{
+		id: 'LMAT-2026-004',
+		folioVehiculo: 'FV-2026-0115',
+		vehiculo: 'VH-019',
+		vehiculoDesc: 'Chevrolet Suburban Z71 — 2024 High Country',
+		numEspecificacion: 'ESP-2026-0177',
+		linea: 'Bahía 2',
+		maquina: 'EST-19',
+		prioridad: 'Alta',
+		estatus: 'completado',
+		materiales: [
+			{ sku: 'MOT-20042', desc: 'Motor elevador vidrio del. izq. 12V', ubic: 'MOT-C04', solicitado: 2, surtido: 2, status: 'done' },
+			{ sku: 'SUS-30091', desc: 'Kit rodamiento rueda del. (juego 4 pzas)', ubic: 'SUS-D04', solicitado: 4, surtido: 4, status: 'done' }
+		]
+	}
+];
+

@@ -1,0 +1,1294 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>GAP-ALM-005 — APP Surtido de Materiales</title>
+    <style>
+        :root {
+            --primary: #1565C0;
+            --primary-dark: #0D47A1;
+            --primary-light: #E3F2FD;
+            --accent: #FF6F00;
+            --success: #2E7D32;
+            --danger: #C62828;
+            --warning: #F57F17;
+            --gray-100: #F5F5F5;
+            --gray-200: #EEEEEE;
+            --gray-400: #BDBDBD;
+            --gray-600: #757575;
+            --gray-800: #424242;
+            --white: #FFFFFF;
+            --shadow: 0 2px 8px rgba(0,0,0,0.15);
+            --radius: 8px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #CFD8DC;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 0;
+        }
+        #app {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            background: var(--white);
+            position: relative;
+            box-shadow: 0 0 40px rgba(0,0,0,0.3);
+        }
+        .screen { display: none; flex-direction: column; min-height: 100vh; }
+        .screen.active { display: flex; }
+
+        /* STATUS BAR */
+        .status-bar {
+            background: var(--primary-dark);
+            color: rgba(255,255,255,0.75);
+            padding: 4px 16px;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            background: var(--primary);
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+        .topbar h2 { font-size: 16px; font-weight: 600; flex: 1; }
+        .back-btn {
+            background: none; border: none; color: white;
+            font-size: 26px; cursor: pointer; padding: 0 4px; line-height: 1;
+        }
+        .connectivity-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: #4CAF50; box-shadow: 0 0 6px #4CAF50; transition: all 0.3s; flex-shrink: 0;
+        }
+        .connectivity-dot.offline { background: #F44336; box-shadow: 0 0 6px #F44336; }
+
+        /* CONTENT */
+        .content { flex: 1; padding: 16px; overflow-y: auto; }
+
+        /* ==================== LOGIN ==================== */
+        #screen-login {
+            background: linear-gradient(160deg, var(--primary-dark) 0%, var(--primary) 55%, #1976D2 100%);
+            justify-content: center;
+            align-items: center;
+            padding: 32px 24px;
+            gap: 0;
+        }
+        .login-logo { text-align: center; margin-bottom: 28px; color: white; }
+        .login-logo .logo-icon { font-size: 64px; display: block; margin-bottom: 10px; }
+        .login-logo h1 { font-size: 24px; font-weight: 800; letter-spacing: 1px; }
+        .login-logo p { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+        .login-card {
+            background: white; border-radius: 16px; padding: 24px;
+            width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+        }
+        .login-card h3 { font-size: 17px; color: var(--gray-800); margin-bottom: 18px; font-weight: 700; }
+
+        /* FORM */
+        .form-group { margin-bottom: 14px; }
+        .form-group label {
+            display: block; font-size: 11px; font-weight: 700; color: var(--gray-600);
+            margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.6px;
+        }
+        .form-group select, .form-group input, .form-group textarea {
+            width: 100%; padding: 11px 13px; border: 2px solid var(--gray-200);
+            border-radius: var(--radius); font-size: 14px; background: var(--gray-100);
+            color: var(--gray-800); transition: border-color 0.2s; appearance: none; font-family: inherit;
+        }
+        .form-group select:focus, .form-group input:focus, .form-group textarea:focus {
+            outline: none; border-color: var(--primary); background: white;
+        }
+        .form-group textarea { resize: none; }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 13px 18px; border-radius: var(--radius); border: none; cursor: pointer;
+            font-size: 14px; font-weight: 700; transition: all 0.18s; font-family: inherit;
+        }
+        .btn-block { width: 100%; display: flex; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-primary:active { transform: scale(0.97); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:active { transform: scale(0.97); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-gray { background: var(--gray-200); color: var(--gray-800); }
+        .btn-sm { padding: 8px 13px; font-size: 12px; }
+        .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+
+        /* CARDS */
+        .card {
+            background: white; border-radius: var(--radius); padding: 14px;
+            box-shadow: var(--shadow); margin-bottom: 12px; border: 1px solid var(--gray-200);
+        }
+        .card-title { font-size: 14px; font-weight: 700; color: var(--gray-800); }
+        .card-subtitle { font-size: 12px; color: var(--gray-600); margin-top: 2px; }
+
+        /* BADGES */
+        .badge {
+            display: inline-block; padding: 3px 9px; border-radius: 20px;
+            font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .badge-pending { background: #FFF3E0; color: #E65100; }
+        .badge-progress { background: #E3F2FD; color: #1565C0; }
+        .badge-done { background: #E8F5E9; color: #2E7D32; }
+
+        /* FOLIO CARDS */
+        .folio-card {
+            background: white; border-radius: var(--radius); padding: 14px;
+            box-shadow: var(--shadow); margin-bottom: 11px;
+            border-left: 4px solid var(--primary); cursor: pointer;
+            transition: box-shadow 0.15s, transform 0.1s;
+        }
+        .folio-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+        .folio-card:active { transform: scale(0.985); }
+        .folio-card.status-pending { border-left-color: var(--accent); }
+        .folio-card.status-done { border-left-color: var(--success); opacity: 0.65; }
+        .folio-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .folio-code { font-size: 15px; font-weight: 800; color: var(--gray-800); }
+        .folio-meta { font-size: 11px; color: var(--gray-600); margin-top: 2px; }
+        .progress-bar-wrap {
+            background: var(--gray-200); border-radius: 4px; height: 6px; margin-top: 5px; overflow: hidden;
+        }
+        .progress-bar-fill { height: 100%; border-radius: 4px; background: var(--primary); transition: width 0.4s; }
+        .progress-label { font-size: 11px; color: var(--gray-600); display: flex; justify-content: space-between; }
+
+        /* STEP INDICATOR */
+        .step-indicator { display: flex; gap: 6px; align-items: center; margin-bottom: 18px; }
+        .step-dot {
+            width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 800; border: 2px solid var(--gray-400); color: var(--gray-400);
+            flex-shrink: 0;
+        }
+        .step-dot.active { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+        .step-dot.done { border-color: var(--success); color: white; background: var(--success); }
+        .step-line { flex: 1; height: 2px; background: var(--gray-200); }
+        .step-line.done { background: var(--success); }
+
+        /* SCAN BOX */
+        .scan-box {
+            background: var(--gray-100); border: 2px dashed var(--gray-400); border-radius: 12px;
+            padding: 20px; text-align: center; margin-bottom: 14px; transition: all 0.3s;
+        }
+        .scan-box.active-scan { border-color: var(--primary); background: var(--primary-light); border-style: solid; }
+        .scan-box.scanned { border-color: var(--success); background: #E8F5E9; border-style: solid; }
+        .scan-icon { font-size: 36px; margin-bottom: 6px; }
+        .scan-result { font-size: 17px; font-weight: 800; color: var(--success); }
+        .scan-label { font-size: 12px; color: var(--gray-600); margin-top: 3px; }
+
+        /* QUANTITY */
+        .qty-display {
+            display: flex; align-items: center; justify-content: center; gap: 20px;
+            background: var(--gray-100); border-radius: 12px; padding: 16px; margin-bottom: 10px;
+        }
+        .qty-btn {
+            width: 46px; height: 46px; border-radius: 50%; border: none; cursor: pointer;
+            font-size: 24px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+            background: var(--primary); color: white; transition: all 0.15s;
+        }
+        .qty-btn:active { transform: scale(0.88); }
+        .qty-value {
+            font-size: 40px; font-weight: 800; color: var(--gray-800);
+            min-width: 64px; text-align: center; transition: color 0.2s;
+        }
+        .qty-limit { font-size: 13px; color: var(--gray-600); text-align: center; margin-bottom: 14px; }
+        .qty-limit span { font-weight: 800; color: var(--primary); }
+
+        /* MATERIAL TABLE */
+        .table-wrap { overflow-x: auto; border-radius: var(--radius); box-shadow: var(--shadow); }
+        .mat-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 400px; }
+        .mat-table th {
+            background: var(--primary); color: white; padding: 9px 7px; text-align: left;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;
+        }
+        .mat-table td { padding: 9px 7px; border-bottom: 1px solid var(--gray-200); vertical-align: middle; }
+        .mat-table tr:last-child td { border-bottom: none; }
+        .mat-table tr.row-done { background: #F1F8E9; }
+        .mat-table tr.row-pending { background: white; }
+        .mat-table tr.row-progress { background: #E3F2FD; }
+        .mat-table tr:hover { filter: brightness(0.97); cursor: pointer; }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            display: none; align-items: flex-end; justify-content: center;
+            z-index: 200; backdrop-filter: blur(3px);
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-sheet {
+            background: white; border-radius: 20px 20px 0 0; padding: 24px;
+            width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto;
+            animation: slideUp 0.28s ease;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .modal-handle {
+            width: 40px; height: 4px; background: var(--gray-400);
+            border-radius: 2px; margin: 0 auto 18px;
+        }
+        .modal-title { font-size: 18px; font-weight: 800; color: var(--gray-800); margin-bottom: 3px; }
+        .modal-subtitle { font-size: 13px; color: var(--gray-600); margin-bottom: 18px; }
+
+        /* ERROR TYPE SELECTOR */
+        .error-type-grid { display: flex; flex-direction: column; gap: 9px; margin-bottom: 14px; }
+        .error-type-btn {
+            padding: 13px; border: 2px solid var(--gray-200); border-radius: var(--radius);
+            background: white; cursor: pointer; text-align: left; transition: all 0.18s; width: 100%;
+            font-family: inherit;
+        }
+        .error-type-btn:hover { border-color: #EF9A9A; background: #FFF8F8; }
+        .error-type-btn.selected { border-color: var(--danger); background: #FFEBEE; }
+        .error-type-btn .et-title { font-size: 14px; font-weight: 700; color: var(--gray-800); }
+        .error-type-btn .et-desc { font-size: 12px; color: var(--gray-600); margin-top: 2px; }
+
+        /* TOAST */
+        .toast {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(90px);
+            background: var(--gray-800); color: white; padding: 12px 22px; border-radius: 24px;
+            font-size: 14px; font-weight: 600; z-index: 300; transition: transform 0.3s ease;
+            max-width: 88%; text-align: center; pointer-events: none;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.warning { background: var(--warning); }
+
+        /* TICKET */
+        .ticket-confirm { text-align: center; padding: 20px 12px; }
+        .ticket-icon { font-size: 56px; margin-bottom: 10px; }
+        .ticket-num { font-size: 26px; font-weight: 800; color: var(--primary); letter-spacing: 2px; margin-bottom: 8px; }
+        .ticket-msg { font-size: 14px; color: var(--gray-600); line-height: 1.6; }
+
+        /* FAB */
+        .fab {
+            position: fixed; bottom: 22px; right: 16px;
+            width: 56px; height: 56px; border-radius: 50%; border: none;
+            background: var(--danger); color: white; font-size: 22px;
+            cursor: pointer; box-shadow: 0 4px 18px rgba(198,40,40,0.55);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 150; transition: all 0.18s;
+        }
+        .fab:active { transform: scale(0.90); }
+
+        /* SECTION TITLE */
+        .section-title {
+            font-size: 11px; font-weight: 800; color: var(--gray-600); text-transform: uppercase;
+            letter-spacing: 1px; margin-bottom: 9px; margin-top: 4px;
+        }
+
+        /* INFO ROW */
+        .info-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 0; border-bottom: 1px solid var(--gray-200); font-size: 14px;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-row .label { color: var(--gray-600); }
+        .info-row .value { font-weight: 700; color: var(--gray-800); }
+
+        /* TOGGLE */
+        .toggle-wrap { display: flex; align-items: center; gap: 10px; }
+        .toggle {
+            position: relative; width: 52px; height: 28px; background: var(--gray-400);
+            border-radius: 14px; cursor: pointer; transition: background 0.3s; flex-shrink: 0;
+        }
+        .toggle.on { background: var(--danger); }
+        .toggle::after {
+            content: ''; position: absolute; top: 3px; left: 3px;
+            width: 22px; height: 22px; border-radius: 50%; background: white;
+            transition: left 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+        }
+        .toggle.on::after { left: 27px; }
+
+        /* SPINNER */
+        .spinner {
+            width: 18px; height: 18px; border: 3px solid rgba(255,255,255,0.35);
+            border-top-color: white; border-radius: 50%; animation: spin 0.75s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* SYNC ITEM */
+        .sync-item {
+            display: flex; align-items: center; gap: 12px; padding: 12px;
+            background: var(--gray-100); border-radius: var(--radius); margin-bottom: 8px;
+        }
+        .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warning); flex-shrink: 0; }
+        .sync-dot.synced { background: var(--success); }
+
+        /* STATS GRID */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+        .stat-card {
+            background: white; border-radius: var(--radius); padding: 12px 8px;
+            box-shadow: var(--shadow); text-align: center; border: 1px solid var(--gray-200);
+        }
+        .stat-num { font-size: 22px; font-weight: 900; }
+        .stat-label { font-size: 11px; color: var(--gray-600); margin-top: 2px; }
+
+        /* QTY WARN */
+        .qty-warn-box {
+            background: #FFEBEE; color: var(--danger); padding: 10px 14px;
+            border-radius: var(--radius); font-size: 13px; font-weight: 700;
+            margin-bottom: 12px; text-align: center; display: none;
+        }
+
+        /* EMPTY STATE */
+        .empty-state { text-align: center; padding: 36px 16px; color: var(--gray-600); }
+        .empty-state .eicon { font-size: 44px; margin-bottom: 10px; }
+        .empty-state p { font-size: 14px; }
+
+        /* ROUTE LIST */
+        .route-item {
+            display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+            border-radius: 6px; margin-bottom: 4px; background: var(--gray-100); font-size: 12px;
+        }
+        .route-item.route-current {
+            background: var(--primary-light); border-left: 4px solid var(--primary); font-weight: 700;
+        }
+        .route-item.route-done { opacity: 0.4; }
+
+        /* SCANNED LIST */
+        .scanned-item {
+            display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+            background: #F1F8E9; border-radius: var(--radius); margin-bottom: 8px;
+            border-left: 4px solid var(--success);
+        }
+
+        /* PRIORIDAD COLOR */
+        .prio-alta { color: var(--danger); }
+        .prio-media { color: var(--warning); }
+        .prio-baja { color: var(--success); }
+    </style>
+</head>
+<body>
+<div id="app">
+
+    <!-- STATUS BAR -->
+    <div class="status-bar">
+        <span id="statusTime">09:42</span>
+        <span id="statusConn" style="display:none;">● En línea</span>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SCREEN 1: LOGIN                                                   -->
+    <!-- ================================================================ -->
+    <div id="screen-login" class="screen active">
+        <div class="login-logo">
+            <span class="logo-icon">📦</span>
+            <h1>ALM·SURTIDO</h1>
+            <p>Control de Materiales en Piso · GAP-ALM-005</p>
+        </div>
+        <div class="login-card">
+            <h3>Iniciar sesión</h3>
+            <div class="form-group">
+                <label>Operador</label>
+                <select id="sel-operador">
+                    <option value="">— Seleccionar —</option>
+                    <option value="jperez">Juan Pérez</option>
+                    <option value="alopez">Ana López</option>
+                    <option value="mtorres">Miguel Torres</option>
+                    <option value="rcardenas">Rosa Cárdenas</option>
+                    <option value="fmendez">Felipe Méndez</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Turno</label>
+                <select id="sel-turno">
+                    <option value="">— Seleccionar —</option>
+                    <option value="mat">Matutino (06:00–14:00)</option>
+                    <option value="ves">Vespertino (14:00–22:00)</option>
+                    <option value="noc">Nocturno (22:00–06:00)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Almacén</label>
+                <select id="sel-almacen">
+                    <option value="alm1">Almacén 1</option>
+                    <option value="alm2">Almacén 2</option>
+                </select>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="doLogin()" style="margin-top:4px;">
+                Ingresar →
+            </button>
+            <div style="margin-top:12px; text-align:center; font-size:12px; color:var(--gray-600);">
+                <span style="display:inline-block; width:8px; height:8px; background:#4CAF50; border-radius:50%; margin-right:5px; vertical-align:middle;"></span>
+                Conectado al servidor
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SCREEN 2: DASHBOARD                                               -->
+    <!-- ================================================================ -->
+    <div id="screen-dashboard" class="screen">
+        <div class="topbar">
+            <span style="font-size:22px;">📦</span>
+            <div style="flex:1; min-width:0;">
+                <div style="font-weight:800; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="dashOperadorName">Juan Pérez</div>
+                <div style="font-size:11px; opacity:0.8;" id="dashTurnoName">Matutino · Almacén 2</div>
+            </div>
+            
+            <button class="btn btn-sm" style="background:rgba(255,255,255,0.18);color:white;border:none;margin-left:4px;" onclick="doLogout()">Salir</button>
+        </div>
+
+        <div class="content" style="padding-bottom:80px;">
+            <div class="stats-grid" id="dashStats"></div>
+            <div class="section-title">Folios LMAT activos</div>
+            <div id="foliosList"></div>
+        </div>
+
+        <!-- FAB: Reportar Error -->
+        <button class="fab" onclick="openErrorModal(null, null)" title="Reportar error de ingeniería">⚠️</button>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SCREEN 3: DETALLE FOLIO                                           -->
+    <!-- ================================================================ -->
+    <div id="screen-folio" class="screen">
+        <div class="topbar">
+            <button class="back-btn" onclick="showScreen('screen-dashboard')">‹</button>
+            <div style="flex:1; min-width:0;">
+                <div style="font-weight:800; font-size:14px;" id="folioDetailCode">LMAT-2024-001</div>
+                <div style="font-size:11px; opacity:0.8;" id="folioDetailMeta">Línea 3 · CNC-05</div>
+            </div>
+            <span class="connectivity-dot" id="folioConnDot" style="display:none;"></span>
+        </div>
+
+        <div class="content" style="padding-bottom:20px;">
+            <div id="folioDetailStats" style="margin-bottom:14px;"></div>
+
+            <div style="display:flex; gap:10px; margin-bottom:16px;">
+                <button class="btn btn-primary" style="flex:1;" onclick="startSurtido()">▶ Iniciar surtido</button>
+                <button class="btn btn-gray" onclick="openErrorModalFromFolio()">⚠️ Error</button>
+            </div>
+
+            <div class="section-title">Lista de materiales (LMAT)</div>
+            <div class="table-wrap">
+                <table class="mat-table" id="matTable">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Descripción</th>
+                            <th>Ubic.</th>
+                            <th style="text-align:center;">Solic.</th>
+                            <th style="text-align:center;">Surtido</th>
+                            <th style="text-align:center;">Est.</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SCREEN 4: FLUJO DE SURTIDO                                        -->
+    <!-- ================================================================ -->
+    <div id="screen-surtido" class="screen">
+        <div class="topbar">
+            <button class="back-btn" onclick="showScreen('screen-folio')">‹</button>
+            <div style="flex:1; min-width:0;">
+                <div style="font-weight:800; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="surtidoTitle">—</div>
+                <div style="font-size:11px; opacity:0.8;" id="surtidoSubtitle">—</div>
+            </div>
+            <span class="connectivity-dot" id="surtidoConnDot" style="display:none;"></span>
+        </div>
+
+        <div class="content">
+            <!-- Paso actual banner -->
+            <div id="currentMatInfo" style="display:none; background:var(--primary-light); border-radius:var(--radius); padding:10px 14px; margin-bottom:14px; border-left:4px solid var(--primary);">
+                <div style="font-size:11px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px;">Material en curso</div>
+                <div style="font-size:15px; font-weight:800; color:var(--gray-800);" id="currentMatSKU"></div>
+                <div style="font-size:12px; color:var(--gray-600);" id="currentMatDesc"></div>
+            </div>
+
+            <!-- RUTA DE ESCANEO -->
+            <div style="margin-bottom:14px;">
+                <div class="section-title" style="margin-bottom:6px;">📍 Ruta de escaneo</div>
+                <div id="routeList"></div>
+            </div>
+
+            <!-- Step indicator (2 pasos) -->
+            <div class="step-indicator">
+                <div class="step-dot" id="step1dot">1</div>
+                <div class="step-line" id="stepLine1"></div>
+                <div class="step-dot" id="step2dot">2</div>
+            </div>
+
+            <!-- PASO 1: Escanear SKU -->
+            <div id="step-2" style="display:none;">
+                <div class="card">
+                    <div class="card-title" style="margin-bottom:12px;">🏷️ Paso 1 — Escanear producto</div>
+                    <div class="scan-box" id="scanBoxSKU">
+                        <div class="scan-icon">📷</div>
+                        <div style="font-size:13px; color:var(--gray-600);">Apunte el lector al código del producto</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Código SKU</label>
+                        <input type="text" id="inputSKU" placeholder="Ej. SKU-10045 ..." onkeyup="if(event.key==='Enter') confirmSKU()"/>
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="simulateScan('sku')">📷 Escanear</button>
+                </div>
+            </div>
+
+            <!-- PASO 2: Cantidad -->
+            <div id="step-3" style="display:none;">
+                <div class="card" style="background:var(--gray-100); margin-bottom:10px; border:none; box-shadow:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="font-size:11px; color:var(--gray-600);">SKU</div>
+                            <div style="font-size:14px; font-weight:800;" id="step3SKU"></div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:11px; color:var(--gray-600);">Descripción</div>
+                            <div style="font-size:13px; font-weight:700; max-width:160px; text-align:right;" id="step3Desc"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title" style="margin-bottom:10px;">📦 Paso 2 — Confirmar cantidad</div>
+                    <div class="qty-limit">Máximo permitido (LMAT): <span id="qtyLimit">0</span> piezas</div>
+                    <div class="qty-display">
+                        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+                        <div class="qty-value" id="qtyValue">1</div>
+                        <button class="qty-btn" onclick="changeQty(1)">+</button>
+                    </div>
+                    <div class="qty-warn-box" id="qtyWarnBox">
+                        ⛔ Cantidad excede el límite LMAT.<br>Máximo permitido: <span id="qtyLimitWarn">0</span> piezas.
+                    </div>
+                    <button class="btn btn-success btn-block" id="btnConfirmSurtido" onclick="confirmSurtido()">
+                        ✓ Confirmar surtido
+                    </button>
+                </div>
+            </div>
+
+            <!-- PASO DONE -->
+            <div id="step-done" style="display:none;">
+                <div style="text-align:center; padding:36px 16px;">
+                    <div style="font-size:64px; margin-bottom:14px;">✅</div>
+                    <div style="font-size:20px; font-weight:800; color:var(--success); margin-bottom:8px;">¡Surtido registrado!</div>
+                    <div style="font-size:14px; color:var(--gray-600); line-height:1.6; margin-bottom:24px;" id="doneMsg"></div>
+                    <button class="btn btn-primary btn-block" onclick="nextMaterial()">› Siguiente material</button>
+                    <button class="btn btn-outline btn-block" style="margin-top:10px;" onclick="showScreen('screen-folio'); refreshFolioDetail();">Ver lista LMAT</button>
+                </div>
+            </div>
+
+            <!-- LISTA ACUMULADA DE ARTÍCULOS ESCANEADOS -->
+            <div id="scannedListSection" style="margin-top:16px; display:none;">
+                <div class="section-title" style="margin-bottom:8px;">Artículos escaneados en este folio &nbsp;<span id="scannedCount" style="font-weight:900; color:var(--primary);">0</span></div>
+                <div id="scannedList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SCREEN 5: SINCRONIZACIÓN                                          -->
+    <!-- ================================================================ -->
+    <div id="screen-sync" class="screen">
+        <div class="topbar">
+            <button class="back-btn" onclick="showScreen('screen-dashboard')">‹</button>
+            <h2>Sincronización</h2>
+            <span class="connectivity-dot" id="syncConnDot"></span>
+        </div>
+        <div class="content">
+            <div class="card" style="margin-bottom:14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <div>
+                        <div class="card-title">Estado de conexión</div>
+                        <div class="card-subtitle" id="syncStatusText">Conectado al servidor</div>
+                    </div>
+                    <div class="toggle-wrap">
+                        <span style="font-size:12px; color:var(--gray-600);">Simular offline</span>
+                        <div class="toggle" id="offlineToggle" onclick="toggleOffline()"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title">Cola de movimientos (<span id="syncQueueCount">0</span> pendientes)</div>
+            <div id="syncQueueList"></div>
+
+            <button class="btn btn-primary btn-block" id="btnSync" onclick="doSync()" style="margin-top:4px;">
+                🔄 Sincronizar ahora
+            </button>
+
+            <div class="section-title" style="margin-top:20px;">Historial de hoy</div>
+            <div class="card">
+                <div class="info-row"><span class="label">Última sincronización exitosa</span><span class="value">Hoy 09:38</span></div>
+                <div class="info-row"><span class="label">Movimientos sincronizados</span><span class="value" id="syncedCount">47</span></div>
+                <div class="info-row"><span class="label">Errores de sincronización</span><span class="value" style="color:var(--success);">0</span></div>
+                <div class="info-row"><span class="label">Dispositivo</span><span class="value">Handheld-03</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- MODAL: ERROR DE INGENIERÍA                                        -->
+    <!-- ================================================================ -->
+    <div class="modal-overlay" id="modalError">
+        <div class="modal-sheet">
+            <div class="modal-handle"></div>
+
+            <!-- FORMULARIO -->
+            <div id="errorFormSection">
+                <div class="modal-title">⚠️ Reporte de Error</div>
+                <div class="modal-subtitle">Escalamiento automático a Ingeniería</div>
+
+                <div style="display:flex; gap:10px; margin-bottom:14px;">
+                    <div class="form-group" style="flex:1; margin-bottom:0;">
+                        <label>Folio LMAT</label>
+                        <input type="text" id="errorFolio" readonly style="background:var(--gray-200);"/>
+                    </div>
+                    <div class="form-group" style="flex:1; margin-bottom:0;">
+                        <label>SKU en curso</label>
+                        <input type="text" id="errorSKU" readonly style="background:var(--gray-200);"/>
+                    </div>
+                </div>
+
+                <div style="font-size:11px; font-weight:800; color:var(--gray-600); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:9px;">Tipo de error *</div>
+                <div class="error-type-grid">
+                    <button class="error-type-btn" onclick="selectErrorType(this,'sku-incorrecto')">
+                        <div class="et-title">🏷️ SKU incorrecto</div>
+                        <div class="et-desc">El código no corresponde al material físico en almacén</div>
+                    </button>
+                    <button class="error-type-btn" onclick="selectErrorType(this,'punto-faltante')">
+                        <div class="et-title">📋 Punto faltante en LMAT</div>
+                        <div class="et-desc">Un material requerido no aparece en la lista del folio</div>
+                    </button>
+                    <button class="error-type-btn" onclick="selectErrorType(this,'codigo-inexistente')">
+                        <div class="et-title">❌ Código inexistente</div>
+                        <div class="et-desc">El código escaneado no existe en el catálogo del sistema</div>
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label>Notas adicionales</label>
+                    <textarea id="errorNotes" rows="3" placeholder="Describe el problema con más detalle..."></textarea>
+                </div>
+
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-gray" style="flex:1;" onclick="closeErrorModal()">Cancelar</button>
+                    <button class="btn btn-danger" style="flex:1;" id="btnEscalar" onclick="submitError()">
+                        📤 Escalar a Ingeniería
+                    </button>
+                </div>
+            </div>
+
+            <!-- CONFIRMACIÓN DE TICKET -->
+            <div id="errorConfirmSection" style="display:none;">
+                <div class="ticket-confirm">
+                    <div class="ticket-icon">📋</div>
+                    <div style="font-size:13px; color:var(--gray-600); margin-bottom:6px;">Ticket generado</div>
+                    <div class="ticket-num" id="ticketNumber">ENG-2024-0047</div>
+                    <div class="ticket-msg">
+                        El reporte fue escalado automáticamente al equipo de <strong>Ingeniería</strong>.<br><br>
+                        El folio queda en pausa hasta recibir resolución. El operador de turno recibirá la confirmación.
+                    </div>
+                    <div style="margin-top:16px; padding:12px; background:var(--gray-100); border-radius:var(--radius); font-size:13px; color:var(--gray-600); text-align:left; line-height:1.7;">
+                        <strong>Detalle del reporte:</strong><br>
+                        <span id="ticketSummary"></span>
+                    </div>
+                    <button class="btn btn-primary btn-block" style="margin-top:18px;" onclick="closeErrorModal()">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST GLOBAL -->
+    <div class="toast" id="toast"></div>
+
+</div><!-- #app -->
+
+<script>
+// ================================================================
+// DATOS FAKE
+// ================================================================
+const OPERADORES = {
+    jperez:   'Juan Pérez',
+    alopez:   'Ana López',
+    mtorres:  'Miguel Torres',
+    rcardenas:'Rosa Cárdenas',
+    fmendez:  'Felipe Méndez'
+};
+const TURNOS = {
+    mat: 'Matutino',
+    ves: 'Vespertino',
+    noc: 'Nocturno'
+};
+const ALMACENES = { alm1: 'Almacén 1', alm2: 'Almacén 2' };
+
+const FOLIOS = [
+    {
+        id: 'LMAT-2024-001',
+        vehiculo: 'VH-007',
+        folioVehiculo: 'FV-2024-0089',
+        vehiculoDesc: 'Toyota Land Cruiser 300 — 2024 Platino',
+        numEspecificacion: 'ESP-2024-0142',
+        linea: 'Bahía 3', maquina: 'EST-07', prioridad: 'Alta', status: 'progress',
+        materiales: [
+            { sku:'VID-10001', desc:'Vidrio blindado lateral delantero izq. NIJ-III',  ubic:'VID-A01', solicitado:1, surtido:1, status:'done' },
+            { sku:'VID-10002', desc:'Vidrio blindado lateral delantero der. NIJ-III',  ubic:'VID-A02', solicitado:1, surtido:0, status:'progress' },
+            { sku:'VID-10003', desc:'Parabrisas blindado laminado NIJ-III',            ubic:'VID-B01', solicitado:1, surtido:0, status:'pending' },
+            { sku:'MOT-20011', desc:'Motor elevador puerta delantera izq. 12V',        ubic:'MOT-C01', solicitado:1, surtido:0, status:'pending' },
+            { sku:'SUS-30045', desc:'Amortiguador reforzado delantero izq. (par)',     ubic:'SUS-D01', solicitado:2, surtido:0, status:'pending' }
+        ]
+    },
+    {
+        id: 'LMAT-2024-002',
+        vehiculo: 'VH-012',
+        folioVehiculo: 'FV-2024-0102',
+        vehiculoDesc: 'Mercedes-Benz GLS 450 — 2024 AMG Line',
+        numEspecificacion: 'ESP-2024-0098',
+        linea: 'Bahía 1', maquina: 'EST-12', prioridad: 'Media', status: 'pending',
+        materiales: [
+            { sku:'VID-10008', desc:'Vidrio blindado lunar trasero NIJ-IIIA',          ubic:'VID-A03', solicitado:1, surtido:0, status:'pending' },
+            { sku:'MOT-20015', desc:'Motor elevador puerta trasera der. 12V',          ubic:'MOT-C02', solicitado:1, surtido:0, status:'pending' },
+            { sku:'SUS-30062', desc:'Resorte suspensión trasero reforzado (par)',      ubic:'SUS-D02', solicitado:2, surtido:0, status:'pending' }
+        ]
+    },
+    {
+        id: 'LMAT-2024-003',
+        vehiculo: 'VH-003',
+        folioVehiculo: 'FV-2024-0071',
+        vehiculoDesc: 'BMW X7 xDrive40i — 2023 M Sport',
+        numEspecificacion: 'ESP-2024-0055',
+        linea: 'Bahía 5', maquina: 'EST-03', prioridad: 'Baja', status: 'pending',
+        materiales: [
+            { sku:'VID-10020', desc:'Vidrio panorámico blindado techo NIJ-II',         ubic:'VID-B02', solicitado:1, surtido:0, status:'pending' },
+            { sku:'VID-10021', desc:'Vidrio blindado lateral trasero izq. NIJ-IIIA',   ubic:'VID-B03', solicitado:1, surtido:0, status:'pending' },
+            { sku:'MOT-20031', desc:'Actuador puerta corrediza trasera izq.',          ubic:'MOT-C03', solicitado:1, surtido:0, status:'pending' },
+            { sku:'SUS-30078', desc:'Brazo de suspensión inferior delantero der.',     ubic:'SUS-D03', solicitado:1, surtido:0, status:'pending' }
+        ]
+    },
+    {
+        id: 'LMAT-2024-004',
+        vehiculo: 'VH-019',
+        folioVehiculo: 'FV-2024-0115',
+        vehiculoDesc: 'Chevrolet Suburban Z71 — 2024 High Country',
+        numEspecificacion: 'ESP-2024-0177',
+        linea: 'Bahía 2', maquina: 'EST-19', prioridad: 'Alta', status: 'done',
+        materiales: [
+            { sku:'MOT-20042', desc:'Motor elevador vidrio delantero izq. 12V',        ubic:'MOT-C04', solicitado:2, surtido:2, status:'done' },
+            { sku:'SUS-30091', desc:'Kit rodamiento rueda delantera (juego 4 pzas)',   ubic:'SUS-D04', solicitado:4, surtido:4, status:'done' }
+        ]
+    }
+];
+
+// ================================================================
+// ESTADO
+// ================================================================
+let currentUser    = {};
+let currentFolioId = null;
+let currentMatIdx  = 0;
+let surtidoStep    = 1;
+let scanSKU        = '';
+let currentQty     = 1;
+let selectedErrType = '';
+let sessionScanned = [];
+
+// ================================================================
+// RELOJ
+// ================================================================
+function updateClock() {
+    const now = new Date();
+    document.getElementById('statusTime').textContent =
+        String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+}
+setInterval(updateClock, 15000);
+updateClock();
+
+// ================================================================
+// NAVEGACIÓN
+// ================================================================
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if (id === 'screen-dashboard') renderDashboard();
+}
+
+// ================================================================
+// LOGIN / LOGOUT
+// ================================================================
+function doLogin() {
+    const op = document.getElementById('sel-operador').value;
+    const tu = document.getElementById('sel-turno').value;
+    const al = document.getElementById('sel-almacen').value;
+    if (!op || !tu) { showToast('Selecciona operador y turno', 'error'); return; }
+    currentUser = { op, tu, al };
+    document.getElementById('dashOperadorName').textContent = OPERADORES[op];
+    document.getElementById('dashTurnoName').textContent = TURNOS[tu] + ' · ' + ALMACENES[al];
+    renderDashboard();
+    showScreen('screen-dashboard');
+    showToast('Bienvenido, ' + OPERADORES[op] + ' ✓', 'success');
+}
+
+function doLogout() {
+    showScreen('screen-login');
+    showToast('Sesión cerrada');
+}
+
+// ================================================================
+// DASHBOARD
+// ================================================================
+function renderDashboard() {
+    const active  = FOLIOS.filter(f => f.status === 'progress').length;
+    const pending = FOLIOS.filter(f => f.status === 'pending').length;
+    const done    = FOLIOS.filter(f => f.status === 'done').length;
+
+    document.getElementById('dashStats').innerHTML = `
+        <div class="stat-card"><div class="stat-num" style="color:var(--accent);">${pending}</div><div class="stat-label">Pendientes</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--primary);">${active}</div><div class="stat-label">En proceso</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--success);">${done}</div><div class="stat-label">Completados</div></div>
+    `;
+
+    const list = document.getElementById('foliosList');
+    list.innerHTML = '';
+
+    const activeFolios = FOLIOS.filter(f => f.status !== 'done');
+    if (!activeFolios.length) {
+        list.innerHTML = '<div class="empty-state"><div class="eicon">🎉</div><p>¡Todos los folios completados!</p></div>';
+    } else {
+        activeFolios.forEach(f => appendFolioCard(list, f));
+    }
+
+    const doneFolios = FOLIOS.filter(f => f.status === 'done');
+    if (doneFolios.length) {
+        const sep = document.createElement('div');
+        sep.className = 'section-title';
+        sep.style.marginTop = '16px';
+        sep.textContent = 'Completados hoy';
+        list.appendChild(sep);
+        doneFolios.forEach(f => appendFolioCard(list, f));
+    }
+}
+
+function appendFolioCard(container, f) {
+    const total = f.materiales.length;
+    const doneMats = f.materiales.filter(m => m.status === 'done').length;
+    const pct = Math.round((doneMats / total) * 100);
+    const statusLabel = { progress:'En proceso', pending:'Pendiente', done:'Completado' };
+    const badgeCls    = { progress:'badge-progress', pending:'badge-pending', done:'badge-done' };
+    const prioCls     = { Alta:'prio-alta', Media:'prio-media', Baja:'prio-baja' };
+
+    const card = document.createElement('div');
+    card.className = `folio-card status-${f.status}`;
+    card.innerHTML = `
+        <div class="folio-header">
+            <div>
+                <div class="folio-code">${f.id}</div>
+                <div class="folio-meta">${f.linea} · ${f.maquina}</div>
+            </div>
+            <div style="text-align:right;">
+                <span class="badge ${badgeCls[f.status]}">${statusLabel[f.status]}</span>
+                <div style="font-size:11px; margin-top:4px; font-weight:800;" class="${prioCls[f.prioridad]}">● Prio. ${f.prioridad}</div>
+            </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:3px 12px; margin-bottom:10px; padding-top:8px; border-top:1px solid var(--gray-200); font-size:11px;">
+            <div><span style="color:var(--gray-600);">Folio:&nbsp;</span><strong>${f.folioVehiculo}</strong></div>
+            <div><span style="color:var(--gray-600);">Orden surtido:&nbsp;</span><strong>${f.id}</strong></div>
+            <div style="grid-column:1/-1;"><span style="color:var(--gray-600);">Vehículo:&nbsp;</span><strong>${f.vehiculoDesc}</strong></div>
+            <div style="grid-column:1/-1;"><span style="color:var(--gray-600);">Núm. Especificación:&nbsp;</span><strong>${f.numEspecificacion}</strong></div>
+        </div>
+        <div>
+            <div class="progress-label">
+                <span>${doneMats} de ${total} materiales surtidos</span>
+                <span>${pct}%</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+        </div>
+    `;
+    card.onclick = () => openFolio(f.id);
+    container.appendChild(card);
+}
+
+// ================================================================
+// DETALLE FOLIO
+// ================================================================
+function openFolio(id) {
+    currentFolioId = id;
+    sessionScanned = [];
+    // Ordenar materiales por ubicación para no pasar dos veces por la misma
+    const folio = FOLIOS.find(f => f.id === id);
+    if (folio) {
+        folio.materiales.sort((a, b) => a.ubic.localeCompare(b.ubic));
+    }
+    refreshFolioDetail();
+    showScreen('screen-folio');
+}
+
+function refreshFolioDetail() {
+    const folio = FOLIOS.find(f => f.id === currentFolioId);
+    if (!folio) return;
+    document.getElementById('folioDetailCode').textContent = folio.id;
+    document.getElementById('folioDetailMeta').textContent = `${folio.linea} · ${folio.maquina} · ${folio.vehiculo} · Prio. ${folio.prioridad}`;
+
+    const total = folio.materiales.length;
+    const doneMats = folio.materiales.filter(m => m.status === 'done').length;
+    const pct = Math.round((doneMats / total) * 100);
+
+    document.getElementById('folioDetailStats').innerHTML = `
+        <div class="card" style="margin-bottom:0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <div style="text-align:center;"><div style="font-size:20px; font-weight:900; color:var(--primary);">${total}</div><div style="font-size:10px; color:var(--gray-600);">Total</div></div>
+                <div style="text-align:center;"><div style="font-size:20px; font-weight:900; color:var(--success);">${doneMats}</div><div style="font-size:10px; color:var(--gray-600);">Surtidos</div></div>
+                <div style="text-align:center;"><div style="font-size:20px; font-weight:900; color:var(--accent);">${total - doneMats}</div><div style="font-size:10px; color:var(--gray-600);">Pendientes</div></div>
+                <div style="text-align:center;"><div style="font-size:20px; font-weight:900; color:var(--gray-800);">${pct}%</div><div style="font-size:10px; color:var(--gray-600);">Avance</div></div>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+        </div>
+    `;
+
+    const tbody = document.getElementById('matTableBody');
+    tbody.innerHTML = '';
+    const icons = { done:'✅', progress:'🔄', pending:'⏳' };
+    const cls   = { done:'row-done', progress:'row-progress', pending:'row-pending' };
+    folio.materiales.forEach((mat, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = cls[mat.status] || 'row-pending';
+        tr.innerHTML = `
+            <td style="font-family:monospace; font-size:11px;">${mat.sku}</td>
+            <td style="font-size:12px;">${mat.desc}</td>
+            <td style="font-family:monospace; font-size:12px; font-weight:800;">${mat.ubic}</td>
+            <td style="text-align:center; font-weight:800;">${mat.solicitado}</td>
+            <td style="text-align:center; font-weight:800; color:${mat.surtido >= mat.solicitado ? 'var(--success)' : 'var(--accent)'};">${mat.surtido}</td>
+            <td style="text-align:center; font-size:15px;">${icons[mat.status] || '⏳'}</td>
+        `;
+        tr.onclick = () => { currentMatIdx = idx; startSurtidoFromIdx(idx); };
+        tbody.appendChild(tr);
+    });
+}
+
+function openErrorModalFromFolio() {
+    const folio = FOLIOS.find(f => f.id === currentFolioId);
+    const mat = folio ? folio.materiales.find(m => m.status !== 'done') : null;
+    openErrorModal(currentFolioId, mat ? mat.sku : null);
+}
+
+// ================================================================
+// FLUJO DE SURTIDO
+// ================================================================
+function startSurtido() {
+    const folio = FOLIOS.find(f => f.id === currentFolioId);
+    const idx = folio.materiales.findIndex(m => m.status === 'pending' || m.status === 'progress');
+    if (idx === -1) { showToast('Todos los materiales ya fueron surtidos ✅', 'success'); return; }
+    currentMatIdx = idx;
+    initSurtidoScreen();
+    showScreen('screen-surtido');
+}
+
+function startSurtidoFromIdx(idx) {
+    const folio = FOLIOS.find(f => f.id === currentFolioId);
+    const mat = folio.materiales[idx];
+    if (mat.status === 'done') { showToast('Este material ya fue surtido ✅', 'success'); return; }
+    currentMatIdx = idx;
+    initSurtidoScreen();
+    showScreen('screen-surtido');
+}
+
+function initSurtidoScreen() {
+    const folio = FOLIOS.find(f => f.id === currentFolioId);
+    const mat   = folio.materiales[currentMatIdx];
+    surtidoStep = 1;
+    scanSKU = '';
+    currentQty = 1;
+
+    document.getElementById('surtidoTitle').textContent = currentFolioId;
+    document.getElementById('surtidoSubtitle').textContent =
+        `${folio.vehiculo} · Mat. ${currentMatIdx + 1}/${folio.materiales.length}`;
+
+    // Banner material
+    document.getElementById('currentMatInfo').style.display = 'block';
+    document.getElementById('currentMatSKU').textContent  = mat.sku;
+    document.getElementById('currentMatDesc').textContent = mat.desc + ' · Ubic: ' + mat.ubic;
+
+    // Render route
+    renderRoute();
+
+    // Steps reset
+    document.getElementById('step1dot').className = 'step-dot active';
+    document.getElementById('step2dot').className = 'step-dot';
+    document.getElementById('stepLine1').className = 'step-line';
+
+    // Inputs reset
+    document.getElementById('inputSKU').value  = '';
+    document.getElementById('qtyValue').textContent = '1';
+    document.getElementById('qtyValue').style.color = 'var(--gray-800)';
+    document.getElementById('qtyWarnBox').style.display  = 'none';
+    document.getElementById('btnConfirmSurtido').disabled = false;
+
+    // Scan box reset
+    setScanBox('scanBoxSKU',  'idle');
+
+    // Show step-2 (SKU scan) directly
+    ['step-2','step-3','step-done'].forEach(id => document.getElementById(id).style.display = 'none');
+    document.getElementById('step-2').style.display = 'block';
+}
+
+function setScanBox(boxId, state, label) {
+    const box = document.getElementById(boxId);
+    if (state === 'idle') {
+        box.className = 'scan-box';
+        box.innerHTML = `<div class="scan-icon">📷</div><div style="font-size:13px;color:var(--gray-600);">Apunte el lector al código de barras</div>`;
+    } else if (state === 'scanning') {
+        box.className = 'scan-box active-scan';
+        box.innerHTML = `<div class="scan-icon">📡</div><div style="font-size:13px;color:var(--primary);">Escaneando...</div>`;
+    } else if (state === 'done') {
+        box.className = 'scan-box scanned';
+        box.innerHTML = `<div class="scan-result">${label}</div><div class="scan-label">Código detectado</div>`;
+    }
+}
+
+function simulateScan(tipo) {
+    const folio = FOLIOS.find(f => f.id === currentFolioId);
+    const mat   = folio.materiales[currentMatIdx];
+    setScanBox('scanBoxSKU', 'scanning');
+    setTimeout(() => {
+        document.getElementById('inputSKU').value = mat.sku;
+        setScanBox('scanBoxSKU', 'done', '🏷️ ' + mat.sku);
+        showToast('SKU escaneado: ' + mat.sku, 'success');
+        setTimeout(() => confirmSKU(), 400);
+    }, 900);
+}
+
+function confirmUbic() {
+    const val = document.getElementById('inputUbic').value.trim().toUpperCase();
+    if (!val) { showToast('Escanea o ingresa la ubicación', 'error'); return; }
+    const folio = FOLIOS.find(f => f.id === currentFolioId);
+    const mat   = folio.materiales[currentMatIdx];
+    if (val !== mat.ubic) {
+        showToast('⚠️ Ubicación no coincide con LMAT (' + mat.ubic + ')', 'warning');
+    }
+    scanUbic = val;
+    document.getElementById('confirmedUbicLabel').textContent = '📍 ' + scanUbic;
+    goToStep(2);
+}
+
+function confirmSKU() {
+    const val = document.getElementById('inputSKU').value.trim().toUpperCase();
+    if (!val) { showToast('Escanea o ingresa el SKU', 'error'); return; }
+    const folio = FOLIOS.find(f => f.id === currentFolioId);
+    const mat   = folio.materiales[currentMatIdx];
+    if (val !== mat.sku) {
+        showToast('⚠️ SKU no coincide con LMAT (' + mat.sku + ')', 'warning');
+    }
+    scanSKU = val;
+    const remaining = mat.solicitado - mat.surtido;
+    currentQty = Math.min(1, remaining);
+
+    document.getElementById('step3SKU').textContent  = scanSKU;
+    document.getElementById('step3Desc').textContent = mat.desc;
+    document.getElementById('qtyLimit').textContent     = remaining;
+    document.getElementById('qtyLimitWarn').textContent = remaining;
+    document.getElementById('qtyValue').textContent = currentQty;
+    document.getElementById('qtyWarnBox').style.display  = 'none';
+    document.getElementById('btnConfirmSurtido').disabled = false;
+    document.getElementById('qtyValue').style.color = 'var(--gray-800)';
+
+    goToStep(3);
+}
+
+function goToStep(n) {
+    ['step-2','step-3','step-done'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+    const el = document.getElementById('step-' + n);
+    if (el) el.style.display = 'block';
+
+    // Visual step: step-2 = visual 1, step-3 = visual 2
+    const vn = n - 1;
+    ['step1dot','step2dot'].forEach((dotId, i) => {
+        const dot = document.getElementById(dotId);
+        if (!dot) return;
+        const dn = i + 1;
+        if (dn < vn)       { dot.className = 'step-dot done';   dot.textContent = '✓'; }
+        else if (dn === vn){ dot.className = 'step-dot active';  dot.textContent = dn; }
+        else               { dot.className = 'step-dot';         dot.textContent = dn; }
+    });
+    const line = document.getElementById('stepLine1');
+    if (line) line.className = 'step-line' + (vn > 1 ? ' done' : '');
+}
+
+function changeQty(delta) {
+    const folio = FOLIOS.find(f => f.id === currentFolioId);
+    const mat   = folio.materiales[currentMatIdx];
+    const remaining = mat.solicitado - mat.surtido;
+    const newQty = currentQty + delta;
+    if (newQty < 1) return;
+    currentQty = newQty;
+    document.getElementById('qtyValue').textContent = currentQty;
+    const exceeded = currentQty > remaining;
+    document.getElementById('qtyValue').style.color = exceeded ? 'var(--danger)' : 'var(--gray-800)';
+    document.getElementById('qtyWarnBox').style.display = exceeded ? 'block' : 'none';
+    document.getElementById('btnConfirmSurtido').disabled = exceeded;
+}
+
+function confirmSurtido() {
+    const folio = FOLIOS.find(f => f.id === currentFolioId);
+    const mat   = folio.materiales[currentMatIdx];
+    mat.surtido = Math.min(mat.surtido + currentQty, mat.solicitado);
+    mat.status  = mat.surtido >= mat.solicitado ? 'done' : 'progress';
+
+    const doneMats = folio.materiales.filter(m => m.status === 'done').length;
+    folio.status = doneMats === folio.materiales.length ? 'done' : 'progress';
+
+    sessionScanned.unshift({ sku: mat.sku, desc: mat.desc, ubic: mat.ubic, qty: currentQty });
+
+    renderRoute();
+    renderScannedList();
+    const remaining = folio.materiales.filter(m => m.status !== 'done').length;
+    showToast(
+        `${mat.sku} · ${currentQty} pzas.` + (remaining ? '' : ' — ¡Folio completo! ✅') + ' ✓',
+    );
+    setTimeout(() => nextMaterial(), 700);
+}
+
+function nextMaterial() {
+    const folio = FOLIOS.find(f => f.id === currentFolioId);
+    const nextIdx = folio.materiales.findIndex((m, i) => i > currentMatIdx && m.status !== 'done');
+    if (nextIdx === -1) {
+        showToast('¡Folio completado! ✅', 'success');
+        refreshFolioDetail();
+        showScreen('screen-folio');
+        return;
+    }
+    currentMatIdx = nextIdx;
+    initSurtidoScreen();
+}
+
+function renderRoute() {
+    const folio = FOLIOS.find(f => f.id === currentFolioId);
+    const list  = document.getElementById('routeList');
+    if (!folio || !list) return;
+    const currentMat = folio.materiales[currentMatIdx];
+    const sorted = [...folio.materiales].sort((a, b) => a.ubic.localeCompare(b.ubic));
+    list.innerHTML = sorted.map(mat => {
+        const isCurrent = mat === currentMat;
+        const isDone    = mat.status === 'done';
+        const icon      = isDone ? '✅' : isCurrent ? '👉' : '⏳';
+        const qty       = mat.surtido + '/' + mat.solicitado;
+        const desc      = mat.desc.length > 28 ? mat.desc.substring(0, 28) + '…' : mat.desc;
+        return `<div class="route-item ${isCurrent ? 'route-current' : ''} ${isDone ? 'route-done' : ''}">
+            <span style="font-size:14px;">${icon}</span>
+            <span style="font-family:monospace; font-weight:800; min-width:52px; color:var(--primary);">${mat.ubic}</span>
+            <span style="flex:1; min-width:0;">
+                <span style="font-family:monospace; font-size:11px;">${mat.sku}</span>
+                <span style="color:var(--gray-600);"> &middot; ${desc}</span>
+            </span>
+            <span style="font-weight:800; color:${isDone ? 'var(--success)' : 'var(--accent)'}; white-space:nowrap;">${qty} pz</span>
+        </div>`;
+    }).join('');
+}
+
+function renderScannedList() {
+    const section = document.getElementById('scannedListSection');
+    const list    = document.getElementById('scannedList');
+    const count   = document.getElementById('scannedCount');
+    if (!section) return;
+    section.style.display = sessionScanned.length ? 'block' : 'none';
+    count.textContent = sessionScanned.length;
+    list.innerHTML = sessionScanned.map(item => `
+        <div class="scanned-item">
+            <div style="font-size:18px;">✅</div>
+            <div style="flex:1; min-width:0;">
+                <div style="font-size:13px; font-weight:800; color:var(--gray-800);">${item.sku}</div>
+                <div style="font-size:11px; color:var(--gray-600); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.desc}</div>
+                <div style="font-size:11px; color:var(--gray-600);">Ubic: ${item.ubic}</div>
+            </div>
+            <div style="text-align:right; flex-shrink:0;">
+                <div style="font-size:18px; font-weight:900; color:var(--success);">${item.qty}</div>
+                <div style="font-size:10px; color:var(--gray-600);">pzas.</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ================================================================
+// MODAL ERROR DE INGENIERÍA
+// ================================================================
+function openErrorModal(folioId, sku) {
+    selectedErrType = '';
+    document.querySelectorAll('.error-type-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('errorFolio').value = folioId || '—';
+    document.getElementById('errorSKU').value   = sku     || '—';
+    document.getElementById('errorNotes').value  = '';
+    document.getElementById('errorFormSection').style.display   = 'block';
+    document.getElementById('errorConfirmSection').style.display = 'none';
+    const btn = document.getElementById('btnEscalar');
+    btn.innerHTML = '📤 Escalar a Ingeniería';
+    btn.disabled  = false;
+    document.getElementById('modalError').classList.add('open');
+}
+
+function closeErrorModal() {
+    document.getElementById('modalError').classList.remove('open');
+}
+
+function selectErrorType(btn, type) {
+    document.querySelectorAll('.error-type-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedErrType = type;
+}
+
+function submitError() {
+    if (!selectedErrType) { showToast('Selecciona el tipo de error', 'error'); return; }
+    const folio = document.getElementById('errorFolio').value;
+    const sku   = document.getElementById('errorSKU').value;
+    const notes = document.getElementById('errorNotes').value.trim();
+    const typeLabels = {
+        'sku-incorrecto':   'SKU incorrecto',
+        'punto-faltante':   'Punto faltante en LMAT',
+        'codigo-inexistente': 'Código inexistente'
+    };
+    const btn = document.getElementById('btnEscalar');
+    btn.innerHTML = '<div class="spinner"></div> Escalando...';
+    btn.disabled  = true;
+
+    setTimeout(() => {
+        const ticket = 'ENG-' + new Date().getFullYear() + '-' + String(Math.floor(1000 + Math.random() * 8999));
+        document.getElementById('ticketNumber').textContent = ticket;
+        document.getElementById('ticketSummary').innerHTML =
+            `Tipo: <strong>${typeLabels[selectedErrType]}</strong><br>` +
+            `Folio: ${folio} · SKU: ${sku}<br>` +
+            (notes ? `Notas: ${notes}` : '');
+        document.getElementById('errorFormSection').style.display   = 'none';
+        document.getElementById('errorConfirmSection').style.display = 'block';
+        btn.innerHTML = '📤 Escalar a Ingeniería';
+        btn.disabled  = false;
+        showToast('Ticket ' + ticket + ' generado ✓', 'success');
+    }, 1600);
+}
+
+// Cerrar modal al tocar el overlay
+document.getElementById('modalError').addEventListener('click', function(e) {
+    if (e.target === this) closeErrorModal();
+});
+
+// ================================================================
+// TOAST
+// ================================================================
+function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className   = 'toast' + (type ? ' ' + type : '');
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>

@@ -79,6 +79,35 @@ export interface InventariosState {
 	folios: Folio[];
 	notificaciones: Notificacion[];
 	trazabilidad: TrazaEntry[];
+	lmatFolios: LmatFolio[];
 	lastUpdated: string;
 	_dataVersion?: number;
 }
+
+// --- Surtido de Materiales (GAP-ALM-005) ---
+export type SurtidoEstatus = 'pendiente' | 'proceso' | 'completado';
+export type SurtidoPrioridad = 'Alta' | 'Media' | 'Baja';
+export type LmatMatStatus = 'pending' | 'progress' | 'done';
+
+export interface LmatMaterial {
+	sku: string;
+	desc: string;
+	ubic: string;
+	solicitado: number;
+	surtido: number;
+	status: LmatMatStatus;
+}
+
+export interface LmatFolio {
+	id: string;
+	folioVehiculo: string;
+	vehiculo: string;
+	vehiculoDesc: string;
+	numEspecificacion: string;
+	linea: string;
+	maquina: string;
+	prioridad: SurtidoPrioridad;
+	estatus: SurtidoEstatus;
+	materiales: LmatMaterial[];
+}
+

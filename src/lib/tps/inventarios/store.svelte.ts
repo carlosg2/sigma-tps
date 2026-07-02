@@ -1,11 +1,11 @@
 import { getContext, setContext } from 'svelte';
 import { browser } from '$app/environment';
-import type { InventariosState, Folio, Notificacion, TrazaEntry, NotifTipo } from './types';
+import type { InventariosState, Folio, Notificacion, TrazaEntry, NotifTipo, LmatFolio } from './types';
 import { createInitialInventariosState } from './seed';
 import { pad } from './constants';
 
 const STORAGE_KEY = 'tps-inventarios-state';
-const DATA_VERSION = 1;
+const DATA_VERSION = 2;
 
 function loadState(): InventariosState | null {
 	if (!browser) return null;
@@ -13,7 +13,7 @@ function loadState(): InventariosState | null {
 		const raw = localStorage.getItem(STORAGE_KEY);
 		if (!raw) return null;
 		const parsed = JSON.parse(raw);
-		if (parsed._dataVersion !== DATA_VERSION || !parsed.folios || !parsed.notificaciones) {
+		if (parsed._dataVersion !== DATA_VERSION || !parsed.folios || !parsed.notificaciones || !parsed.lmatFolios) {
 			localStorage.removeItem(STORAGE_KEY);
 			return null;
 		}
@@ -175,6 +175,42 @@ export class InventariosStore {
 	addTraza(entry: Omit<TrazaEntry, 'id' | 'fecha' | 'hora'>) {
 		const row: TrazaEntry = { id: uid('tz'), fecha: fechaHoy(), hora: horaAhora(), ...entry };
 		this.state.trazabilidad = [row, ...this.state.trazabilidad];
+	}
+
+	// --- Surtido de Materiales (GAP-ALM-005) ---
+	getLmatFolio(id: string): LmatFolio | undefined {
+		return this.state.lmatFolios.find((f) => f.id === id);
+	}
+
+	lmatFolioProgress(folio: LmatFolio) {
+		const done = folio.materiales.filter((m) => m.status === 'done').length;
+		const total = folio.materiales.length;
+		const pct = total ? Math.round((done / total) * 100) : 0;
+		return { done, total, pct, pending: total - done };
+	}
+
+	get lmatPendientes(): number {
+		return this.state.lmatFolios.filter((f) => f.estatus === 'pendiente').length;
+	}
+
+	get lmatEnProceso(): number {
+		return this.state.lmatFolios.filter((f) => f.estatus === 'proceso').length;
+	}
+
+	get lmatCompletados(): number {
+		return this.state.lmatFolios.filter((f) => f.estatus === 'completado').length;
+	}
+
+	surtirLmatMaterial(folioId: string, sku: string, qty: number) {
+		const folio = this.getLmatFolio(folioId);
+		if (!folio) return;
+		const mat = folio.materiales.find((m) => m.sku === sku);
+		if (!mat || mat.status === 'done') return;
+		mat.surtido = Math.min(mat.surtido + qty, mat.solicitado);
+		mat.status = mat.surtido >= mat.solicitado ? 'done' : 'progress';
+		const doneMats = folio.materiales.filter((m) => m.status === 'done').length;
+		folio.estatus = doneMats === folio.materiales.length ? 'completado' : 'proceso';
+		this.#commit();
 	}
 
 	// --- Nuevo folio ---

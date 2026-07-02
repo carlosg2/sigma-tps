@@ -28,6 +28,7 @@
 	import Bell from '@lucide/svelte/icons/bell';
 	import Warehouse from '@lucide/svelte/icons/warehouse';
 	import CartFlatbed from '@lucide/svelte/icons/truck';
+	import PackageOpen from '@lucide/svelte/icons/package-open';
 	import QrCode from '@lucide/svelte/icons/qr-code';
 	import Zap from '@lucide/svelte/icons/zap';
 	import ClipboardCheck from '@lucide/svelte/icons/clipboard-check';
@@ -86,6 +87,7 @@
 			label: 'Inventarios',
 			items: [
 				{ label: 'Dashboard', href: '/inventarios', icon: Warehouse },
+				{ label: 'Surtido de Materiales', href: '/inventarios/surtido', icon: PackageOpen },
 				{ label: 'Picking por Folio', href: '/inventarios/picking', icon: ListChecks },
 				{ label: 'Carritos por Folio', href: '/inventarios/carritos', icon: CartFlatbed },
 				{ label: 'Confirmación de Kits', href: '/inventarios/confirmacion', icon: QrCode },

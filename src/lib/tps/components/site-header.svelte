@@ -27,6 +27,7 @@
 		'/compras/requisiciones': 'Requisiciones',
 		'/compras/alertas': 'Alertas y Notificaciones',
 		'/inventarios': 'Inventarios · Kitting por Folio',
+		'/inventarios/surtido': 'Surtido de Materiales',
 		'/inventarios/picking': 'Lista de Picking por Folio / VIN',
 		'/inventarios/carritos': 'Gestión de Carritos por Folio',
 		'/inventarios/confirmacion': 'Confirmación Electrónica de Kits',
