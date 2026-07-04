@@ -1,0 +1,123 @@
+en en proyecto sigm tps acabo de crear un nuevo route co el nombre (svgl-layout)
+
+y en su carpeta lib/components pege las dos carpetas layout y tableOfContents del proyecto svgl sin ninguna modificacion. estos requrian adaptaciones y hardocear info demo.
+
+implementa el layout en el proyecto svgl en nuestro proyecto sigma-tps en la ruta reciencreada con (svgl-layout).
+
+solo nos interesa el layout y dos paginas ejemplo son un minima cantidad estatica de informacion demo para corroborar que el layout se vea igual que en svgl
+
+pregunta si tienes dudas
+
+---
+
+analiza la estructura de las paginas de svgl para que en (svgl-layout) se reproduccan el mismo diseño de las paginas, 
+
+ejemplos
+falta el header (con bluir filter y snaped arriba) en la pgina de docs y el componente tableOfContent
+
+la seccion principal del layout no tiene el mismo color y borde redondeado de svgl 
+
+el search en el home esta distinto en svgl esta anclado arriba
+
+el diseño debe ser fiel al original, contenido no nos importa, soloe s demo.
+
+---
+
+lo unico que varia es el bachround general de la pagina no se ve igual.. eso hace que queden cirtos espacios por donde se transparenta en backgound general. haz que se vea igual solo editando el token css ene sta pagina
+
+---
+
+algo esta provocando que tengamos doble scrollbar, solo se deberia de poder hacer en el contenido y pareciera que el layout tambien hace scroll un ligero espacio similar al alto de un top bar
+
+---
+
+sihe un liberao espacio en la parte de abajo por el que se filtra el blanco del background, como lo podemos corregir?
+
+---
+
+paareciera que toda la pagina tiene un espacio blanco abajo. porque?
+
+---
+
+repite muchas 3 veces el mismo contenido en el home para poder ver como hace scroll
+
+---
+
+porque al cargar la pagina hay un breve layout shift?
+
+---
+
+porque al cargar la pagina hay un breve layout shift?
+
+---
+
+```
+[plugin:vite-plugin-svelte:compile] /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/lib/components/layout/pageCard.svelte:34:0 `</div>` attempted to close an element that was not open
+https://svelte.dev/e/element_invalid_closing_tag
+```
+
+```
+pageCard.svelte:34:0
+```
+
+```
+32 |    </div>
+ 33 |  </div>
+ 34 |  </div>
+       ^
+ 35 |
+```
+
+```
+
+```
+
+---
+
+duda: si el page header y page card se repiten en cada page, no seria mejor compartirlo desde el layout?
+
+---
+
+trae la pagina extensions conserva todos los elementos, pero recuerda que es solo dummy data minima
+
+y a la pagina de api tiene un diseño de pagian distinto, no se ve centrado y ordenado como el svgl
+
+---
+
+agrega mas cards a extensions, en total unas 10
+
+---
+
+ests seguro que la altura de los page headers es la misma que en svgl? veo que svgl tiene un poco de mas aire arriba y abajo del icono y el titulo de la pagina.
+
+---
+
+creo que el page header y el page card deberian de usar el componente card que ya teemos
+
+---
+
+entonces page header y card deberian seguir el diseño de card con las mismas clases para que sea consistente el design system
+
+---
+
+ajusta aqui tambien
+
+---
+
+e faltaron los cn-* esos dan vida al design system
+
+---
+
+el header unca tiene buena altura como en nuestro card, porque? siempre queda sin espacio arriba y abajo del icono y el titulo
+
+---
+
+busc en nuestro design ssytem un mejor search
+
+---
+
+por algun motivo no puedo hacer click y editar el input de seach, porque?
+
+---
+
+en el header, quita el icono de sponsor y agrega el componente customizer
