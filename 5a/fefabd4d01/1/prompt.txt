@@ -1,0 +1,5 @@
+el sidebar aparece cortado de la parte de arriba deberia comenzar mas abajo, analiza detenidamente el layout y corrige
+
+---
+
+antes solia ver un ligero espacio en la parte derecha del panel principal ahora esta pegado a la derecha, porque?
