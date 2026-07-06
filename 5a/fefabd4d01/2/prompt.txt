@@ -1,0 +1,35 @@
+en la ruta vacia (landing) replica el landing page de proyecto agentic-build-and-orchestrate-ai-agents-while-you-sleep 
+
+ambos proyectos tienen instalado shadcn y su base css con el desig system correspondiente. 
+
+debe quedar todo colocalizado en el folder de (landing)
+
+---
+
+[Terminal 03138b2d-a126-4117-a6a9-f2598fc09ba3 notification: command completed. The terminal has been cleaned up.]
+Terminal output:
+(base) carlosgarzagarza@Mac sigma-tps %  pnpm dev 2>&1 | head -20
+
+> s-mail@0.0.1 dev /Users/carlosgarzagarza/Documents/GitHub/sigma-tps
+> vite dev
+
+2:43:57 AM [vite] (ssr) Re-optimizing dependencies because lockfile has changed
+2:43:57 AM [vite] (client) Re-optimizing dependencies because lockfile has changed
+Port 5173 is in use, trying another one...
+Port 5174 is in use, trying another one...
+Port 5175 is in use, trying another one...
+Port 5176 is in use, trying another one...
+
+  VITE v8.0.16  ready in 750 ms
+
+  ➜  Local:   http://localhost:5177/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+2:44:01 AM [vite] (client) [optimizer] bundling dependencies...
+2:44:08 AM [vite] (ssr) Error when evaluating SSR module /src/routes/+layout.svelte: Invalid declaration: `|@import 'tailwindcss'`
+  Plugin: @tailwindcss/vite:generate:serve
+  File: /Users/carlosgarzagarza/Documents/GitHub/sigma-tps/src/routes/layout.css
+
+---
+
+esta video no tiene bien la url y no se ve. porque?

@@ -1,0 +1,90 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "5afefabd4d01",
+  "session_id": "22c532a1-f57f-4cb6-b366-9b4b7143903e",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-06T08:28:37.770848Z",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "save_step_count": 2,
+  "files_touched": [
+    "src/lib/components/layout/header.svelte",
+    "src/lib/components/ui/sidebar/sidebar.svelte",
+    "src/routes/(svgl-layout)/+layout.svelte",
+    "src/routes/(tps)/lmat/kits/[id]/+page.svelte"
+  ],
+  "agent": "Copilot CLI",
+  "model": "",
+  "turn_id": "da38073ab5a7",
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-06T08:28:37.764803Z",
+    "agent_lines": 0,
+    "agent_removed": 7,
+    "human_added": 8561,
+    "human_modified": 91,
+    "human_removed": 0,
+    "total_committed": 8568,
+    "total_lines_changed": 8672,
+    "agent_percentage": 0.08071955719557196,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 1648,
+      "user_lines_removed": 97,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "src/lib/components/layout/header.svelte": 2,
+        "src/lib/components/layout/svglSidebar.svelte": 85,
+        "src/lib/components/ui/sidebar/sidebar.svelte": 1,
+        "src/routes/(landing)/+page.svelte": 498,
+        "src/routes/(landing)/bento-card.svelte": 50,
+        "src/routes/(landing)/devex-section.svelte": 195,
+        "src/routes/(landing)/intro-animation.svelte": 71,
+        "src/routes/(landing)/live-agent-counter.svelte": 16,
+        "src/routes/(landing)/live-agent-feed.svelte": 156,
+        "src/routes/(landing)/mobile-nav.svelte": 73,
+        "src/routes/(landing)/pixel-icon.svelte": 167,
+        "src/routes/(landing)/reveal-text.svelte": 70,
+        "src/routes/(landing)/stacking-agent-cards.svelte": 121,
+        "src/routes/(svgl-layout)/+layout.svelte": 13,
+        "src/routes/(tps)/+page.ts.bak": 5,
+        "src/routes/(tps)/lmat/kits/[id]/+page.svelte": 124,
+        "src/routes/layout.css": 1
+      },
+      "user_removed_per_file": {
+        "src/lib/components/layout/header.svelte": 2,
+        "src/lib/components/ui/sidebar/sidebar.svelte": 1,
+        "src/routes/(svgl-layout)/+layout.svelte": 6,
+        "src/routes/(tps)/+page.ts": 5,
+        "src/routes/(tps)/lmat/kits/[id]/+page.svelte": 82,
+        "src/routes/layout.css": 1
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 1,
+      "user_lines_removed": 1,
+      "agent_lines_added": 1647,
+      "agent_lines_removed": 96,
+      "user_added_per_file": {
+        "src/routes/(landing)/+page.svelte": 1
+      },
+      "user_removed_per_file": {
+        "src/routes/(landing)/+page.svelte": 1
+      }
+    }
+  ]
+}
