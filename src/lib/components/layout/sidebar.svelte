@@ -13,14 +13,16 @@
   let { children }: Props = $props();
 </script>
 
-<section class="bg-neutral-100 dark:bg-neutral-950">
+<section 
+/* class="bg-neutral-100 dark:bg-neutral-950" */
+>
   <aside
     class={cn(
       "md:fixed md:left-1 md:h-[calc(100vh-4.5rem)]",
       "overflow-x-hidden",
       "w-54",
       "hidden flex-col space-y-3 md:flex",
-      "bg-neutral-100 dark:bg-neutral-950",
+      /* "bg-neutral-100 dark:bg-neutral-950", */
     )}
   >
     <nav class="flex flex-col space-y-0.5 px-2">

@@ -943,7 +943,7 @@
 
 	/* MARK: Resizable */
 	.cn-resizable-handle-icon {
-		@apply bg-border h-6 w-1 rounded-lg;
+		@apply flex items-center h-6 justify-center rounded-sm bg-border p-0.5 transition-all;
 	}
 
 	/* MARK: Scroll Area */

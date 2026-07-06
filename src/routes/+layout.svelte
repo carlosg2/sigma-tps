@@ -21,7 +21,7 @@
 
 <Tooltip.Provider>
 	<DesignSystemProvider>
-		<div class="fixed top-3 right-3 z-50">
+		<div class="fixed bottom-4 left-1/2 z-50 -translate-x-1/2">
 			<Customizer />
 		</div>
 		{@render children()}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import GripVertical from '@lucide/svelte/icons/grip-vertical';
 	import * as ResizablePrimitive from "paneforge";
 	import { cn, type WithoutChildrenOrChild } from "$lib/utils.js";
 
@@ -22,6 +23,8 @@
 	{...restProps}
 >
 	{#if withHandle}
-		<div class="cn-resizable-handle-icon z-10 flex shrink-0"></div>
+		<div class="cn-resizable-handle-icon z-10 flex shrink-0">
+			<GripVertical class="size-2.5 "  />
+		</div>
 	{/if}
 </ResizablePrimitive.PaneResizer>

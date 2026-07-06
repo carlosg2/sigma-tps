@@ -94,34 +94,34 @@
 
 	<div class="mx-auto flex w-full max-w-5xl flex-col gap-6">
 		<!-- Header -->
-		<div class="flex flex-wrap items-center gap-4">
-			<Button href="/lmat/kits" variant="outline" size="icon">
+		<div class="flex flex-wrap items-start gap-4">
+			<Button href="/lmat/kits" variant="outline" size="icon" class="shrink-0">
 				<ArrowLeft />
 			</Button>
-			<div class="flex flex-1 flex-col gap-1">
-				<div class="flex items-center gap-3">
-					<h2 class="text-2xl font-semibold">Kit #{kit.id.toUpperCase()}</h2>
+			<div class="flex min-w-0 flex-1 flex-col gap-1">
+				<div class="flex flex-wrap items-center gap-2">
+					<h2 class="text-xl font-semibold sm:text-2xl">Kit #{kit.id.toUpperCase()}</h2>
 					<StatusBadge label={statusConfig.label} colorClass={statusConfig.color} />
 				</div>
-				<p class="text-muted-foreground text-sm">
+				<p class="text-muted-foreground truncate text-sm">
 					Folio {kit.folio} - {spec?.model || 'Sin especificacion'} - {kit.cell}
 				</p>
 			</div>
-			<div class="flex gap-2">
-				<Button variant="outline" size="sm">
+			<div class="flex w-full flex-wrap gap-2 sm:w-auto">
+				<Button variant="outline" size="sm" class="flex-1 sm:flex-none">
 					<QrCode data-icon="inline-start" /> Escanear
 				</Button>
-				<Button variant="outline" size="sm">
+				<Button variant="outline" size="sm" class="flex-1 sm:flex-none">
 					<Printer data-icon="inline-start" /> Imprimir
 				</Button>
-				<Button variant="outline" size="sm">
+				<Button variant="outline" size="sm" class="flex-1 sm:flex-none">
 					<Download data-icon="inline-start" /> Exportar
 				</Button>
 			</div>
 		</div>
 
 		<!-- Info Cards -->
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+		<div class="grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-4">
 			<Card.Root>
 				<Card.Header>
 					<Card.Description>Proceso</Card.Description>
@@ -175,54 +175,93 @@
 
 		<!-- Items List -->
 		<Card.Root>
-			<Card.Header>
+			<Card.Header class="border-b">
 				<Card.Title>Componentes del Kit</Card.Title>
 				<Card.Description>
 					Escanea cada componente para confirmar su inclusion en el kit
 				</Card.Description>
 			</Card.Header>
-			<Card.Content>
-				<Table.Root>
-					<Table.Header>
-						<Table.Row>
-							<Table.Head class="w-12"></Table.Head>
-							<Table.Head>Codigo</Table.Head>
-							<Table.Head>Descripcion</Table.Head>
-							<Table.Head class="text-center">Cant. BOM</Table.Head>
-							<Table.Head class="text-center">Cant. Surtida</Table.Head>
-							<Table.Head class="text-center">Backorder</Table.Head>
-							<Table.Head>UdM</Table.Head>
-							<Table.Head>Estado</Table.Head>
-							<Table.Head>Accion</Table.Head>
-						</Table.Row>
-					</Table.Header>
-					<Table.Body>
-						{#each kit.items as item (item.id)}
-							<Table.Row class={item.scanned ? 'bg-emerald-500/5' : ''}>
-								<Table.Cell>
-									<Checkbox
-										checked={item.scanned}
-										disabled={item.scanned}
-										onCheckedChange={() => handleScanItem(item.id)}
-									/>
-								</Table.Cell>
-								<Table.Cell class="font-mono text-sm">{item.articleCode}</Table.Cell>
-								<Table.Cell>{item.articleDescription}</Table.Cell>
-								<Table.Cell class="text-center font-medium tabular-nums">{item.quantityBOM}</Table.Cell>
-								<Table.Cell class="text-center tabular-nums">
-									<span class={item.quantitySupplied === item.quantityBOM ? 'text-emerald-500' : 'text-destructive'}>
-										{item.quantitySupplied}
-									</span>
-								</Table.Cell>
-								<Table.Cell class="text-center">
-									{#if item.quantityBackorder > 0}
-										<StatusBadge label={String(item.quantityBackorder)} colorClass="bg-destructive text-destructive-foreground" />
-									{:else}
-										<span class="text-muted-foreground">-</span>
-									{/if}
-								</Table.Cell>
-								<Table.Cell class="text-muted-foreground">{item.udm}</Table.Cell>
-								<Table.Cell>
+			<Card.Content class="p-0">
+				<!-- Vista desktop: tabla -->
+				<div class="hidden overflow-x-auto md:block">
+					<Table.Root>
+						<Table.Header>
+							<Table.Row>
+								<Table.Head class="w-12"></Table.Head>
+								<Table.Head>Codigo</Table.Head>
+								<Table.Head>Descripcion</Table.Head>
+								<Table.Head class="text-center">Cant. BOM</Table.Head>
+								<Table.Head class="text-center">Cant. Surtida</Table.Head>
+								<Table.Head class="text-center">Backorder</Table.Head>
+								<Table.Head>UdM</Table.Head>
+								<Table.Head>Estado</Table.Head>
+								<Table.Head>Accion</Table.Head>
+							</Table.Row>
+						</Table.Header>
+						<Table.Body>
+							{#each kit.items as item (item.id)}
+								<Table.Row class={item.scanned ? 'bg-emerald-500/5' : ''}>
+									<Table.Cell>
+										<Checkbox
+											checked={item.scanned}
+											disabled={item.scanned}
+											onCheckedChange={() => handleScanItem(item.id)}
+										/>
+									</Table.Cell>
+									<Table.Cell class="font-mono text-sm">{item.articleCode}</Table.Cell>
+									<Table.Cell>{item.articleDescription}</Table.Cell>
+									<Table.Cell class="text-center font-medium tabular-nums">{item.quantityBOM}</Table.Cell>
+									<Table.Cell class="text-center tabular-nums">
+										<span class={item.quantitySupplied === item.quantityBOM ? 'text-emerald-500' : 'text-destructive'}>
+											{item.quantitySupplied}
+										</span>
+									</Table.Cell>
+									<Table.Cell class="text-center">
+										{#if item.quantityBackorder > 0}
+											<StatusBadge label={String(item.quantityBackorder)} colorClass="bg-destructive text-destructive-foreground" />
+										{:else}
+											<span class="text-muted-foreground">-</span>
+										{/if}
+									</Table.Cell>
+									<Table.Cell class="text-muted-foreground">{item.udm}</Table.Cell>
+									<Table.Cell>
+										{#if item.scanned}
+											<StatusBadge label="Escaneado" colorClass="bg-emerald-500/15 text-emerald-400" />
+										{:else if item.quantityBackorder > 0}
+											<StatusBadge label="Backorder" colorClass="bg-destructive text-destructive-foreground" />
+										{:else}
+											<StatusBadge label="Pendiente" colorClass="bg-muted text-muted-foreground" />
+										{/if}
+									</Table.Cell>
+									<Table.Cell>
+										{#if !item.scanned}
+											<Button variant="outline" size="sm" onclick={() => handleScanItem(item.id)}>
+												<QrCode data-icon="inline-start" /> Escanear
+											</Button>
+										{/if}
+									</Table.Cell>
+								</Table.Row>
+							{/each}
+						</Table.Body>
+					</Table.Root>
+				</div>
+
+				<!-- Vista mobile: tarjetas -->
+				<div class="flex flex-col divide-y md:hidden">
+					{#each kit.items as item (item.id)}
+						<div class="flex items-start gap-3 p-4 {item.scanned ? 'bg-emerald-500/5' : ''}">  
+							<Checkbox
+								checked={item.scanned}
+								disabled={item.scanned}
+								onCheckedChange={() => handleScanItem(item.id)}
+								class="mt-0.5 shrink-0"
+							/>
+							<div class="flex min-w-0 flex-1 flex-col gap-2">
+								<div class="flex items-start justify-between gap-2">
+									<div class="min-w-0">
+										<p class="font-mono text-sm font-medium">{item.articleCode}</p>
+										<p class="text-muted-foreground truncate text-sm">{item.articleDescription}</p>
+									</div>
 									{#if item.scanned}
 										<StatusBadge label="Escaneado" colorClass="bg-emerald-500/15 text-emerald-400" />
 									{:else if item.quantityBackorder > 0}
@@ -230,18 +269,23 @@
 									{:else}
 										<StatusBadge label="Pendiente" colorClass="bg-muted text-muted-foreground" />
 									{/if}
-								</Table.Cell>
-								<Table.Cell>
-									{#if !item.scanned}
-										<Button variant="outline" size="sm" onclick={() => handleScanItem(item.id)}>
-											<QrCode data-icon="inline-start" /> Escanear
-										</Button>
+								</div>
+								<div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+									<span class="text-muted-foreground">BOM: <span class="text-foreground font-medium tabular-nums">{item.quantityBOM} {item.udm}</span></span>
+									<span class="text-muted-foreground">Surtido: <span class="tabular-nums {item.quantitySupplied === item.quantityBOM ? 'text-emerald-500' : 'text-destructive'} font-medium">{item.quantitySupplied}</span></span>
+									{#if item.quantityBackorder > 0}
+										<span class="text-muted-foreground">Backorder: <span class="text-destructive font-medium tabular-nums">{item.quantityBackorder}</span></span>
 									{/if}
-								</Table.Cell>
-							</Table.Row>
-						{/each}
-					</Table.Body>
-				</Table.Root>
+								</div>
+								{#if !item.scanned}
+									<Button variant="outline" size="sm" class="w-full" onclick={() => handleScanItem(item.id)}>
+										<QrCode data-icon="inline-start" /> Escanear
+									</Button>
+								{/if}
+							</div>
+						</div>
+					{/each}
+				</div>
 			</Card.Content>
 		</Card.Root>
 
@@ -258,28 +302,26 @@
 
 		<!-- Actions -->
 		<Card.Root>
-			<Card.Header>
+			<Card.Header class="border-b">
 				<Card.Title>Acciones</Card.Title>
 			</Card.Header>
 			<Card.Content class="flex flex-col gap-4">
-				<div class="flex gap-4">
-					{#if kit.status !== 'entregado' && progress === 100}
-						<Button onclick={handleMarkDelivered}>
-							<Truck data-icon="inline-start" /> Marcar como Entregado
+				{#if kit.status !== 'entregado' && progress === 100}
+					<Button class="w-full sm:w-auto" onclick={handleMarkDelivered}>
+						<Truck data-icon="inline-start" /> Marcar como Entregado
+					</Button>
+				{/if}
+				{#if kit.status !== 'entregado' && progress < 100}
+					<div class="flex flex-col gap-3">
+						<Textarea
+							placeholder="Notas de backorder (ej: Cristal trasero en transito - llega manana)"
+							bind:value={backorderNotes}
+						/>
+						<Button variant="outline" class="w-full sm:w-auto sm:self-start" onclick={handleMarkBackorder}>
+							<TriangleAlert data-icon="inline-start" /> Registrar Backorder
 						</Button>
-					{/if}
-					{#if kit.status !== 'entregado' && progress < 100}
-						<div class="flex flex-1 flex-col gap-3">
-							<Textarea
-								placeholder="Notas de backorder (ej: Cristal trasero en transito - llega manana)"
-								bind:value={backorderNotes}
-							/>
-							<Button variant="outline" class="self-start" onclick={handleMarkBackorder}>
-								<TriangleAlert data-icon="inline-start" /> Registrar Backorder
-							</Button>
-						</div>
-					{/if}
-				</div>
+					</div>
+				{/if}
 			</Card.Content>
 		</Card.Root>
 	</div>

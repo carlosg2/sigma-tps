@@ -12,7 +12,7 @@
 
 <div
   class={cn(
-    "sticky top-0 z-50 flex h-12.5 items-center justify-between px-4 py-1.5",
+    "sticky top-0 z-50 flex h-12.5 shrink-0 items-center justify-between px-4 py-1.5",
     "border-b border-border",
     "backdrop-blur-sm cbg-card/80 ",
     className,
