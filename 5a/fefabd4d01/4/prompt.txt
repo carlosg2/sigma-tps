@@ -1,0 +1,142 @@
+en el folder (opensidian) replica el el app de opensidian, todo debe ser funcional con informacion dummy para demostracion
+
+copia con libertad archivos de un proyecto a otro 
+procura cololaclizar todo en la ruta y recuerda que se esta usando el mismo design system
+
+---
+
+replica el panel de ai chat sin ningun componenente adentro. solo replica la funcionalidad de que abre un panel en al parte derecha
+
+---
+
+[Terminal 774f7e19-357d-4594-ac4f-f168e402a3b7 notification: command completed. The terminal has been cleaned up.]
+Terminal output:
+(base) carlosgarzagarza@Mac sigma-tps %  pnpm dev --port 5177 2>&1 | head -20
+
+> s-mail@0.0.1 dev /Users/carlosgarzagarza/Documents/GitHub/sigma-tps
+> vite dev --port 5177
+
+3:15:34 AM [vite] (client) Re-optimizing dependencies because lockfile has changed
+Port 5177 is in use, trying another one...
+
+  VITE v8.0.16  ready in 689 ms
+
+  ➜  Local:   http://localhost:5178/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+3:15:38 AM [vite] (client) [optimizer] bundling dependencies...
+3:20:01 AM [vite] (client) hmr update /src/routes/(opensidian)/opensidian/components/StatusBar.svelte, /src/routes/layout.css
+3:20:01 AM [vite] (ssr) page reload src/routes/(opensidian)/opensidian/components/StatusBar.svelte
+3:20:29 AM [vite] (client) hmr update /src/routes/(opensidian)/opensidian/+page.svelte, /src/routes/layout.css
+3:20:29 AM [vite] (ssr) page reload src/routes/(opensidian)/opensidian/+page.svelte
+3:20:37 AM [vite] (client) hmr update /src/routes/(opensidian)/opensidian/+page.svelte, /src/routes/layout.css
+3:20:37 AM [vite] (ssr) page reload src/routes/(opensidian)/opensidian/+page.svelte
+3:20:52 AM [vite] (client) hmr update /src/routes/(opensidian)/opensidian/+page.svelte, /src/routes/layout.css
+
+---
+
+analiza bien porque en opensidian si se puede haceer mas grande y mas chico el area del ai-chat
+
+---
+
+porque cuando el editor esta enfocado tiene un borde azul cuando en opensidian no lo tiene
+
+---
+
+el borde izquierdo de el chat se ve muy ancho, visualmente pareciera que tiene doble borde. porque?
+
+---
+
+el header de el primer panel (donde aparece el icono y dice opensidian con unos botones a la derecha) parece que no es el mismo alto que el header de la seccion donde esta el editor. y causa que visualmente no se vea alineado y consistente. corrigelo
+
+---
+
+aun no se ve alineado, mas las chico el alto por un solo pixel
+
+---
+
+el diseño del input del la terminal en opensidian se ve muy distinto en diseño al de nuestro app, porque?
+
+---
+
+ENOENT: no such file or directory, stat '/Users/carlosgarzagarza/Documents/GitHub/sigma-tps/.svelte-kit/types/src/routes/proxy+layout.server.ts'
+
+---
+
+que se vea al centro hasa abajo arriba de todo
+
+---
+
+el la version original de opensidian, el filebrwoser al expandir una carpeta se ve una linea que atraviesa todo lo alto al abrir al carpeta, esa linea no se ve en nuestra implementacion en sigma-tps cuando navego a la ruta /editor
+
+---
+
+en cada rama, los items van creciendo mucho de profundidad en la izquierda, para el terner nivel ya va muy profundo, es mucho el margan que aumenta entre cada depth, reducelo
+
+---
+
+definelo como variable para podrer cambiarloe n este ejemplo
+
+---
+
+porque el resize handler se ve con un icono en opensidian y en nuetsra version no
+
+---
+
+opensidian esta dentro del proyecto epicenter
+
+---
+
+aunno veo el cambio en el handler, porque?
+
+---
+
+es el la ruta editor
+
+---
+
+aparece demasiado chido y cargado arriba, no se ve como el de opensidian, corrige el diseño
+
+---
+
+aparece demasiado chido y cargado arriba, no se ve como el de opensidian, corrige el diseño
+
+hay varios Resizable.Handle que nos e ve el icono grip bien. porque?
+
+---
+
+el icono del resize handler aparece demasiado chico y cargado arriba, no se ve como el de opensidian, corrige el diseño
+
+hay varios Resizable.Handle que nos e ve el icono grip bien. porque? corregelos
+
+---
+
+en los estilos Lyra y Sera no se ve bien, en los demas estilos si se ve bien. idetifica cuale s el problema y corrigelo en esos dos estilos
+
+---
+
+este icono solo debe de aparecer al hacer hover en el resizer
+
+---
+
+me estoy dando cuenta que los page headers en el layout de las paginas dentro de svgl-layout, se ve mas chico cuadno el contenido es largo pero cuando el contenido de la pagian es corto si toma su altura correcta. el page header se esta encogiendo. corrigelo
+
+---
+
+el resize handler del ai chat panel solo debe existir cuando el panel esta abierto
+
+---
+
+entre el content y la terminal, pareciera que hay doble borde porque se ve muy ancho, debeir ser solo un borde visualmente
+
+---
+
+commenta tenportalmente el uso de esta libreria:
+
+import { Chat } from "@ai-sdk/svelte";
+
+y crea un dummy que los remplace temporalmente
+
+---
+
+inserta en esta pagina el componente message-scroller-demo.svelte
