@@ -1,0 +1,43 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "5afefabd4d01",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 3,
+  "files_touched": [
+    "package.json",
+    "pnpm-lock.yaml",
+    "src/lib/components/layout/header.svelte",
+    "src/lib/components/layout/pageHeader.svelte",
+    "src/lib/components/layout/sidebar.svelte",
+    "src/lib/components/ui/resizable/resizable-handle.svelte",
+    "src/lib/components/ui/sidebar/sidebar.svelte",
+    "src/lib/ds/styles/style-luma.css",
+    "src/lib/ds/styles/style-lyra.css",
+    "src/lib/ds/styles/style-maia.css",
+    "src/lib/ds/styles/style-mira.css",
+    "src/lib/ds/styles/style-nova.css",
+    "src/lib/ds/styles/style-rhea.css",
+    "src/lib/ds/styles/style-sera.css",
+    "src/lib/ds/styles/style-vega.css",
+    "src/routes/(svgl-layout)/+layout.svelte",
+    "src/routes/(tps)/lmat/kits/[id]/+page.svelte",
+    "src/routes/+layout.svelte",
+    "tsconfig.json"
+  ],
+  "sessions": [
+    {
+      "metadata": "/5a/fefabd4d01/0/metadata.json",
+      "transcript": "/5a/fefabd4d01/0/full.jsonl",
+      "content_hash": "/5a/fefabd4d01/0/content_hash.txt",
+      "prompt": "/5a/fefabd4d01/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  }
+}

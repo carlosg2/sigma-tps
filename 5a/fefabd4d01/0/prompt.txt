@@ -1,0 +1,9 @@
+la app si compila y la veo bien en el navegador, pero sigo viendo este error solo en vscode, porque?
+
+---
+
+estudia este panel y corrige su layout se debe ser a full y debe hacer scroll bien, ahorita ocurren cosas extrañas cuando ya hay muchos menasjes, no deja hacer scroll
+
+---
+
+cambia los mensajes como si estuvieras cosultando un erp inteligente extremadamente proactivo e inteligente
