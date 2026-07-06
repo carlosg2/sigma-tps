@@ -1,0 +1,3 @@
+en la ruta /lmat/kits/sk3
+
+estoy viendo que no esta optimizado para que tambien se vea en movil. guiate en las card de /ds

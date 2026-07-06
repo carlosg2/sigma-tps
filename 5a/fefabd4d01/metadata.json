@@ -3,7 +3,7 @@
   "checkpoint_id": "5afefabd4d01",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 35,
+  "checkpoints_count": 36,
   "files_touched": [
     "package.json",
     "pnpm-lock.yaml",
@@ -57,6 +57,12 @@
       "transcript": "/5a/fefabd4d01/4/full.jsonl",
       "content_hash": "/5a/fefabd4d01/4/content_hash.txt",
       "prompt": "/5a/fefabd4d01/4/prompt.txt"
+    },
+    {
+      "metadata": "/5a/fefabd4d01/5/metadata.json",
+      "transcript": "/5a/fefabd4d01/5/full.jsonl",
+      "content_hash": "/5a/fefabd4d01/5/content_hash.txt",
+      "prompt": "/5a/fefabd4d01/5/prompt.txt"
     }
   ],
   "token_usage": {
