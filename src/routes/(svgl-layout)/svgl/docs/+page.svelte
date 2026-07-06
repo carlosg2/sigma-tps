@@ -56,28 +56,28 @@
       <div class="space-y-8 text-sm text-neutral-700 dark:text-neutral-300">
 
         <section>
-          <span class="rounded-full border border-neutral-200 bg-white px-2.5 py-0.5 text-xs font-medium text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400">
+          <span class="rounded-full border px-2.5 py-0.5 text-xs font-medium ">
             REST API
           </span>
-          <h2 id="introduction" class="mt-4 mb-3 text-base font-semibold text-neutral-900 dark:text-neutral-50">
+          <h2 id="introduction" class="mt-4 mb-3 text-base font-semibold">
             Introduction
           </h2>
-          <p class="text-neutral-500 dark:text-neutral-400">
+          <p class="text-muted-foreground ">
             Access the svgl logo library programmatically via the REST API. Free to use, no authentication required.
           </p>
         </section>
 
         <section>
-          <h2 id="base-url" class="mb-3 text-base font-semibold text-neutral-900 dark:text-neutral-50">
+          <h2 id="base-url" class="mb-3 text-base font-semibold ">
             Base URL
           </h2>
-          <div class="rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-3 font-mono text-sm dark:border-neutral-800 dark:bg-neutral-900">
-            https://svgl.app/api
+          <div class="rounded-lg border border-border bg-card px-4 py-3 font-mono text-sm dark:border-border dark:bg-card">
+            https://sigma-ai.mx
           </div>
         </section>
 
         <section>
-          <h2 id="endpoints" class="mb-3 text-base font-semibold text-neutral-900 dark:text-neutral-50">
+          <h2 id="endpoints" class="mb-3 text-base font-semibold ">
             Endpoints
           </h2>
 
@@ -89,14 +89,14 @@
           </p>
           <div class="overflow-x-auto rounded-lg border border-neutral-200 dark:border-neutral-800">
             <table class="w-full text-xs">
-              <thead class="bg-neutral-50 dark:bg-neutral-900">
+              <thead class="bg-card ">
                 <tr>
                   <th class="px-4 py-2 text-left font-medium text-neutral-600 dark:text-neutral-400">Parameter</th>
                   <th class="px-4 py-2 text-left font-medium text-neutral-600 dark:text-neutral-400">Type</th>
                   <th class="px-4 py-2 text-left font-medium text-neutral-600 dark:text-neutral-400">Description</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-neutral-100 dark:divide-neutral-800">
+              <tbody class="divide-y divide-border">
                 <tr>
                   <td class="px-4 py-2 font-mono text-neutral-700 dark:text-neutral-300">category</td>
                   <td class="px-4 py-2 text-neutral-500">string</td>

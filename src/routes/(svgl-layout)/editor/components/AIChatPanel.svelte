@@ -26,22 +26,114 @@
 		.user("¿Cuál es el estado general del inventario esta semana?")
 		.sleep(800)
 		.assistant(
-			"El inventario presenta **3 alertas críticas** que requieren atención hoy:\n\n1. **Válvula de compuerta 2\" (SKU-0482)** — stock en 4 uds, mínimo recomendado 20. Proveedor Ferreaceros tiene entrega en 3 días.\n2. **Brida ciega DN100 (SKU-1130)** — 0 existencias. Hay 2 órdenes de compra abiertas desde hace 12 días sin confirmación de fecha.\n3. **Empaque PTFE (SKU-0219)** — consumo promedio semanal aumentó 40% vs mes anterior. Al ritmo actual, se agotará en 6 días.\n\n¿Quieres que genere las requisiciones de compra para los tres artículos ahora?"
+			`## Diagnóstico semanal de inventario
+
+Encontré **3 alertas críticas** y **2 oportunidades de ahorro** que quiero mostrarte antes de que abras el día.
+
+---
+
+### 🔴 Alertas críticas
+
+| Artículo | SKU | Stock actual | Mínimo | Días para agotarse |
+|---|---|---|---|---|
+| Válvula compuerta 2" | SKU-0482 | **4 uds** | 20 uds | ~2 días |
+| Brida ciega DN100 | SKU-1130 | **0 uds** | 5 uds | Agotado |
+| Empaque PTFE 1/8" | SKU-0219 | 31 uds | 50 uds | ~6 días |
+
+> ⚠️ La brida DN100 tiene **2 órdenes de compra abiertas desde hace 12 días** sin confirmación de fecha de entrega. Proveedor no ha respondido.
+
+---
+
+### 🟡 Alertas de tendencia
+
+El consumo de **Empaque PTFE** aumentó **+40%** vs el mes anterior. Si el ritmo continúa, el mínimo de 50 uds quedará corto para la siguiente quincena.
+
+---
+
+¿Genero las requisiciones de compra para los tres artículos ahora?`
 		)
 		.user("Sí, genera las requisiciones. ¿A qué proveedor le asignas cada una?")
 		.sleep(1000)
 		.assistant(
-			"Basándome en historial de precios, tiempos de entrega y calificación de proveedor, recomiendo:\n\n| Artículo | Proveedor | Precio unit. | Entrega est. |\n|---|---|---|---|\n| Válvula 2\" | Ferreaceros del Norte | $487.00 | 3 días |\n| Brida DN100 | Grupo Industrial Reyes | $1,240.00 | 5 días |\n| Empaque PTFE | Plastimundo S.A. | $38.50 | 1 día |\n\nHe pre-llenado las 3 requisiciones. **Nota:** Grupo Industrial Reyes tiene una factura vencida de $14,200 — Cuentas por Pagar debe liberarla antes de que Compras pueda emitir la orden. ¿Procedo con las otras dos y marco la brida como pendiente?"
+			`## Requisiciones pre-llenadas ✓
+
+Analicé **historial de precios** (últimos 6 meses), **tiempos de entrega reales** y **calificación de proveedor** para seleccionar la mejor opción en cada caso:
+
+| Artículo | Proveedor asignado | Precio unit. | Lead time | Calificación |
+|---|---|---|---|---|
+| Válvula compuerta 2" | Ferreaceros del Norte | $487.00 | 3 días | ⭐⭐⭐⭐⭐ |
+| Brida ciega DN100 | Grupo Industrial Reyes | $1,240.00 | 5 días | ⭐⭐⭐⭐ |
+| Empaque PTFE 1/8" | Plastimundo S.A. | $38.50 | 1 día | ⭐⭐⭐⭐⭐ |
+
+---
+
+### ⛔ Bloqueo detectado — Brida DN100
+
+Grupo Industrial Reyes tiene una **factura vencida de $14,200** (30 días de mora). El sistema bloqueará la emisión de la orden hasta que **Cuentas por Pagar** la libere.
+
+**Opciones:**
+1. Esperar la liberación y proceder con los 3 artículos
+2. Proceder solo con Válvula y Empaque PTFE hoy, y marcar la brida como pendiente
+3. Cambiar proveedor de brida (alternativa: Tubacero Noreste, lead time 7 días, +8% precio)
+
+¿Cuál prefieres?`
 		)
 		.user("Procede con las dos y avísame cuando estén autorizadas.")
 		.sleep(900)
 		.assistant(
-			"Listo. REQ-2024-0891 (Válvula) y REQ-2024-0892 (Empaque PTFE) están en flujo de autorización.\n\nDetecté que el autorizador asignado, **Ing. Ramírez**, tiene 7 documentos pendientes con más de 48 hrs sin revisar. Le envié una notificación automática con prioridad alta.\n\nTambién encontré algo relevante: el **proyecto Planta Norte (OT-445)** consume el 60% del empaque PTFE que estás reordenando. Si ese proyecto se adelanta, necesitarás el doble. ¿Quieres que ajuste la cantidad antes de autorizar?"
+			`## REQ-2024-0891 y REQ-2024-0892 enviadas a autorización ✓
+
+Ambas requisiciones están en flujo. Aquí el detalle:
+
+\`\`\`
+REQ-2024-0891  Válvula compuerta 2"   Cant: 30 uds   Importe: $14,610.00
+REQ-2024-0892  Empaque PTFE 1/8"      Cant: 500 uds  Importe: $19,250.00
+                                       ─────────────────────────────────
+                                       Total:          $33,860.00
+\`\`\`
+
+---
+
+### ⚠️ Alerta en flujo de autorización
+
+El autorizador asignado, **Ing. Ramírez**, acumula **7 documentos pendientes con más de 48 hrs sin revisar**. Le envié una notificación automática con prioridad alta.
+
+Tiempo estimado de autorización basado en su historial: **~4 horas** en horario laboral.
+
+---
+
+### 💡 Algo que deberías saber antes de autorizar
+
+El **Proyecto Planta Norte (OT-445)**, programado para iniciar el próximo lunes, tiene asignado en su presupuesto de materiales **300 uds de Empaque PTFE** — el **60%** de la cantidad que acabo de requisicionar.
+
+Si OT-445 arranca en fecha, las 500 uds se agotarán en ~10 días en lugar de las 3 semanas estimadas originalmente.
+
+¿Quieres que ajuste la cantidad ahora, antes de que el Ing. Ramírez autorice?`
 		)
 		.user("Buena observación. Ajusta la cantidad al doble para OT-445.")
 		.sleep(700)
 		.assistant(
-			"REQ-2024-0892 actualizada: cantidad de 500 uds → **1,000 uds** (importe $38,500). Monto por encima del límite de autorización individual del Ing. Ramírez ($30,000), por lo que el flujo escala automáticamente al **Gerente de Operaciones**.\n\nAdemás, detecté que Plastimundo ofrece descuento del 8% en pedidos superiores a 800 uds — ya está aplicado. Ahorro generado: **$3,080.00**.\n\nRequisición lista para firma electrónica. ¿Algo más antes de cerrar el día?"
+			`## REQ-2024-0892 actualizada ✓
+
+| Campo | Antes | Después |
+|---|---|---|
+| Cantidad | 500 uds | **1,000 uds** |
+| Precio unitario | $38.50 | **$35.42** ¹ |
+| Importe total | $19,250.00 | **$35,420.00** |
+| Autorizador | Ing. Ramírez | **Gerente de Operaciones** ² |
+
+> ¹ Plastimundo aplica descuento del **8%** en pedidos > 800 uds. Ahorro generado: **$3,080.00**
+> ² El importe supera el límite de autorización individual del Ing. Ramírez ($30,000), por lo que el flujo escala automáticamente.
+
+---
+
+### Resumen del día
+
+- ✅ **REQ-2024-0891** — Válvula 2" → $14,610 → pendiente Ing. Ramírez
+- ✅ **REQ-2024-0892** — Empaque PTFE × 1,000 uds → $35,420 → pendiente Gerente de Operaciones
+- 🔄 **Brida DN100** — bloqueada hasta liberar factura vencida con Grupo Industrial Reyes
+
+Ambas requisiciones están listas para **firma electrónica**. Te aviso en cuanto el Gerente de Operaciones las firme. ¿Algo más?`
 		);
 	const initialMessages = chat.get({ count: 0 });
 	const transport = chat.transport({ chunkDelayMs: 20 });

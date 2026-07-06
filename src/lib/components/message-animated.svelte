@@ -5,6 +5,7 @@
 	import * as MessageScroller from "$lib/components/ui/message-scroller/index.js";
 	import type { BubbleVariant } from "$lib/components/ui/bubble/bubble.svelte";
 	import type { HTMLAttributes } from "svelte/elements";
+	import { Markdown } from "$lib/components/ai/markdown/index.js";
 
 	type MessageAnimatedPart = {
 		type: string;
@@ -68,17 +69,13 @@
 	<Message.Root align={isUserMessage ? "end" : "start"}>
 		<Message.Content>
 			{#each textParts as part (part.key)}
-				{@const paragraphs = part.text
-					.split(/\n\s*\n/)
-					.map((paragraph) => paragraph.trim())
-					.filter(Boolean)}
 				<Bubble.Root variant={isUserMessage ? userVariant : assistantVariant}>
-					<Bubble.Content class="space-y-2">
-						{#each paragraphs as paragraph, paragraphIndex (`${part.key}-${paragraphIndex}`)}
-							<p class="whitespace-pre-wrap">
-								{paragraph}
-							</p>
-						{/each}
+					<Bubble.Content>
+						{#if isUserMessage}
+							<p class="whitespace-pre-wrap">{part.text}</p>
+						{:else}
+							<Markdown content={part.text} />
+						{/if}
 					</Bubble.Content>
 				</Bubble.Root>
 			{/each}

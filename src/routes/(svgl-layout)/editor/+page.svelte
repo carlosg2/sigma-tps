@@ -116,11 +116,11 @@
 		<PaneForge
 			bind:this={chatPaneRef}
 			order={3}
-			collapsible={true}
+			collapsible={false}
 			collapsedSize={0}
 			defaultSize={0}
-			minSize={18}
-			maxSize={50}
+			minSize={40}
+			maxSize={80}
 			onCollapse={() => { appState.aiChatOpen = false; }}
 			onExpand={() => { appState.aiChatOpen = true; }}
 			class="min-w-0"

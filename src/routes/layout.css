@@ -362,3 +362,12 @@ html.dark .sv-grid-cell[data-selected-range="true"] { background: color-mix(in o
 
 /* Fill handle */
 html .sv-grid-fill-handle                       { background: var(--ring); }
+
+
+/* En layout.css o app.css */
+/* .streamdown pre {
+  @apply rounded-xl border bg-muted/40 text-xs;
+}
+.streamdown code {
+  @apply font-mono;
+} */

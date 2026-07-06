@@ -10,4 +10,11 @@ declare global {
 	}
 }
 
+// Shiki themes only ship .mjs without separate .d.ts — suppress TS errors
+declare module '@shikijs/themes/*' {
+	import type { ThemeRegistration } from 'shiki';
+	const theme: ThemeRegistration;
+	export default theme;
+}
+
 export {};
