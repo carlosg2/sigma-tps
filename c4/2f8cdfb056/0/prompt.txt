@@ -1,0 +1,10 @@
+implementa https://github.com/beynar/svelte-streamdown ya esta instalado, solo actualiza el pakete.
+ lee el componente markdown, este es una version de expoloracion antigua como referencia
+
+---
+
+vualve a cambiar los mensajes como si estuvieras cosultando un erp inteligente extremadamente proactivo e inteligente. esta vez se mas expresivo ya que ahora tienes full markdown support
+
+---
+
+donde y como se pueden editar los componentes que se renderean del markdown como l tabla y y el bloque de codigo?
