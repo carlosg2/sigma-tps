@@ -1,0 +1,44 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "6c9396d8cb2d",
+  "session_id": "6a385b93-5eba-4e22-b11a-b88095b4b2ec",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-07T23:18:10.457006Z",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "save_step_count": 1,
+  "files_touched": [
+    "documentacion/Finanzas/Fianzas.html",
+    "src/routes/(svgl-layout)/flow2/+layout.svelte",
+    "src/routes/(svgl-layout)/flow2/+page.svelte",
+    "src/routes/(svgl-layout)/flow2/detail/+page.svelte",
+    "src/routes/(svgl-layout)/flow2/extra/+page.svelte",
+    "src/routes/(svgl-layout)/flow2/flow-nav.svelte.ts",
+    "src/routes/(svgl-layout)/flow2/screens.css"
+  ],
+  "agent": "Copilot CLI",
+  "model": "",
+  "turn_id": "ebc5d537a288",
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-07T23:18:10.452732Z",
+    "agent_lines": 1643,
+    "agent_removed": 153,
+    "human_added": 7042,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 8685,
+    "total_lines_changed": 8840,
+    "agent_percentage": 20.316742081447963,
+    "metric_version": 2
+  }
+}

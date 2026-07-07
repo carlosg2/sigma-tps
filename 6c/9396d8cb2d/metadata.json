@@ -1,0 +1,31 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "6c9396d8cb2d",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "documentacion/Finanzas/Fianzas.html",
+    "src/routes/(svgl-layout)/flow2/+layout.svelte",
+    "src/routes/(svgl-layout)/flow2/+page.svelte",
+    "src/routes/(svgl-layout)/flow2/detail/+page.svelte",
+    "src/routes/(svgl-layout)/flow2/extra/+page.svelte",
+    "src/routes/(svgl-layout)/flow2/flow-nav.svelte.ts",
+    "src/routes/(svgl-layout)/flow2/screens.css"
+  ],
+  "sessions": [
+    {
+      "metadata": "/6c/9396d8cb2d/0/metadata.json",
+      "transcript": "/6c/9396d8cb2d/0/full.jsonl",
+      "content_hash": "/6c/9396d8cb2d/0/content_hash.txt",
+      "prompt": "/6c/9396d8cb2d/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  }
+}
