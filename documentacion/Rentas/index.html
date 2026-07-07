@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maqueta Rentas | Blindados Premium</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Staatliches&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=20260706-01" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="shield">🛡</div>
+        <div>
+          <h1>Blindados Premium</h1>
+          <p>Maqueta Operativa</p>
+        </div>
+      </div>
+
+      <div class="side-actions">
+        <button id="btn-demo-reset" class="ghost-btn">Reiniciar sesión</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <aside class="module-dock" aria-label="Módulos">
+        <span class="dock-badge" aria-hidden="true">🛡</span>
+
+        <button class="side-btn dock-btn active" data-module="cotizador" id="nav-cotizador" type="button">
+          <span class="icon">🧾</span>
+          <span>
+            <strong>Cotizador</strong>
+            <small>Rentas</small>
+          </span>
+        </button>
+
+      </aside>
+
+      <header class="topbar">
+        <div>
+          <h2 id="module-title">Cotizador de Rentas</h2>
+          <p id="module-subtitle">Versión dinámica, disponibilidad y propuesta comercial</p>
+        </div>
+        <div class="topbar-actions">
+          <button id="btn-export-state" class="gold-btn">Exportar estado</button>
+        </div>
+      </header>
+
+      <section class="executive-strip" aria-label="Executive Pulse">
+        <article class="pulse-card">
+          <p class="pulse-label">Disponibilidad hoy</p>
+          <p id="kpi-disponibilidad" class="pulse-value">0%</p>
+          <small class="pulse-foot">Unidades listas para salida inmediata</small>
+        </article>
+
+        <article class="pulse-card">
+          <p class="pulse-label">Utilizacion operativa</p>
+          <p id="kpi-utilizacion" class="pulse-value">0%</p>
+          <small class="pulse-foot">Flota ocupada o en mantenimiento</small>
+        </article>
+
+        <article class="pulse-card">
+          <p class="pulse-label">Pipeline comercial</p>
+          <p id="kpi-valor" class="pulse-value">$0.00</p>
+          <small class="pulse-foot">Cotizaciones guardadas y borrador actual</small>
+        </article>
+
+        <article class="pulse-card">
+          <p class="pulse-label">Riesgo compliance</p>
+          <p id="kpi-riesgo" class="pulse-value">Bajo</p>
+          <small class="pulse-foot">Calculado por antifraude, expediente y calidad</small>
+        </article>
+      </section>
+
+      <section id="module-cotizador" class="module active-module">
+        <p class="phase-kicker">Fase 1: Captura comercial y estructuración de propuesta</p>
+        <div class="grid one-col">
+          <article class="card">
+            <h3>Datos de cotización</h3>
+            <div class="form-grid">
+              <label>Cliente
+                <select id="cliente-select">
+                  <option value="">Seleccionar cliente</option>
+                  <option value="Grupo Alfa">Grupo Alfa</option>
+                  <option value="Constructora Coppel">Constructora Coppel</option>
+                  <option value="Gobierno de NL">Gobierno de NL</option>
+                  <option value="Logística Hades">Logística Hades</option>
+                </select>
+              </label>
+
+              <label>Unidad (VIN)
+                <select id="vin-select">
+                  <option value="">Seleccionar unidad</option>
+                  <option value="VIN-AX90">Mercedes S600 Guard VR7+ | VIN-AX90</option>
+                  <option value="VIN-BM11">BMW 760Li Protect | VIN-BM11</option>
+                  <option value="VIN-CH33">Cadillac Escalade ESV Blindado | VIN-CH33</option>
+                </select>
+              </label>
+
+              <label>Inicio renta
+                <input id="fecha-inicio" type="datetime-local" />
+                <small id="help-fecha-inicio" class="field-help">Tip: puedes elegir fechas desde el calendario de disponibilidad.</small>
+              </label>
+
+              <label>Fin renta
+                <input id="fecha-fin" type="datetime-local" />
+                <small id="help-fecha-fin" class="field-help">Selecciona una fecha posterior al inicio.</small>
+              </label>
+
+              <label>Días estimados
+                <input id="dias-estimados" type="number" min="1" value="1" />
+              </label>
+
+              <label>Tarifa base diaria (MXN)
+                <input id="tarifa-base" type="number" min="1000" step="500" value="18000" />
+              </label>
+            </div>
+
+            <h4>Calendario de disponibilidad (tipo vuelo)</h4>
+            <div class="calendar-card">
+              <div class="calendar-toolbar">
+                <button id="btn-cal-prev-month" class="outline-btn" type="button">Mes anterior</button>
+                <p id="calendar-month-label" class="calendar-month-label">Mes</p>
+                <button id="btn-cal-next-month" class="outline-btn" type="button">Mes siguiente</button>
+                <label class="calendar-time-field">Hora inicio
+                  <input id="cal-time-start" type="time" value="09:00" step="1800" />
+                </label>
+                <label class="calendar-time-field">Hora fin
+                  <input id="cal-time-end" type="time" value="18:00" step="1800" />
+                </label>
+                <button id="btn-cal-clear" class="danger-btn" type="button">Limpiar selección</button>
+              </div>
+
+              <div class="calendar-legend">
+                <span class="cal-dot available"></span> Disponible
+                <span class="cal-dot occupied"></span> Ocupado
+                <span class="cal-dot maintenance"></span> Mantenimiento
+              </div>
+
+              <div class="calendar-weekdays" id="calendar-weekdays"></div>
+              <div class="calendar-grid" id="booking-calendar-grid"></div>
+              <p id="calendar-selection-summary" class="calendar-selection-summary">Selecciona fecha inicio y fin.</p>
+            </div>
+
+            <h4>Extras del servicio</h4>
+            <div class="extras-list" id="extras-list"></div>
+
+            <h4>Vehículo seleccionado</h4>
+            <div class="vehicle-preview" id="vehicle-preview">
+              <img id="vehiculo-foto" alt="Foto de unidad" />
+              <div class="vehicle-meta">
+                <p id="vehiculo-modelo" class="vehicle-title">Sin selección</p>
+                <p id="vehiculo-vin" class="vehicle-sub">VIN -</p>
+                <div class="gallery-controls">
+                  <button id="btn-foto-prev" class="outline-btn" type="button">Foto anterior</button>
+                  <span id="vehiculo-foto-contador" class="gallery-counter">0/0</span>
+                  <button id="btn-foto-next" class="outline-btn" type="button">Foto siguiente</button>
+                </div>
+                <div id="vehiculo-thumbs" class="vehicle-thumbs"></div>
+                <p id="vehiculo-disponibilidad" class="vehicle-chip">Disponibilidad pendiente</p>
+              </div>
+            </div>
+
+            <div class="button-row">
+              <button id="btn-validar-disponibilidad" class="outline-btn">Validar disponibilidad</button>
+              <button id="btn-calcular" class="gold-btn">Calcular total</button>
+              <button id="btn-nueva-version" class="outline-btn">Nueva versión</button>
+              <button id="btn-guardar-cotizacion" class="outline-btn">Guardar cotización</button>
+              <button id="btn-generar-pdf" class="gold-btn">Generar propuesta</button>
+              <button id="btn-limpiar-cotizacion" class="danger-btn">Limpiar</button>
+            </div>
+          </article>
+
+        </div>
+
+        <article class="card" style="margin-top:16px">
+          <h3>Cotizaciones guardadas</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Folio</th>
+                  <th>Cliente</th>
+                  <th>VIN</th>
+                  <th>Avance</th>
+                  <th>Versión</th>
+                  <th>Total</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-cotizaciones"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="card" style="margin-top:16px">
+          <h3>Disponibilidad de flota</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Unidad</th>
+                  <th>Foto</th>
+                  <th>Hoy</th>
+                  <th>Periodo seleccionado</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-flota"></tbody>
+            </table>
+          </div>
+        </article>
+
+      </section>
+
+      <div id="toast" class="toast"></div>
+
+      <div id="quote-process-modal" class="occupancy-modal quote-process-modal" aria-hidden="true">
+        <div class="occupancy-modal-backdrop" id="quote-process-modal-backdrop"></div>
+        <div class="occupancy-modal-panel quote-process-modal-panel" role="dialog" aria-modal="true" aria-labelledby="quote-process-modal-title">
+          <div class="occupancy-modal-header">
+            <div>
+              <h3 id="quote-process-modal-title">Proceso De Cotización</h3>
+              <p id="quote-process-modal-subtitle">Selecciona una cotización para ver su avance.</p>
+            </div>
+            <button id="btn-quote-process-close" class="danger-btn" type="button">Cerrar</button>
+          </div>
+
+          <div class="quote-process-summary" id="quote-process-summary"></div>
+
+          <div class="qp-resumen-card">
+            <h4 class="qp-section-title">Resumen y versionado</h4>
+            <div class="summary-grid">
+              <div>
+                <small>Versión actual</small>
+                <p id="version-actual" class="stat">v01</p>
+              </div>
+              <div>
+                <small>Total cotización</small>
+                <p id="total-cotizacion" class="stat">$0.00</p>
+              </div>
+              <div>
+                <small>Estatus disponibilidad</small>
+                <p id="estatus-disponibilidad" class="stat muted">Sin validar</p>
+              </div>
+              <div>
+                <small>Estatus cotización</small>
+                <p id="estatus-cotizacion" class="stat muted">Borrador</p>
+              </div>
+            </div>
+            <h4 style="font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin:14px 0 8px;border-bottom:1px solid var(--border);padding-bottom:6px">Historial de versiones</h4>
+            <ul id="historial-versiones" class="timeline"></ul>
+          </div>
+
+          <h4>Formulario de cotización</h4>
+          <div class="form-grid quote-process-form">
+            <label>Cliente
+              <select id="qp-cliente-select">
+                <option value="">Seleccionar cliente</option>
+                <option value="Grupo Alfa">Grupo Alfa</option>
+                <option value="Constructora Coppel">Constructora Coppel</option>
+                <option value="Gobierno de NL">Gobierno de NL</option>
+                <option value="Logística Hades">Logística Hades</option>
+              </select>
+            </label>
+
+            <label>Unidad (VIN)
+              <select id="qp-vin-select">
+                <option value="">Seleccionar unidad</option>
+                <option value="VIN-AX90">Mercedes S600 Guard VR7+ | VIN-AX90</option>
+                <option value="VIN-BM11">BMW 760Li Protect | VIN-BM11</option>
+                <option value="VIN-CH33">Cadillac Escalade ESV Blindado | VIN-CH33</option>
+              </select>
+            </label>
+
+            <label>Inicio renta
+              <input id="qp-fecha-inicio" type="datetime-local" />
+            </label>
+
+            <label>Fin renta
+              <input id="qp-fecha-fin" type="datetime-local" />
+            </label>
+
+            <label>Días estimados
+              <input id="qp-dias-estimados" type="number" min="1" value="1" />
+            </label>
+
+            <label>Tarifa base diaria (MXN)
+              <input id="qp-tarifa-base" type="number" min="1000" step="500" value="18000" />
+            </label>
+          </div>
+
+          <div class="button-row">
+            <button id="qp-btn-validar-disponibilidad" class="outline-btn" type="button">Validar disponibilidad</button>
+            <button id="qp-btn-calcular" class="gold-btn" type="button">Calcular total</button>
+            <button id="qp-btn-guardar-cotizacion" class="outline-btn" type="button">Guardar cotización</button>
+          </div>
+
+          <div class="quote-process-progress-meta">
+            <p id="quote-process-progress-percent" class="flow-progress-percent">0%</p>
+            <p id="quote-process-progress-count" class="flow-progress-count">0/0 pasos</p>
+          </div>
+          <div class="flow-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="quote-process-progress-track">
+            <span id="quote-process-progress-fill" class="flow-progress-fill"></span>
+          </div>
+
+          <h4>Checklist del proceso</h4>
+          <ul id="quote-process-checklist" class="timeline quote-process-checklist"></ul>
+
+          <div class="button-row">
+            <button id="btn-quote-process-close-alt" class="danger-btn" type="button">Cerrar</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="compliance-modal" class="occupancy-modal compliance-modal" aria-hidden="true">
+        <div class="occupancy-modal-backdrop" id="compliance-modal-backdrop"></div>
+        <div class="occupancy-modal-panel compliance-modal-panel" role="dialog" aria-modal="true" aria-labelledby="compliance-modal-title">
+          <div class="occupancy-modal-header">
+            <div>
+              <h3 id="compliance-modal-title">Cumplimiento y Stop-Gate</h3>
+              <p id="compliance-active-quote" class="flow-caption">Cotización activa en cumplimiento: Sin selección</p>
+            </div>
+            <button id="btn-compliance-close" class="danger-btn" type="button">Cerrar</button>
+          </div>
+
+          <div class="flow-card compliance-flow-card">
+            <div class="compliance-flow-header">
+              <h3>Control Operativo Del Flujo</h3>
+              <div class="flow-progress-meta">
+                <p id="flow-progress-percent" class="flow-progress-percent">0%</p>
+                <p id="flow-progress-count" class="flow-progress-count">0/0 pasos</p>
+              </div>
+            </div>
+            <p class="flow-caption">Seguimiento del proceso para esta cotización: captura, propuesta, compliance y liberación.</p>
+            <div class="flow-progress-track" aria-label="Progreso del flujo" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <span id="flow-progress-fill" class="flow-progress-fill"></span>
+            </div>
+            <div id="flow-checklist" class="flow-checklist" aria-label="Etapas del proceso"></div>
+            <p id="flow-next-step" class="flow-next-step"></p>
+            <div class="button-row flow-ops-row">
+              <button id="btn-export-evidence" class="gold-btn">Descargar evidencia flujo</button>
+            </div>
+          </div>
+
+          <div class="grid two-col">
+            <article class="card">
+              <h3>Cumplimiento Por Cotización</h3>
+
+              <div class="form-grid">
+                <label>Cliente
+                  <select id="compliance-cliente-select">
+                    <option value="">Seleccionar cliente</option>
+                    <option value="Grupo Alfa">Grupo Alfa</option>
+                    <option value="Constructora Coppel">Constructora Coppel</option>
+                    <option value="Gobierno de NL">Gobierno de NL</option>
+                    <option value="Logística Hades">Logística Hades</option>
+                  </select>
+                </label>
+
+                <label>Riesgo inicial
+                  <select id="riesgo-select">
+                    <option value="bajo">Bajo</option>
+                    <option value="medio">Medio</option>
+                    <option value="alto">Alto</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="button-row">
+                <button id="btn-verificar-lista-negra" class="outline-btn">Verificar lista negra</button>
+                <button id="btn-marcar-recibidos" class="outline-btn">Marcar docs recibidos</button>
+                <button id="btn-guardar-validacion" class="gold-btn">Guardar validación</button>
+              </div>
+
+              <h4>Checklist documental obligatorio</h4>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Documento</th>
+                      <th>Estatus</th>
+                      <th>Observaciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-documentos"></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="card">
+              <h3>Control De Calidad (Stop-Gate)</h3>
+
+              <div class="summary-grid">
+                <div>
+                  <small>Resultado antifraude</small>
+                  <p id="estatus-antifraude" class="stat muted">Pendiente</p>
+                </div>
+                <div>
+                  <small>Expediente completo</small>
+                  <p id="estatus-expediente" class="stat muted">Pendiente</p>
+                </div>
+                <div>
+                  <small>Aprobación Calidad</small>
+                  <p id="estatus-calidad" class="stat muted">Sin revisar</p>
+                </div>
+                <div>
+                  <small>Liberación de unidad</small>
+                  <p id="estatus-liberacion" class="stat muted">Bloqueada</p>
+                </div>
+              </div>
+
+              <div class="button-row">
+                <button id="btn-enviar-calidad" class="outline-btn">Enviar a Calidad</button>
+                <button id="btn-aprobar-calidad" class="gold-btn">Aprobar Calidad</button>
+                <button id="btn-rechazar-calidad" class="danger-btn">Rechazar Calidad</button>
+                <button id="btn-reutilizar-historial" class="outline-btn">Reutilizar historial</button>
+              </div>
+
+              <h4>Bitácora de validaciones</h4>
+              <ul id="bitacora-validaciones" class="timeline"></ul>
+            </article>
+          </div>
+
+          <div class="button-row">
+            <button id="btn-compliance-close-alt" class="danger-btn" type="button">Cerrar</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="occupancy-modal" class="occupancy-modal" aria-hidden="true">
+        <div class="occupancy-modal-backdrop" id="occupancy-modal-backdrop"></div>
+        <div class="occupancy-modal-panel" role="dialog" aria-modal="true" aria-labelledby="occupancy-modal-title">
+          <div class="occupancy-modal-header">
+            <div>
+              <h3 id="occupancy-modal-title">Calendario de Ocupación</h3>
+              <p id="occupancy-modal-subtitle">Selecciona un vehículo desde la tabla para ver su ocupación.</p>
+            </div>
+            <button id="btn-occupancy-close" class="danger-btn" type="button">Cerrar</button>
+          </div>
+
+          <div class="occupancy-modal-toolbar">
+            <button id="btn-occupancy-prev-month" class="outline-btn" type="button">Mes anterior</button>
+            <p id="occupancy-month-label" class="calendar-month-label">Mes</p>
+            <button id="btn-occupancy-next-month" class="outline-btn" type="button">Mes siguiente</button>
+          </div>
+
+          <div class="calendar-legend">
+            <span class="cal-dot available"></span> Disponible
+            <span class="cal-dot occupied"></span> Ocupado
+            <span class="cal-dot maintenance"></span> Mantenimiento
+          </div>
+
+          <div class="calendar-weekdays" id="occupancy-weekdays"></div>
+          <div class="calendar-grid occupancy-grid" id="occupancy-calendar-grid"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="app.js?v=20260706-01"></script>
+</body>
+</html>

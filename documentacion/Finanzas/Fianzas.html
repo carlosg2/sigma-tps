@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAP-FIN-004 · Avisos de Pago Automáticos — TPS Intelisis</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#1e3a5f;--primary-l:#2563eb;--primary-d:#0f2240;
+  --success:#16a34a;--warn:#d97706;--danger:#dc2626;--info:#0891b2;
+  --bg:#f1f5f9;--card:#fff;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;
+  --sw:256px;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px}
+
+/* SIDEBAR */
+.sb{width:var(--sw);background:var(--primary);color:#fff;display:flex;flex-direction:column;position:fixed;height:100vh;overflow-y:auto;z-index:100}
+.sb-head{padding:20px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-logo{font-size:18px;font-weight:700}.sb-logo span{color:#38bdf8}
+.sb-sub{font-size:11px;color:rgba(255,255,255,.5);margin-top:3px}
+.nav-sec{padding:16px 20px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.35)}
+.nav-i{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;border-radius:8px;margin:2px 8px;color:rgba(255,255,255,.7);font-size:13.5px;transition:.18s}
+.nav-i:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-i.active{background:var(--primary-l);color:#fff}
+.nav-ic{font-size:17px;width:22px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+.sb-foot{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,.1)}
+.u-info{display:flex;align-items:center;gap:10px}
+.u-av{width:34px;height:34px;border-radius:50%;background:var(--primary-l);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+.u-name{font-size:13px;font-weight:600;color:#fff}.u-role{font-size:11px;color:rgba(255,255,255,.5)}
+
+/* MAIN */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column}
+
+/* TOPBAR */
+.topbar{background:#fff;padding:13px 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.bc{font-size:13px;color:var(--muted)}.bc strong{color:var(--text)}
+
+/* BTNS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13.5px;font-weight:500;transition:.18s;text-decoration:none}
+.btn-p{background:var(--primary-l);color:#fff}.btn-p:hover{background:#1d4ed8}
+.btn-s{background:var(--bg);color:var(--text);border:1px solid var(--border)}.btn-s:hover{background:#e2e8f0}
+.btn-ok{background:var(--success);color:#fff}.btn-ok:hover{background:#15803d}
+.btn-err{background:var(--danger);color:#fff}.btn-err:hover{background:#b91c1c}
+.btn-warn{background:var(--warn);color:#fff}.btn-warn:hover{background:#b45309}
+.btn-info{background:var(--info);color:#fff}.btn-info:hover{background:#0e7490}
+.btn-out{background:transparent;border:1px solid var(--primary-l);color:var(--primary-l)}.btn-out:hover{background:var(--primary-l);color:#fff}
+.btn-sm{padding:5px 11px;font-size:12.5px}
+.btn-xs{padding:4px 9px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.tb-btns{display:flex;align-items:center;gap:8px}
+
+/* CONTENT */
+.content{padding:26px;flex:1}
+.sec{display:none}.sec.active{display:block}
+
+/* PAGE HEADER */
+.ph{margin-bottom:22px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.ph-title{font-size:21px;font-weight:700}
+.ph-sub{font-size:13px;color:var(--muted);margin-top:3px}
+
+/* CARD */
+.card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:20px}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-t{font-size:15px;font-weight:600}
+
+/* GRID */
+.g{display:grid;gap:18px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+
+/* STAT CARDS */
+.sc{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:18px;display:flex;align-items:flex-start;gap:14px}
+.sc-ic{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.ic-b{background:#dbeafe}.ic-g{background:#dcfce7}.ic-a{background:#fef3c7}.ic-r{background:#fee2e2}.ic-p{background:#f3e8ff}
+.sc-val{font-size:26px;font-weight:700;line-height:1}
+.sc-lbl{font-size:12px;color:var(--muted);margin-top:4px}
+.sc-ch{font-size:11px;margin-top:6px}.up{color:var(--success)}.dn{color:var(--danger)}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--bg);padding:11px 14px;text-align:left;font-weight:600;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border);transition:.14s}
+tbody tr:hover{background:#f8fafc}
+tbody td{padding:13px 14px;vertical-align:middle}
+tbody tr:last-child{border-bottom:none}
+.tc{text-align:center}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:600}
+.b-ok{background:#dcfce7;color:#15803d}
+.b-err{background:#fee2e2;color:#b91c1c}
+.b-warn{background:#fef3c7;color:#92400e}
+.b-info{background:#e0f2fe;color:#0369a1}
+.b-gray{background:#f1f5f9;color:#475569}
+.b-purple{background:#f3e8ff;color:#7c3aed}
+
+/* FORMS */
+.fg{margin-bottom:16px}
+.fl{display:block;font-size:13px;font-weight:600;margin-bottom:5px}
+.fl .req{color:var(--danger)}
+.fc{width:100%;padding:9px 13px;border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--text);background:#fff;transition:.18s}
+.fc:focus{outline:none;border-color:var(--primary-l);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.fh{font-size:12px;color:var(--muted);margin-top:4px}
+.fi-row{display:grid;gap:14px}
+.fg-2{grid-template-columns:1fr 1fr}
+.fg-3{grid-template-columns:1fr 1fr 1fr}
+.fg-4{grid-template-columns:1fr 1fr 1fr 1fr}
+
+/* SEARCH */
+.srch{position:relative}
+.srch input{padding-left:36px}
+.srch-ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;width:90%;max-width:580px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-lg{max-width:780px}
+.modal-xl{max-width:920px}
+.m-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.m-title{font-size:16px;font-weight:700}
+.m-close{width:30px;height:30px;border-radius:7px;border:none;background:var(--bg);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}
+.m-body{padding:22px}
+.m-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+
+/* TOAST */
+.tc-wrap{position:fixed;top:18px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:10px}
+.toast{background:#fff;border-radius:10px;padding:13px 16px;box-shadow:0 4px 24px rgba(0,0,0,.15);display:flex;align-items:flex-start;gap:10px;min-width:290px;border-left:4px solid;animation:tsIn .3s ease}
+@keyframes tsIn{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+.ts-ok{border-color:var(--success)}.ts-err{border-color:var(--danger)}.ts-warn{border-color:var(--warn)}.ts-info{border-color:var(--info)}
+.t-ic{font-size:18px;flex-shrink:0}.t-txt{flex:1}.t-ttl{font-weight:600;font-size:13px}.t-msg{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* TABS */
+.tabs{display:flex;gap:2px;border-bottom:2px solid var(--border);margin-bottom:22px}
+.tab{padding:9px 16px;cursor:pointer;font-size:13.5px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:.18s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--primary-l);border-color:var(--primary-l)}
+.tab-c{display:none}.tab-c.active{display:block}
+
+/* SPINNER */
+.spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* TOGGLE */
+.tog{position:relative;width:40px;height:22px;cursor:pointer;display:inline-block}
+.tog input{opacity:0;width:0;height:0}
+.tog-t{position:absolute;inset:0;background:#cbd5e1;border-radius:11px;transition:.25s}
+.tog-t::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.25s}
+.tog input:checked+.tog-t{background:var(--primary-l)}
+.tog input:checked+.tog-t::before{transform:translateX(18px)}
+
+/* FILTER BAR */
+.fb{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.fb .fc{width:auto;min-width:140px}
+
+/* BAR CHART */
+.bchart{display:flex;gap:6px;align-items:flex-end;height:100px;padding-top:8px}
+.bc-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.bc-bar{width:100%;border-radius:4px 4px 0 0;min-height:4px;transition:.5s}
+.bc-lbl{font-size:10px;color:var(--muted)}
+.bc-val{font-size:10px;font-weight:700;color:var(--text)}
+
+/* PROGRESS */
+.prog{height:7px;background:var(--border);border-radius:4px;overflow:hidden;margin-top:6px}
+.prog-b{height:100%;border-radius:4px}
+
+/* ALERT */
+.alert{padding:13px 15px;border-radius:9px;font-size:13px;display:flex;gap:9px;align-items:flex-start;margin-bottom:18px}
+.al-info{background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd}
+.al-warn{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.al-ok{background:#dcfce7;color:#15803d;border:1px solid #bbf7d0}
+.al-err{background:#fee2e2;color:#b91c1c;border:1px solid #fecaca}
+
+/* DIVIDER */
+.div{height:1px;background:var(--border);margin:18px 0}
+
+/* INVOICE TABLE */
+.inv-tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin-bottom:12px}
+.inv-tbl th{background:#f8fafc;padding:9px 12px;text-align:left;font-size:12px;font-weight:600;color:var(--muted);border:1px solid var(--border)}
+.inv-tbl td{padding:8px 10px;border:1px solid var(--border);vertical-align:middle}
+.inv-tbl td input{width:100%;border:none;background:transparent;font-size:13px;color:var(--text)}
+.inv-tbl td input:focus{outline:none;background:#eff6ff;border-radius:4px}
+.inv-total-row td{background:#f0f9ff;font-weight:700;font-size:14px}
+
+/* EMAIL PREVIEW */
+.ep{border:1px solid var(--border);border-radius:10px;overflow:hidden;font-family:Arial,sans-serif;font-size:13px}
+.ep-head{background:#1e3a5f;color:#fff;padding:20px 24px;text-align:center}
+.ep-body{padding:20px 24px;background:#f8fafc}
+.ep-card{background:#fff;border-radius:8px;padding:18px;margin-bottom:16px;border:1px solid var(--border)}
+.ep-tbl{width:100%;border-collapse:collapse}
+.ep-tbl th{background:#1e3a5f;color:#fff;padding:9px 13px;font-size:12px;text-align:left}
+.ep-tbl td{padding:9px 13px;border-bottom:1px solid #e2e8f0;font-size:12.5px}
+.ep-tbl tr:last-child td{border:none}
+.ep-foot{background:#1e3a5f;color:rgba(255,255,255,.7);text-align:center;padding:14px;font-size:11px}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:44px 24px;color:var(--muted)}
+.empty .e-ic{font-size:44px;margin-bottom:10px}
+.empty h3{font-size:15px;color:var(--text);margin-bottom:5px}
+
+/* PROV INFO BOX */
+.prov-box{background:#f0f9ff;border:1px solid #bae6fd;border-radius:9px;padding:14px 16px;margin-bottom:16px;display:none}
+.prov-box.show{display:block}
+
+/* TOTAL BOX */
+.total-box{background:var(--primary);color:#fff;border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.total-lbl{font-size:13px;opacity:.8}
+.total-val{font-size:24px;font-weight:700}
+
+/* CONFIRM */
+.conf-ic{text-align:center;font-size:44px;margin-bottom:12px}
+.conf-txt{text-align:center;font-size:14px;color:var(--muted)}
+
+.egr-bar{display:none;position:sticky;top:64px;z-index:40;background:#1e3a5f;color:#fff;border-radius:10px;padding:14px 20px;margin-bottom:18px;align-items:center;justify-content:space-between;box-shadow:0 4px 20px rgba(30,58,95,.4);flex-wrap:wrap;gap:12px}
+.egr-bar.show{display:flex}
+@media(max-width:1200px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:860px){.g3{grid-template-columns:1fr 1fr}.fg-3{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<nav class="sb">
+  <div class="sb-head">
+    <div class="sb-logo">TPS <span>Intelisis</span></div>
+    <div class="sb-sub">Finanzas · Tesorería</div>
+  </div>
+
+  <div class="nav-sec">Principal</div>
+  <div class="nav-i active" id="ni-dashboard" onclick="nav('dashboard')">
+    <span class="nav-ic">📊</span> Dashboard
+  </div>
+
+  <div class="nav-sec">Módulos</div>
+  <div class="nav-i" id="ni-proveedores" onclick="nav('proveedores')">
+    <span class="nav-ic">🏢</span> Proveedores
+  </div>
+  <div class="nav-i" id="ni-egreso" onclick="nav('egreso')">
+    <span class="nav-ic">💳</span> Egresos ERP
+    <span class="nav-badge" id="pend-badge">3</span>
+  </div>
+  <div class="nav-i" id="ni-historial" onclick="nav('historial')">
+    <span class="nav-ic">📋</span> Historial de Avisos
+    <span class="nav-badge" id="err-badge">1</span>
+  </div>
+
+  <div class="nav-sec">Sistema</div>
+  <div class="nav-i" id="ni-config" onclick="nav('config')">
+    <span class="nav-ic">⚙️</span> Configuración
+  </div>
+
+  <div class="sb-foot">
+    <div class="u-info">
+      <div class="u-av">CA</div>
+      <div>
+        <div class="u-name">Carlos Arce</div>
+        <div class="u-role">Tesorería</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="topbar">
+    <div class="bc" id="bc">Finanzas / <strong>Dashboard</strong></div>
+    <div class="tb-btns">
+      <button class="btn btn-s btn-sm" onclick="nav('historial')">📋 Historial</button>
+      <button class="btn btn-p btn-sm" onclick="nav('egreso')">💳 Egresos ERP</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════ DASHBOARD ══════════ -->
+    <div class="sec active" id="sec-dashboard">
+      <div class="ph">
+        <div>
+          <div class="ph-title">Dashboard</div>
+          <div class="ph-sub">Resumen de avisos de pago automáticos · Julio 2026</div>
+        </div>
+        <button class="btn btn-s btn-sm" onclick="refreshDash()">🔄 Actualizar</button>
+      </div>
+
+      <div id="dash-alert"></div>
+
+      <div class="g g4" style="margin-bottom:18px">
+        <div class="sc"><div class="sc-ic ic-b">📨</div><div><div class="sc-val" id="d-total">26</div><div class="sc-lbl">Avisos enviados (mes)</div><div class="sc-ch up">↑ +8 vs mes anterior</div></div></div>
+        <div class="sc"><div class="sc-ic ic-a">🕐</div><div><div class="sc-val" id="d-pend">3</div><div class="sc-lbl">Pendientes de aviso</div><div class="sc-ch dn">↓ En cola de envío</div></div></div>
+        <div class="sc"><div class="sc-ic ic-r">⚠️</div><div><div class="sc-val" id="d-err">1</div><div class="sc-lbl">Con error</div><div class="sc-ch dn">Requiere reenvío</div></div></div>
+        <div class="sc"><div class="sc-ic ic-p">💰</div><div><div class="sc-val" style="font-size:18px" id="d-monto">$1.39M</div><div class="sc-lbl">Monto comunicado (MXN)</div><div class="sc-ch up">↑ +12% vs anterior</div></div></div>
+      </div>
+
+      <div class="g g2" style="margin-bottom:18px">
+        <div class="card">
+          <div class="card-h"><div class="card-t">Avisos por día — últimos 7 días</div></div>
+          <div class="bchart" id="bchart"></div>
+          <div style="display:flex;gap:14px;margin-top:12px;font-size:12px;color:var(--muted)">
+            <span>🟦 Enviados</span><span>🟥 Errores</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h">
+            <div class="card-t">Actividad reciente</div>
+            <button class="btn btn-s btn-sm" onclick="nav('historial')">Ver todo →</button>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Proveedor</th><th>Monto</th><th>Hora</th><th>Estado</th></tr></thead>
+              <tbody id="dash-recent"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-t">Estado de proveedores activos</div>
+          <button class="btn btn-s btn-sm" onclick="nav('proveedores')">Administrar →</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Proveedor</th><th>Correo de Avisos</th><th>Avisos (mes)</th><th>Último aviso</th><th>Estado</th></tr></thead>
+            <tbody id="dash-provs"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ PROVEEDORES ══════════ -->
+    <div class="sec" id="sec-proveedores">
+      <div class="ph">
+        <div>
+          <div class="ph-title">Proveedores</div>
+          <div class="ph-sub">Catálogo sincronizado con ERP · Configura correos y preferencias de avisos por proveedor</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="fb">
+          <div class="srch" style="flex:1;min-width:220px">
+            <span class="srch-ic">🔍</span>
+            <input class="fc" id="prov-search" placeholder="Buscar por nombre, RFC o correo..." oninput="renderProvs()">
+          </div>
+          <select class="fc" id="prov-correo-filter" onchange="renderProvs()" style="width:210px">
+            <option value="">Todos los proveedores</option>
+            <option value="con">Con correo de avisos</option>
+            <option value="sin">Sin correo de avisos</option>
+          </select>
+          <select class="fc" id="prov-filter" onchange="renderProvs()" style="width:170px">
+            <option value="">Avisos: todos</option>
+            <option value="activo">Avisos activos</option>
+            <option value="inactivo">Avisos inactivos</option>
+          </select>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>RFC</th>
+                <th>Proveedor <span style="font-weight:400;color:var(--muted);font-size:10px">(ERP)</span></th>
+                <th>Correo Comercial <span style="font-weight:400;color:var(--muted);font-size:10px">(ERP)</span></th>
+                <th>Correo de Avisos <span style="font-weight:400;color:var(--success);font-size:10px">(configurable)</span></th>
+                <th>Contacto Pagos</th>
+                <th style="text-align:center">Avisos Activos</th>
+                <th style="text-align:center">Configurar</th>
+              </tr>
+            </thead>
+            <tbody id="prov-tbody"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:12px;font-size:12px;color:var(--muted)" id="prov-count"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ EGRESOS ERP ══════════ -->
+    <div class="sec" id="sec-egreso">
+      <div class="ph">
+        <div>
+          <div class="ph-title">Egresos del ERP</div>
+          <div class="ph-sub">Pagos generados en TPS Intelisis · Selecciona egresos para enviar aviso al proveedor</div>
+        </div>
+      </div>
+
+      <!-- BARRA DE ACCIONES (aparece al seleccionar) -->
+      <div class="egr-bar" id="egr-bar">
+        <div style="display:flex;align-items:center;gap:16px">
+          <span style="font-size:20px">📋</span>
+          <div>
+            <div style="font-weight:700;font-size:14px" id="egr-sel-label">0 egresos seleccionados</div>
+            <div style="font-size:12px;opacity:.75">Total: <strong id="egr-sel-monto">$0.00 MXN</strong></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-sm" style="border:1px solid rgba(255,255,255,.3);color:#fff;background:rgba(255,255,255,.1)" onclick="deselAll()">✕ Deseleccionar todo</button>
+          <button class="btn btn-info btn-sm" onclick="previewLote()">👁 Ver Preview</button>
+          <button class="btn btn-ok btn-sm" id="btn-enviar-lote" onclick="enviarLote()">📨 Enviar Avisos Seleccionados</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="fb">
+          <div class="srch" style="flex:1;min-width:200px">
+            <span class="srch-ic">🔍</span>
+            <input class="fc" id="egr-search" placeholder="Buscar folio, proveedor, factura..." oninput="renderEgresos()">
+          </div>
+          <select class="fc" id="egr-filter-prov" onchange="renderEgresos()" style="width:190px">
+            <option value="">Todos los proveedores</option>
+          </select>
+          <select class="fc" id="egr-filter-est" onchange="renderEgresos()" style="width:170px">
+            <option value="">Todos los estados</option>
+            <option value="pendiente">Pendiente de aviso</option>
+            <option value="sin_correo">Sin correo</option>
+            <option value="error">Con error</option>
+            <option value="enviado">Aviso enviado</option>
+          </select>
+          <input class="fc" type="date" id="egr-filter-desde" value="2026-07-01" onchange="renderEgresos()" style="width:148px">
+          <input class="fc" type="date" id="egr-filter-hasta" value="2026-07-07" onchange="renderEgresos()" style="width:148px">
+          <button class="btn btn-s btn-sm" onclick="clearEgrFilt()">✖</button>
+        </div>
+
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:42px;text-align:center">
+                  <input type="checkbox" id="chk-all" onchange="toggleAllEgr(this)" style="width:15px;height:15px;cursor:pointer" title="Seleccionar todos">
+                </th>
+                <th>Folio ERP</th>
+                <th>Fecha</th>
+                <th>Proveedor</th>
+                <th class="tc"># Fact.</th>
+                <th>Facturas</th>
+                <th style="text-align:right">Monto</th>
+                <th>Ref. SPEI</th>
+                <th>Banco</th>
+                <th style="text-align:center">Estado Aviso</th>
+                <th style="text-align:center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="egr-tbody"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:12px;font-size:12px;color:var(--muted)" id="egr-count"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ HISTORIAL ══════════ -->
+    <div class="sec" id="sec-historial">
+      <div class="ph">
+        <div>
+          <div class="ph-title">Historial de Avisos</div>
+          <div class="ph-sub">Registro completo de notificaciones enviadas a proveedores</div>
+        </div>
+        <button class="btn btn-s btn-sm" onclick="exportHist()">⬇ Exportar CSV</button>
+      </div>
+
+      <div class="card">
+        <div class="fb">
+          <div class="srch" style="flex:1;min-width:200px">
+            <span class="srch-ic">🔍</span>
+            <input class="fc" id="hist-search" placeholder="Buscar proveedor, referencia..." oninput="renderHist()">
+          </div>
+          <select class="fc" id="hist-prov" onchange="renderHist()" style="width:190px">
+            <option value="">Todos los proveedores</option>
+          </select>
+          <select class="fc" id="hist-est" onchange="renderHist()" style="width:150px">
+            <option value="">Todos los estados</option>
+            <option value="enviado">Enviado</option>
+            <option value="error">Con error</option>
+            <option value="sin_correo">Sin correo</option>
+          </select>
+          <input class="fc" type="date" id="hist-desde" value="2026-07-01" onchange="renderHist()" style="width:150px">
+          <input class="fc" type="date" id="hist-hasta" value="2026-07-07" onchange="renderHist()" style="width:150px">
+          <button class="btn btn-s btn-sm" onclick="clearHFilt()">✖ Limpiar filtros</button>
+        </div>
+
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Folio</th>
+                <th>Fecha / Hora</th>
+                <th>Proveedor</th>
+                <th>Facturas</th>
+                <th style="text-align:right">Monto</th>
+                <th>Enviado a</th>
+                <th>Referencia SPEI</th>
+                <th style="text-align:center">Estado</th>
+                <th style="text-align:center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="hist-tbody"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:12px;font-size:12px;color:var(--muted)" id="hist-count"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ CONFIGURACIÓN ══════════ -->
+    <div class="sec" id="sec-config">
+      <div class="ph">
+        <div>
+          <div class="ph-title">Configuración del Sistema</div>
+          <div class="ph-sub">Parámetros de envío de correo y plantilla de avisos</div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('smtp',this)">📡 Servidor SMTP</div>
+        <div class="tab" onclick="switchTab('plantilla',this)">📄 Plantilla de Correo</div>
+        <div class="tab" onclick="switchTab('general',this)">⚙️ General</div>
+      </div>
+
+      <!-- SMTP TAB -->
+      <div class="tab-c active" id="tc-smtp">
+        <div class="card" style="max-width:600px">
+          <div class="alert al-info" style="margin-bottom:20px">
+            <span>ℹ️</span>
+            <div>Los cambios en la configuración SMTP requieren reinicio del servicio. Usar <strong>Probar Conexión</strong> antes de guardar.</div>
+          </div>
+          <div class="fi-row fg-2">
+            <div class="fg">
+              <label class="fl">Servidor SMTP <span class="req">*</span></label>
+              <input class="fc" id="cfg-smtp" value="smtp.santander.com.mx">
+            </div>
+            <div class="fg">
+              <label class="fl">Puerto <span class="req">*</span></label>
+              <input class="fc" id="cfg-port" value="587" type="number">
+            </div>
+          </div>
+          <div class="fg">
+            <label class="fl">Usuario SMTP <span class="req">*</span></label>
+            <input class="fc" id="cfg-user" value="notificaciones.finanzas@empresa.com.mx" type="email">
+          </div>
+          <div class="fg">
+            <label class="fl">Contraseña SMTP <span class="req">*</span></label>
+            <div style="display:flex;gap:8px">
+              <input class="fc" id="cfg-pass" type="password" value="S3cur3P@ss2026" style="flex:1">
+              <button class="btn btn-s btn-sm" onclick="togglePass()">👁</button>
+            </div>
+          </div>
+          <div class="fg" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:8px;padding:12px 14px">
+            <div>
+              <div style="font-weight:600;font-size:13px">Cifrado SSL/TLS</div>
+              <div class="fh">Recomendado para conexiones seguras</div>
+            </div>
+            <label class="tog"><input type="checkbox" id="cfg-ssl" checked><span class="tog-t"></span></label>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:6px">
+            <button class="btn btn-info" onclick="testSMTP()">🔗 Probar Conexión</button>
+            <button class="btn btn-p" onclick="saveCfg('smtp')">💾 Guardar SMTP</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLANTILLA TAB -->
+      <div class="tab-c" id="tc-plantilla">
+        <div class="g g2" style="align-items:start">
+          <div class="card">
+            <div class="card-t" style="margin-bottom:16px">Configuración del correo</div>
+            <div class="fi-row fg-2">
+              <div class="fg">
+                <label class="fl">Nombre del remitente</label>
+                <input class="fc" id="cfg-rname" value="Tesorería TPS">
+              </div>
+              <div class="fg">
+                <label class="fl">Correo remitente</label>
+                <input class="fc" id="cfg-remail" value="notificaciones.finanzas@empresa.com.mx" type="email">
+              </div>
+            </div>
+            <div class="fg">
+              <label class="fl">Asunto del correo</label>
+              <input class="fc" id="cfg-subject" value="Confirmación de Pago — {proveedor} — Ref. {referencia}">
+              <div class="fh">Variables: {proveedor}, {referencia}, {fecha}, {monto}</div>
+            </div>
+            <div class="fg">
+              <label class="fl">Correo CC (copia)</label>
+              <input class="fc" id="cfg-cc" value="cxp@empresa.com.mx" placeholder="cxp@empresa.com.mx">
+              <div class="fh">Opcional. Se envía copia a este correo en cada aviso</div>
+            </div>
+            <div class="fg">
+              <label class="fl">Pie de página del correo</label>
+              <textarea class="fc" id="cfg-footer" rows="3">Tesorería · TPS Intelisis · Tel: 55-1234-5678 · finanzas@empresa.com.mx
+Este es un mensaje automático, por favor no responder directamente.</textarea>
+            </div>
+            <button class="btn btn-p" onclick="saveCfg('plantilla')">💾 Guardar Plantilla</button>
+          </div>
+          <div class="card">
+            <div class="card-h">
+              <div class="card-t">Vista previa de plantilla</div>
+              <button class="btn btn-s btn-sm" onclick="openModal('modal-preview-tmpl')">🔍 Pantalla completa</button>
+            </div>
+            <div style="font-size:11px;background:var(--bg);border-radius:8px;padding:12px;line-height:1.7">
+              <div><strong>De:</strong> Tesorería TPS &lt;notificaciones.finanzas@empresa.com.mx&gt;</div>
+              <div><strong>Para:</strong> pagos@proveedor.com.mx</div>
+              <div><strong>CC:</strong> cxp@empresa.com.mx</div>
+              <div><strong>Asunto:</strong> Confirmación de Pago — Papelería García — Ref. SPEI2026070700XX</div>
+            </div>
+            <div class="div"></div>
+            <div id="tmpl-mini-preview">
+              <div style="background:#1e3a5f;color:#fff;padding:14px;border-radius:8px 8px 0 0;text-align:center;font-weight:700;font-size:14px">TPS Intelisis · Aviso de Pago</div>
+              <div style="background:#f8fafc;padding:14px;border-radius:0 0 8px 8px;font-size:12px;line-height:1.7;border:1px solid var(--border);border-top:none">
+                <p style="margin-bottom:8px">Estimado equipo de <strong>Papelería García S.A.</strong>,</p>
+                <p>Le notificamos que se ha procesado el pago correspondiente a las siguientes facturas...</p>
+                <div style="background:var(--primary);color:#fff;border-radius:4px;padding:6px 10px;margin:8px 0;font-size:11px">
+                  Tabla de facturas liquidadas
+                </div>
+                <p style="font-size:11px;color:var(--muted)">Referencia SPEI · Banco · Fecha · Monto Total</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GENERAL TAB -->
+      <div class="tab-c" id="tc-general">
+        <div class="card" style="max-width:560px">
+          <div class="fg" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:8px;padding:14px">
+            <div>
+              <div style="font-weight:600;font-size:14px">Envío automático al generar egreso</div>
+              <div class="fh">El aviso se envía automáticamente sin intervención manual</div>
+            </div>
+            <label class="tog"><input type="checkbox" id="cfg-auto" checked><span class="tog-t"></span></label>
+          </div>
+          <div class="div"></div>
+          <div class="fg" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:8px;padding:14px">
+            <div>
+              <div style="font-weight:600;font-size:14px">Reintentar si falla el envío</div>
+              <div class="fh">Reintenta automáticamente hasta 3 veces con intervalo de 5 min</div>
+            </div>
+            <label class="tog"><input type="checkbox" id="cfg-retry" checked><span class="tog-t"></span></label>
+          </div>
+          <div class="div"></div>
+          <div class="fg" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:8px;padding:14px">
+            <div>
+              <div style="font-weight:600;font-size:14px">Notificar errores a Tesorería</div>
+              <div class="fh">Envía alerta interna cuando un aviso falla</div>
+            </div>
+            <label class="tog"><input type="checkbox" id="cfg-notif" checked><span class="tog-t"></span></label>
+          </div>
+          <div class="div"></div>
+          <div class="fg">
+            <label class="fl">Retención de historial (días)</label>
+            <input class="fc" type="number" id="cfg-dias" value="365" min="30" max="3650">
+            <div class="fh">Tiempo que se conservan los registros de avisos enviados</div>
+          </div>
+          <button class="btn btn-p" onclick="saveCfg('general')">💾 Guardar configuración</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ══════════ MODALES ══════════ -->
+
+<!-- Modal: Configurar Avisos del Proveedor -->
+<div class="overlay" id="modal-prov">
+  <div class="modal">
+    <div class="m-head">
+      <div>
+        <div class="m-title" id="mprov-title">Configurar Avisos</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Datos del portal · Los datos del ERP son de solo lectura</div>
+      </div>
+      <button class="m-close" onclick="closeModal('modal-prov')">✕</button>
+    </div>
+    <div class="m-body">
+      <input type="hidden" id="mprov-id">
+      <!-- Datos ERP: solo lectura -->
+      <div class="alert al-info" style="margin-bottom:16px;padding:10px 14px">
+        <span style="font-size:16px">🏭</span>
+        <div>
+          <div style="font-weight:600" id="mprov-nombre-ro">&mdash;</div>
+          <div style="font-size:12px;margin-top:2px">RFC: <strong id="mprov-rfc-ro">&mdash;</strong> · Correo comercial (ERP): <span id="mprov-emailc-ro">&mdash;</span></div>
+        </div>
+      </div>
+      <!-- Datos configurables del portal -->
+      <div class="fg">
+        <label class="fl">Correo para Avisos de Pago <span class="req">*</span></label>
+        <input class="fc" id="mprov-email-a" type="email" placeholder="pagos@empresa.mx">
+        <div class="fh">Correo al que se enviarán los avisos · Si se deja vacío se usará el correo comercial del ERP</div>
+      </div>
+      <div class="fg">
+        <label class="fl">Contacto de Pagos / Cuentas por Pagar</label>
+        <input class="fc" id="mprov-contacto" placeholder="Nombre del contacto en el proveedor">
+        <div class="fh">Persona que recibe los avisos en el proveedor</div>
+      </div>
+      <div class="fg" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:8px;padding:13px 16px">
+        <div>
+          <div style="font-weight:600;font-size:14px">Avisos activos para este proveedor</div>
+          <div class="fh">Al desactivar, no se enviarán correos aunque se genere un egreso</div>
+        </div>
+        <label class="tog"><input type="checkbox" id="mprov-activo" checked><span class="tog-t"></span></label>
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-s" onclick="closeModal('modal-prov')">Cancelar</button>
+      <button class="btn btn-p" onclick="saveProv()">💾 Guardar Configuración</button>
+    </div>
+  </div>
+</div>
+
+<!-- modal-del conservado pero ya no se activa desde la UI -->
+<div class="overlay" id="modal-del" style="display:none">
+  <div class="modal" style="max-width:420px">
+    <div class="m-head"><div class="m-title">-</div></div>
+    <div class="m-body">
+      <div class="conf-txt"><strong id="del-nombre"></strong></div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-s" onclick="closeModal('modal-del')">Cancelar</button>
+      <button class="btn btn-err" onclick="deleteProv()">Eliminar permanentemente</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Preview de Aviso (antes de enviar) -->
+<div class="overlay" id="modal-aviso">
+  <div class="modal modal-xl">
+    <div class="m-head">
+      <div class="m-title">Vista previa del Aviso de Pago</div>
+      <button class="m-close" onclick="closeModal('modal-aviso')">✕</button>
+    </div>
+    <div class="m-body">
+      <div class="alert al-info" style="margin-bottom:18px">
+        <span>📧</span>
+        <div>Así recibirá el correo el proveedor. Verifica los datos antes de enviar.</div>
+      </div>
+      <div id="aviso-preview-content"></div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-s" onclick="closeModal('modal-aviso')">Cerrar</button>
+      <button class="btn btn-ok" onclick="closeModal('modal-aviso');enviarEgreso()">📨 Confirmar y Enviar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Ver correo del historial -->
+<div class="overlay" id="modal-hist-email">
+  <div class="modal modal-xl">
+    <div class="m-head">
+      <div class="m-title" id="mhe-title">Aviso enviado</div>
+      <button class="m-close" onclick="closeModal('modal-hist-email')">✕</button>
+    </div>
+    <div class="m-body">
+      <div id="hist-email-content"></div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-s" onclick="closeModal('modal-hist-email')">Cerrar</button>
+      <button class="btn btn-p btn-sm" onclick="printEmail()">🖨 Imprimir</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Reenviar con confirmación -->
+<div class="overlay" id="modal-reenvio">
+  <div class="modal" style="max-width:440px">
+    <div class="m-head">
+      <div class="m-title">Reenviar Aviso de Pago</div>
+      <button class="m-close" onclick="closeModal('modal-reenvio')">✕</button>
+    </div>
+    <div class="m-body">
+      <div class="conf-ic">📨</div>
+      <div class="conf-txt" id="reenv-txt">¿Reenviar el aviso de pago a este proveedor?</div>
+      <div class="div"></div>
+      <div class="fg">
+        <label class="fl">Correo destino</label>
+        <input class="fc" id="reenv-email" type="email">
+        <div class="fh">Puedes modificar el correo si el anterior era incorrecto</div>
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-s" onclick="closeModal('modal-reenvio')">Cancelar</button>
+      <button class="btn btn-ok" onclick="confirmReenvio()">📨 Reenviar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Plantilla full preview -->
+<div class="overlay" id="modal-preview-tmpl">
+  <div class="modal modal-xl">
+    <div class="m-head">
+      <div class="m-title">Vista completa de plantilla</div>
+      <button class="m-close" onclick="closeModal('modal-preview-tmpl')">✕</button>
+    </div>
+    <div class="m-body">
+      <div id="tmpl-full-preview"></div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-s" onclick="closeModal('modal-preview-tmpl')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Preview lote de avisos -->
+<div class="overlay" id="modal-lote">
+  <div class="modal modal-xl">
+    <div class="m-head">
+      <div class="m-title" id="mlote-title">Preview de avisos a enviar</div>
+      <button class="m-close" onclick="closeModal('modal-lote')">✕</button>
+    </div>
+    <div class="m-body">
+      <div class="alert al-info" style="margin-bottom:18px">
+        <span>📧</span>
+        <div id="mlote-desc">Se enviará un correo por cada egreso seleccionado. Verifica antes de confirmar.</div>
+      </div>
+      <div id="mlote-tabs" class="tabs" style="flex-wrap:wrap;overflow-x:auto;gap:4px"></div>
+      <div id="mlote-content"></div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-s" onclick="closeModal('modal-lote')">Cancelar</button>
+      <button class="btn btn-ok" onclick="closeModal('modal-lote');enviarLote(true)">📨 Confirmar y Enviar todos</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="tc-wrap" id="tc"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════════════════════════
+const DB = {
+  proveedores: [
+    { id:1, rfc:'PCG200115MX1', nombre:'Papelería García S.A. de C.V.', correoC:'ventas@papeleriagarcia.com.mx', correoA:'pagos@papeleriagarcia.com.mx', contacto:'José García Martínez', tel:'55-4521-8890', activo:true },
+    { id:2, rfc:'DNH190823MX5', nombre:'Distribuidora Nacional Hernández SA', correoC:'ventas@distnalhernandez.mx', correoA:'contabilidad@distnalhernandez.mx', contacto:'María Hernández Cruz', tel:'55-2234-7761', activo:true },
+    { id:3, rfc:'TSM180401MX3', nombre:'TechSolutions México SAPI de CV', correoC:'contacto@techsolutionsmx.com', correoA:'pagos@techsolutionsmx.com', contacto:'Roberto Méndez Leal', tel:'55-8801-4492', activo:true },
+    { id:4, rfc:'SLI170912MX7', nombre:'Servicios de Limpieza Integral SA', correoC:'info@limpiezaintegral.mx', correoA:'', contacto:'Ana López Vega', tel:'55-3345-6612', activo:true },
+    { id:5, rfc:'MCN160520MX2', nombre:'Materiales del Norte S.A.', correoC:'ventas@matnorte.mx', correoA:'cxc@matnorte.mx', contacto:'Luis Torres Ibarra', tel:'81-2291-3304', activo:false },
+    { id:6, rfc:'CFA210304MX9', nombre:'Consultores Financieros Asociados SC', correoC:'info@consultoresfa.mx', correoA:'finanzas@consultoresfa.mx', contacto:'Sofía Ramírez Peña', tel:'55-6677-8821', activo:true },
+    { id:7, rfc:'EOM150718MX4', nombre:'Equipos de Oficina Moderna SA de CV', correoC:'ventas@equiposofimoderna.com', correoA:'pagos@equiposofimoderna.com', contacto:'Carlos Morales Ríos', tel:'55-9900-1122', activo:true },
+    { id:8, rfc:'ABP220110MX6', nombre:'Alimentos y Bebidas Premium SC', correoC:'ventas@abpremium.mx', correoA:'tesoreria@abpremium.mx', contacto:'Diana Ruiz Castillo', tel:'55-4455-6677', activo:true },
+  ],
+  historial: [
+    { id:1001, fecha:'2026-07-07 09:23:14', provId:3, facturas:[{num:'FAC-2026-0451',desc:'Licencias software Q3',sub:79310.34,iva:12689.66,tot:92000},{num:'FAC-2026-0452',desc:'Soporte técnico julio',sub:79741.38,iva:12758.62,tot:92500}], monto:184500, correo:'pagos@techsolutionsmx.com', ref:'SPEI202607070001', banco:'Santander → BBVA', estado:'enviado' },
+    { id:1002, fecha:'2026-07-07 08:45:30', provId:1, facturas:[{num:'FAC-2026-0448',desc:'Papelería y consumibles',sub:39068.97,iva:6251.03,tot:45320}], monto:45320, correo:'pagos@papeleriagarcia.com.mx', ref:'SPEI202607070002', banco:'Santander → BBVA', estado:'enviado' },
+    { id:1003, fecha:'2026-07-06 16:10:05', provId:6, facturas:[{num:'FAC-2026-0440',desc:'Consultoría financiera jun',sub:50000,iva:8000,tot:58000}], monto:58000, correo:'finanzas@consultoresfa.mx', ref:'SPEI202607060008', banco:'Santander → Banamex', estado:'enviado' },
+    { id:1004, fecha:'2026-07-06 14:22:18', provId:8, facturas:[{num:'FAC-2026-0438',desc:'Suministro alimentos',sub:26810.34,iva:4289.66,tot:31100},{num:'FAC-2026-0439',desc:'Bebidas premium',sub:16293.1,iva:2606.9,tot:18900}], monto:50000, correo:'tesoreria@abpremium.mx', ref:'SPEI202607060007', banco:'Santander → Banorte', estado:'error' },
+    { id:1005, fecha:'2026-07-06 11:05:44', provId:2, facturas:[{num:'FAC-2026-0435',desc:'Distribución jun 2026',sub:103448.28,iva:16551.72,tot:120000}], monto:120000, correo:'contabilidad@distnalhernandez.mx', ref:'SPEI202607060005', banco:'Santander → HSBC', estado:'enviado' },
+    { id:1006, fecha:'2026-07-05 17:33:21', provId:7, facturas:[{num:'FAC-2026-0430',desc:'Equipos oficina',sub:58448.28,iva:9351.72,tot:67800}], monto:67800, correo:'pagos@equiposofimoderna.com', ref:'SPEI202607050012', banco:'Santander → Scotiabank', estado:'enviado' },
+    { id:1007, fecha:'2026-07-05 09:14:58', provId:4, facturas:[{num:'FAC-2026-0428',desc:'Servicio limpieza jul',sub:13448.28,iva:2151.72,tot:15600}], monto:15600, correo:'', ref:'SPEI202607050004', banco:'Santander → BBVA', estado:'sin_correo' },
+    { id:1008, fecha:'2026-07-04 15:48:12', provId:3, facturas:[{num:'FAC-2026-0422',desc:'Infraestructura cloud',sub:75862.07,iva:12137.93,tot:88000},{num:'FAC-2026-0423',desc:'Consultoría TI',sub:37931.03,iva:6068.97,tot:44000}], monto:132000, correo:'pagos@techsolutionsmx.com', ref:'SPEI202607040009', banco:'Santander → BBVA', estado:'enviado' },
+    { id:1009, fecha:'2026-07-03 13:22:44', provId:6, facturas:[{num:'FAC-2026-0415',desc:'Auditoría Q2',sub:43103.45,iva:6896.55,tot:50000}], monto:50000, correo:'finanzas@consultoresfa.mx', ref:'SPEI202607030003', banco:'Santander → Banamex', estado:'enviado' },
+    { id:1010, fecha:'2026-07-02 10:05:18', provId:1, facturas:[{num:'FAC-2026-0408',desc:'Material de oficina',sub:22413.79,iva:3586.21,tot:26000},{num:'FAC-2026-0409',desc:'Tóner y cartuchos',sub:12931.03,iva:2068.97,tot:15000}], monto:41000, correo:'pagos@papeleriagarcia.com.mx', ref:'SPEI202607020011', banco:'Santander → BBVA', estado:'enviado' },
+  ],
+  egresos_erp: [
+    { id:'EGR-2026-00188', fecha:'2026-07-07', provId:3, facturas:[{num:'FAC-2026-0460',desc:'Licencias software Q3 2026',sub:108620.69,iva:17379.31,tot:126000},{num:'FAC-2026-0461',desc:'Soporte técnico julio',sub:68103.45,iva:10896.55,tot:79000}], monto:205000, ref:'SPEI202607070010', banco:'Santander → BBVA', aviso:'pendiente' },
+    { id:'EGR-2026-00187', fecha:'2026-07-07', provId:1, facturas:[{num:'FAC-2026-0458',desc:'Material de oficina y papelería',sub:29310.34,iva:4689.66,tot:34000}], monto:34000, ref:'SPEI202607070009', banco:'Santander → BBVA', aviso:'pendiente' },
+    { id:'EGR-2026-00186', fecha:'2026-07-07', provId:6, facturas:[{num:'FAC-2026-0456',desc:'Consultoría financiera julio',sub:37500,iva:6000,tot:43500,saldoRest:6500}], monto:43500, ref:'SPEI202607070008', banco:'Santander → Banamex', aviso:'pendiente' },
+    { id:'EGR-2026-00185', fecha:'2026-07-07', provId:4, facturas:[{num:'FAC-2026-0454',desc:'Servicio de limpieza sem. 27',sub:13448.28,iva:2151.72,tot:15600}], monto:15600, ref:'SPEI202607070007', banco:'Santander → BBVA', aviso:'sin_correo' },
+    { id:'EGR-2026-00184', fecha:'2026-07-06', provId:8, facturas:[{num:'FAC-2026-0450',desc:'Suministro alimentos julio',sub:36206.9,iva:5793.1,tot:42000},{num:'FAC-2026-0451',desc:'Bebidas y refrescos',sub:21551.72,iva:3448.28,tot:25000}], monto:67000, ref:'SPEI202607060015', banco:'Santander → Banorte', aviso:'enviado' },
+    { id:'EGR-2026-00183', fecha:'2026-07-06', provId:2, facturas:[{num:'FAC-2026-0447',desc:'Distribución nacional junio',sub:103448.28,iva:16551.72,tot:120000}], monto:120000, ref:'SPEI202607060014', banco:'Santander → HSBC', aviso:'enviado' },
+    { id:'EGR-2026-00182', fecha:'2026-07-05', provId:7, facturas:[{num:'FAC-2026-0444',desc:'Sillas ergonómicas x12',sub:47413.79,iva:7586.21,tot:55000},{num:'FAC-2026-0445',desc:'Escritorios modulares x6',sub:34482.76,iva:5517.24,tot:40000}], monto:95000, ref:'SPEI202607050020', banco:'Santander → Scotiabank', aviso:'enviado' },
+    { id:'EGR-2026-00181', fecha:'2026-07-05', provId:3, facturas:[{num:'FAC-2026-0442',desc:'Infraestructura cloud junio',sub:75862.07,iva:12137.93,tot:88000}], monto:88000, ref:'SPEI202607050019', banco:'Santander → BBVA', aviso:'error' },
+    { id:'EGR-2026-00180', fecha:'2026-07-04', provId:1, facturas:[{num:'FAC-2026-0439',desc:'Cartuchos y tóner impresoras',sub:18103.45,iva:2896.55,tot:21000}], monto:21000, ref:'SPEI202607040018', banco:'Santander → BBVA', aviso:'enviado' },
+    { id:'EGR-2026-00179', fecha:'2026-07-03', provId:6, facturas:[{num:'FAC-2026-0435',desc:'Auditoría financiera Q2 2026',sub:86206.9,iva:13793.1,tot:100000}], monto:100000, ref:'SPEI202607030017', banco:'Santander → Banamex', aviso:'enviado' },
+  ],
+  nextId: 9,
+  nextHistId: 1011,
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════════════════
+let currentSection = 'dashboard';
+let pendingDeleteId = null;
+let pendingReenvioId = null;
+let selectedEgresos = [];
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════════════════════════
+const sections = ['dashboard','proveedores','egreso','historial','config'];
+const bcMap = {
+  dashboard:'Finanzas / <strong>Dashboard</strong>',
+  proveedores:'Finanzas / <strong>Proveedores</strong>',
+  egreso:'Finanzas / <strong>Egresos ERP</strong>',
+  historial:'Finanzas / <strong>Historial de Avisos</strong>',
+  config:'Finanzas / <strong>Configuración</strong>',
+};
+
+function nav(s) {
+  sections.forEach(x => {
+    document.getElementById('sec-'+x).classList.remove('active');
+    document.getElementById('ni-'+x).classList.remove('active');
+  });
+  document.getElementById('sec-'+s).classList.add('active');
+  document.getElementById('ni-'+s).classList.add('active');
+  document.getElementById('bc').innerHTML = bcMap[s];
+  currentSection = s;
+  if(s==='dashboard') renderDash();
+  if(s==='proveedores') renderProvs();
+  if(s==='egreso') renderEgresos();
+  if(s==='historial') renderHist();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TOASTS
+// ═══════════════════════════════════════════════════════════════════════════════
+function toast(type, title, msg, dur=4000) {
+  const map = { ok:['ts-ok','✅'], err:['ts-err','❌'], warn:['ts-warn','⚠️'], info:['ts-info','ℹ️'] };
+  const [cls, ic] = map[type] || map.info;
+  const el = document.createElement('div');
+  el.className = `toast ${cls}`;
+  el.innerHTML = `<span class="t-ic">${ic}</span><div class="t-txt"><div class="t-ttl">${title}</div><div class="t-msg">${msg}</div></div>`;
+  const tc = document.getElementById('tc');
+  tc.appendChild(el);
+  setTimeout(() => { el.style.opacity='0'; el.style.transform='translateX(110%)'; el.style.transition='.3s'; setTimeout(()=>el.remove(),300); }, dur);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════════════════════════════
+function switchTab(id, el) {
+  el.closest('.sec').querySelectorAll('.tab,.tab-c').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tc-'+id).classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CURRENCY FORMAT
+// ═══════════════════════════════════════════════════════════════════════════════
+const mxn = v => new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(v);
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════════════════════════════
+function renderDash() {
+  // Badge historial con errores
+  const errs = DB.historial.filter(h=>h.estado==='error'||h.estado==='sin_correo').length;
+  const badge = document.getElementById('err-badge');
+  badge.textContent = errs; badge.style.display = errs ? '' : 'none';
+  // Badge egresos pendientes
+  const pend = DB.egresos_erp.filter(e=>e.aviso==='pendiente'||e.aviso==='error').length;
+  const pb = document.getElementById('pend-badge');
+  if(pb){ pb.textContent = pend; pb.style.display = pend ? '' : 'none'; }
+
+  // Alert proveedores sin correo
+  const sinCorreo = DB.proveedores.filter(p=>p.activo && !p.correoA);
+  const alertDiv = document.getElementById('dash-alert');
+  alertDiv.innerHTML = sinCorreo.length
+    ? `<div class="alert al-warn">⚠️ <div><strong>${sinCorreo.length} proveedor(es) activo(s) sin correo de avisos configurado:</strong> ${sinCorreo.map(p=>`<strong>${p.nombre.split(' ').slice(0,3).join(' ')}</strong>`).join(', ')}. <a href="#" onclick="nav('proveedores');return false" style="color:inherit">Configurar ahora →</a></div></div>`
+    : '';
+
+  // Stats
+  const envMes = DB.historial.filter(h=>h.estado==='enviado').length;
+  const pendC = DB.egresos_erp.filter(e=>e.aviso==='pendiente'||e.aviso==='error').length;
+  const errC = DB.historial.filter(h=>h.estado==='error').length;
+  const monto = DB.historial.reduce((a,h)=>a+h.monto,0);
+  document.getElementById('d-total').textContent = envMes;
+  document.getElementById('d-pend').textContent = pendC;
+  document.getElementById('d-err').textContent = errC;
+  document.getElementById('d-monto').textContent = monto >= 1000000 ? `$${(monto/1000000).toFixed(2)}M` : mxn(monto);
+
+  // Chart
+  const days = ['Jul 1','Jul 2','Jul 3','Jul 4','Jul 5','Jul 6','Jul 7'];
+  const vals = [3,5,2,4,6,4,2];
+  const errsV = [0,0,0,0,0,1,0];
+  const max = Math.max(...vals);
+  const bc = document.getElementById('bchart');
+  bc.innerHTML = days.map((d,i)=>`
+    <div class="bc-item">
+      <div class="bc-val">${vals[i]}</div>
+      <div class="bc-bar" style="height:${(vals[i]/max)*80}px;background:${errsV[i]?'#fee2e2':'#dbeafe'};border:2px solid ${errsV[i]?'var(--danger)':'var(--primary-l)'}"></div>
+      <div class="bc-lbl">${d}</div>
+    </div>
+  `).join('');
+
+  // Recent
+  const recent = DB.historial.slice(0,5);
+  document.getElementById('dash-recent').innerHTML = recent.map(h=>{
+    const p = DB.proveedores.find(x=>x.id===h.provId);
+    return `<tr>
+      <td><div style="font-weight:500">${p.nombre.split(' ').slice(0,3).join(' ')}</div></td>
+      <td>${mxn(h.monto)}</td>
+      <td style="font-size:12px;color:var(--muted)">${h.fecha.split(' ')[1]}</td>
+      <td>${estadoBadge(h.estado)}</td>
+    </tr>`;
+  }).join('');
+
+  // Proveedores overview
+  const activos = DB.proveedores.filter(p=>p.activo);
+  document.getElementById('dash-provs').innerHTML = activos.map(p=>{
+    const cnt = DB.historial.filter(h=>h.provId===p.id).length;
+    const last = DB.historial.find(h=>h.provId===p.id);
+    return `<tr>
+      <td><div style="font-weight:500">${p.nombre.split(' ').slice(0,4).join(' ')}</div><div style="font-size:11px;color:var(--muted)">${p.rfc}</div></td>
+      <td>${p.correoA ? `<span style="font-size:12px">${p.correoA}</span>` : '<span class="badge b-warn">Sin configurar</span>'}</td>
+      <td class="tc"><strong>${cnt}</strong></td>
+      <td style="font-size:12px;color:var(--muted)">${last ? last.fecha.split(' ')[0] : '—'}</td>
+      <td>${p.activo?'<span class="badge b-ok">Activo</span>':'<span class="badge b-gray">Inactivo</span>'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function refreshDash() {
+  renderDash();
+  toast('ok','Dashboard actualizado','Datos sincronizados correctamente.');
+}
+
+function estadoBadge(e) {
+  const m = { enviado:'<span class="badge b-ok">✅ Enviado</span>', error:'<span class="badge b-err">❌ Error</span>', sin_correo:'<span class="badge b-warn">📭 Sin correo</span>' };
+  return m[e] || '';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PROVEEDORES
+// ═══════════════════════════════════════════════════════════════════════════════
+function renderProvs() {
+  const q = document.getElementById('prov-search').value.toLowerCase();
+  const filt = document.getElementById('prov-filter').value;
+  const correoFilt = document.getElementById('prov-correo-filter').value;
+
+  let list = DB.proveedores.filter(p => {
+    const match = p.nombre.toLowerCase().includes(q) || p.rfc.toLowerCase().includes(q) || p.correoC.toLowerCase().includes(q) || p.correoA.toLowerCase().includes(q);
+    const estOk = !filt || (filt==='activo'?p.activo:!p.activo);
+    const correoOk = !correoFilt || (correoFilt==='con'?!!p.correoA:!p.correoA);
+    return match && estOk && correoOk;
+  });
+
+  document.getElementById('prov-tbody').innerHTML = list.length ? list.map(p => `
+    <tr>
+      <td><span style="font-size:11px;font-family:monospace;color:var(--muted)">${p.rfc}</span></td>
+      <td>
+        <div style="font-weight:500">${p.nombre}</div>
+        <div style="font-size:11px;color:var(--muted)">📞 ${p.tel}</div>
+      </td>
+      <td style="font-size:12px;color:var(--muted)">${p.correoC}</td>
+      <td>${p.correoA
+        ? `<span style="font-size:13px;color:var(--success);font-weight:500">✓ ${p.correoA}</span>`
+        : '<span class="badge b-warn">⚠ Sin configurar</span>'}</td>
+      <td style="font-size:12px">${p.contacto||'<span style="color:var(--muted)">—</span>'}</td>
+      <td class="tc">
+        <label class="tog" title="${p.activo?'Desactivar avisos':'Activar avisos'}">
+          <input type="checkbox" ${p.activo?'checked':''} onchange="toggleProv(${p.id})">
+          <span class="tog-t"></span>
+        </label>
+      </td>
+      <td class="tc">
+        <button class="btn btn-p btn-xs" onclick="openEditProv(${p.id})" title="Configurar avisos">⚙️ Configurar</button>
+      </td>
+    </tr>
+  `).join('') : `<tr><td colspan="7"><div class="empty"><div class="e-ic">🔍</div><h3>Sin resultados</h3><p>Ajusta los filtros</p></div></td></tr>`;
+
+  document.getElementById('prov-count').textContent = `Mostrando ${list.length} de ${DB.proveedores.length} proveedores · ${DB.proveedores.filter(p=>!p.correoA).length} sin correo de avisos configurado`;
+}
+
+function openEditProv(id) {
+  const p = DB.proveedores.find(x=>x.id===id);
+  document.getElementById('mprov-title').textContent = `Configurar Avisos`;
+  document.getElementById('mprov-id').value = id;
+  // Datos ERP (solo lectura)
+  document.getElementById('mprov-nombre-ro').textContent = p.nombre;
+  document.getElementById('mprov-rfc-ro').textContent = p.rfc;
+  document.getElementById('mprov-emailc-ro').textContent = p.correoC;
+  // Datos configurables del portal
+  document.getElementById('mprov-email-a').value = p.correoA || '';
+  document.getElementById('mprov-contacto').value = p.contacto || '';
+  document.getElementById('mprov-activo').checked = p.activo;
+  openModal('modal-prov');
+}
+
+function saveProv() {
+  const id = parseInt(document.getElementById('mprov-id').value);
+  const emailA = document.getElementById('mprov-email-a').value.trim();
+  const contacto = document.getElementById('mprov-contacto').value.trim();
+  const activo = document.getElementById('mprov-activo').checked;
+  if(emailA && !/\S+@\S+\.\S+/.test(emailA)) { toast('warn','Correo inválido','Verifica el formato del correo de avisos.'); return; }
+  const idx = DB.proveedores.findIndex(p=>p.id===id);
+  DB.proveedores[idx] = { ...DB.proveedores[idx], correoA: emailA, contacto, activo };
+  const p = DB.proveedores[idx];
+  closeModal('modal-prov');
+  toast('ok','Configuración guardada',`${p.nombre.split(' ')[0]} · avisos ${activo?'activados':'desactivados'}`);
+  renderProvs();
+}
+
+function toggleProv(id) {
+  const p = DB.proveedores.find(x=>x.id===id);
+  p.activo = !p.activo;
+  toast('info',`Avisos ${p.activo?'activados':'desactivados'}`,p.nombre.split(' ').slice(0,3).join(' '));
+  renderProvs();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// EGRESOS ERP
+// ═══════════════════════════════════════════════════════════════════════════════
+function renderEgresos() {
+  const eprov = document.getElementById('egr-filter-prov');
+  if(eprov && eprov.options.length <= 1) {
+    DB.proveedores.forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent=p.nombre.split(' ').slice(0,4).join(' '); eprov.appendChild(o); });
+  }
+  const q = (document.getElementById('egr-search')||{}).value?.toLowerCase()||'';
+  const provF = (document.getElementById('egr-filter-prov')||{}).value||'';
+  const estF = (document.getElementById('egr-filter-est')||{}).value||'';
+  const desde = (document.getElementById('egr-filter-desde')||{}).value||'';
+  const hasta = (document.getElementById('egr-filter-hasta')||{}).value||'';
+
+  const avisoBadge = a => ({'pendiente':'<span class="badge b-info">🕐 Pendiente</span>','enviado':'<span class="badge b-ok">✅ Enviado</span>','error':'<span class="badge b-err">❌ Error</span>','sin_correo':'<span class="badge b-warn">📭 Sin correo</span>'})[a]||'';
+
+  let list = DB.egresos_erp.filter(e => {
+    const p = DB.proveedores.find(x=>x.id===e.provId);
+    const mq = !q || e.id.toLowerCase().includes(q) || p.nombre.toLowerCase().includes(q) || e.facturas.some(f=>f.num.toLowerCase().includes(q)) || e.ref.toLowerCase().includes(q);
+    return mq && (!provF||e.provId===parseInt(provF)) && (!estF||e.aviso===estF) && (!desde||e.fecha>=desde) && (!hasta||e.fecha<=hasta);
+  });
+
+  document.getElementById('egr-tbody').innerHTML = list.length ? list.map(e => {
+    const p = DB.proveedores.find(x=>x.id===e.provId);
+    const sel = selectedEgresos.includes(e.id);
+    const canSel = e.aviso !== 'enviado';
+    const nums = e.facturas.map(f=>f.num).join(', ');
+    return `<tr style="${sel?'background:#eff6ff;border-left:3px solid var(--primary-l)':''}">
+      <td class="tc">${canSel?`<input type="checkbox" ${sel?'checked':''} onchange="toggleEgr('${e.id}',this)" style="width:15px;height:15px;cursor:pointer">`:'<span style="color:var(--muted)">—</span>'}</td>
+      <td><span style="font-family:monospace;font-weight:700;color:var(--primary-l);font-size:13px">${e.id}</span></td>
+      <td style="font-size:13px;white-space:nowrap">${e.fecha}</td>
+      <td><div style="font-weight:500;font-size:13px">${p.nombre.split(' ').slice(0,3).join(' ')}</div><div style="font-size:11px;color:var(--muted)">${p.rfc}</div></td>
+      <td class="tc"><span class="badge b-gray">${e.facturas.length}</span></td>
+      <td style="font-size:12px;max-width:170px"><span title="${nums}">${nums.length>38?nums.slice(0,36)+'…':nums}</span></td>
+      <td style="text-align:right;font-weight:600">${mxn(e.monto)}</td>
+      <td style="font-size:11px;font-family:monospace;color:var(--muted)">${e.ref}</td>
+      <td style="font-size:12px">${e.banco}</td>
+      <td class="tc">${avisoBadge(e.aviso)}</td>
+      <td class="tc"><div style="display:flex;gap:4px;justify-content:center">
+        <button class="btn btn-info btn-xs" onclick="previewEgreso('${e.id}')" title="Ver aviso">👁</button>
+        ${canSel?`<button class="btn btn-ok btn-xs" onclick="enviarUno('${e.id}')" title="Enviar aviso">📨</button>`:''}
+      </div></td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="11"><div class="empty"><div class="e-ic">�</div><h3>Sin egresos pendientes</h3><p>El ERP no tiene egresos con los filtros seleccionados</p></div></td></tr>`;
+
+  const allCheck = list.filter(e=>e.aviso!=='enviado');
+  const allC = allCheck.length > 0 && allCheck.every(e=>selectedEgresos.includes(e.id));
+  const chkAll = document.getElementById('chk-all');
+  if(chkAll){ chkAll.checked=allC; chkAll.indeterminate=!allC&&selectedEgresos.length>0&&allCheck.some(e=>selectedEgresos.includes(e.id)); }
+  document.getElementById('egr-count').textContent = `Mostrando ${list.length} de ${DB.egresos_erp.length} egresos · ${DB.egresos_erp.filter(e=>e.aviso==='pendiente').length} pendientes · ${DB.egresos_erp.filter(e=>e.aviso==='error').length} con error`;
+  updateSelBar();
+}
+
+function toggleEgr(id, el) {
+  if(el.checked){ if(!selectedEgresos.includes(id)) selectedEgresos.push(id); }
+  else { selectedEgresos = selectedEgresos.filter(x=>x!==id); }
+  updateSelBar(); renderEgresos();
+}
+
+function toggleAllEgr(el) {
+  const q=(document.getElementById('egr-search')||{}).value?.toLowerCase()||'';
+  const provF=(document.getElementById('egr-filter-prov')||{}).value||'';
+  const estF=(document.getElementById('egr-filter-est')||{}).value||'';
+  const desde=(document.getElementById('egr-filter-desde')||{}).value||'';
+  const hasta=(document.getElementById('egr-filter-hasta')||{}).value||'';
+  const vis = DB.egresos_erp.filter(e=>{
+    const p=DB.proveedores.find(x=>x.id===e.provId);
+    return (!q||e.id.toLowerCase().includes(q)||p.nombre.toLowerCase().includes(q)||e.facturas.some(f=>f.num.toLowerCase().includes(q)))
+      &&(!provF||e.provId===parseInt(provF))&&(!estF||e.aviso===estF)
+      &&(!desde||e.fecha>=desde)&&(!hasta||e.fecha<=hasta)&&e.aviso!=='enviado';
+  });
+  if(el.checked){ vis.forEach(e=>{ if(!selectedEgresos.includes(e.id)) selectedEgresos.push(e.id); }); }
+  else { const ids=vis.map(e=>e.id); selectedEgresos=selectedEgresos.filter(id=>!ids.includes(id)); }
+  updateSelBar(); renderEgresos();
+}
+
+function deselAll() { selectedEgresos=[]; updateSelBar(); renderEgresos(); }
+
+function updateSelBar() {
+  const bar = document.getElementById('egr-bar');
+  const n = selectedEgresos.length;
+  if(!bar) return;
+  if(n===0){ bar.classList.remove('show'); return; }
+  bar.classList.add('show');
+  const tot = selectedEgresos.reduce((a,id)=>{ const e=DB.egresos_erp.find(x=>x.id===id); return a+(e?e.monto:0); },0);
+  document.getElementById('egr-sel-label').textContent = `${n} egreso${n>1?'s':''} seleccionado${n>1?'s':''}`;
+  document.getElementById('egr-sel-monto').textContent = `${mxn(tot)} MXN`;
+}
+
+function clearEgrFilt() {
+  ['egr-search','egr-filter-prov','egr-filter-est'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  const d=document.getElementById('egr-filter-desde'); if(d) d.value='2026-07-01';
+  const h=document.getElementById('egr-filter-hasta'); if(h) h.value='2026-07-07';
+  renderEgresos();
+}
+
+function previewEgreso(id) {
+  const e = DB.egresos_erp.find(x=>x.id===id);
+  const p = DB.proveedores.find(x=>x.id===e.provId);
+  const correo = p.correoA || p.correoC;
+  document.getElementById('aviso-preview-content').innerHTML = generateEmailHTML({ prov:p, facturas:e.facturas, fecha:e.fecha, ref:e.ref, banco:e.banco, monto:e.monto, correo, folio:e.id });
+  document.querySelector('#modal-aviso .m-title').textContent = `Preview · ${e.id}`;
+  document.querySelector('#modal-aviso .m-foot .btn-ok').onclick = ()=>{ closeModal('modal-aviso'); enviarUno(id); };
+  openModal('modal-aviso');
+}
+
+function enviarUno(id) {
+  const e = DB.egresos_erp.find(x=>x.id===id);
+  const p = DB.proveedores.find(x=>x.id===e.provId);
+  const correo = p.correoA || p.correoC;
+  toast('info','Enviando aviso...',`${e.id} · ${p.nombre.split(' ')[0]}`);
+  setTimeout(()=>{
+    const estado = correo ? 'enviado' : 'sin_correo';
+    e.aviso = estado;
+    DB.historial.unshift({ id:DB.nextHistId++, fecha:new Date().toISOString().slice(0,19).replace('T',' '), provId:e.provId, facturas:e.facturas, monto:e.monto, correo:correo||'', ref:e.ref, banco:e.banco, estado });
+    selectedEgresos = selectedEgresos.filter(x=>x!==id);
+    updatePendBadge(); renderEgresos();
+    if(estado==='enviado') toast('ok','Aviso enviado',`Correo a ${correo} · ${e.id}`);
+    else toast('warn','Sin correo configurado',`${p.nombre} no tiene correo de avisos.`);
+  }, 1200);
+}
+
+function previewLote() {
+  if(!selectedEgresos.length){ toast('warn','Nada seleccionado','Selecciona al menos un egreso.'); return; }
+  document.getElementById('mlote-title').textContent = `Preview · ${selectedEgresos.length} aviso${selectedEgresos.length>1?'s':''} a enviar`;
+  const sinC = selectedEgresos.filter(id=>{ const e=DB.egresos_erp.find(x=>x.id===id); const p=DB.proveedores.find(x=>x.id===e.provId); return !p.correoA&&!p.correoC; });
+  document.getElementById('mlote-desc').innerHTML = sinC.length
+    ? `⚠️ <strong>${sinC.length} egreso(s) no se enviarán</strong> por falta de correo. El resto se enviará. Se envía <strong>1 correo por egreso.</strong>`
+    : `Se enviarán <strong>${selectedEgresos.length} correo${selectedEgresos.length>1?'s':''}</strong> — <strong>uno por cada egreso</strong> seleccionado.`;
+  document.getElementById('mlote-tabs').innerHTML = selectedEgresos.map((id,i)=>{
+    const e=DB.egresos_erp.find(x=>x.id===id);
+    return `<div class="tab ${i===0?'active':''}" onclick="switchLoteTab(${i},this)">${e.id}</div>`;
+  }).join('');
+  document.getElementById('mlote-content').innerHTML = selectedEgresos.map((id,i)=>{
+    const e=DB.egresos_erp.find(x=>x.id===id); const p=DB.proveedores.find(x=>x.id===e.provId);
+    const correo=p.correoA||p.correoC;
+    return `<div class="tab-c ${i===0?'active':''}" id="ltc-${i}">${generateEmailHTML({prov:p,facturas:e.facturas,fecha:e.fecha,ref:e.ref,banco:e.banco,monto:e.monto,correo,folio:e.id})}</div>`;
+  }).join('');
+  openModal('modal-lote');
+}
+
+function switchLoteTab(i, el) {
+  document.querySelectorAll('#mlote-tabs .tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('#mlote-content .tab-c').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('ltc-'+i).classList.add('active');
+}
+
+function enviarLote(confirmed=false) {
+  if(!selectedEgresos.length){ toast('warn','Nada seleccionado','Selecciona al menos un egreso.'); return; }
+  if(!confirmed){ previewLote(); return; }
+  const btn = document.getElementById('btn-enviar-lote');
+  if(btn){ btn.disabled=true; btn.innerHTML='<span class="spin"></span> Enviando...'; }
+  const ids=[...selectedEgresos];
+  setTimeout(()=>{
+    let sent=0, nomail=0;
+    ids.forEach(id=>{
+      const e=DB.egresos_erp.find(x=>x.id===id); const p=DB.proveedores.find(x=>x.id===e.provId);
+      const correo=p.correoA||p.correoC; const estado=correo?'enviado':'sin_correo';
+      e.aviso=estado;
+      DB.historial.unshift({ id:DB.nextHistId++, fecha:new Date().toISOString().slice(0,19).replace('T',' '), provId:e.provId, facturas:e.facturas, monto:e.monto, correo:correo||'', ref:e.ref, banco:e.banco, estado });
+      if(estado==='enviado') sent++; else nomail++;
+    });
+    selectedEgresos=[];
+    if(btn){ btn.disabled=false; btn.innerHTML='📨 Enviar Avisos Seleccionados'; }
+    updatePendBadge(); renderEgresos();
+    if(sent>0) toast('ok',`${sent} aviso${sent>1?'s':''} enviado${sent>1?'s':''}`,`Notificaciones enviadas correctamente.`);
+    if(nomail>0) toast('warn',`${nomail} sin correo`,`Configura el correo de avisos en Proveedores.`);
+    setTimeout(()=>nav('historial'), 1800);
+  }, 2000);
+}
+
+function updatePendBadge() {
+  const pend=DB.egresos_erp.filter(e=>e.aviso==='pendiente'||e.aviso==='error').length;
+  const b=document.getElementById('pend-badge');
+  if(b){ b.textContent=pend; b.style.display=pend?'':'none'; }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// HISTORIAL
+// ═══════════════════════════════════════════════════════════════════════════════
+function renderHist() {
+  const q = document.getElementById('hist-search').value.toLowerCase();
+  const provFilt = document.getElementById('hist-prov').value;
+  const estFilt = document.getElementById('hist-est').value;
+  const desde = document.getElementById('hist-desde').value;
+  const hasta = document.getElementById('hist-hasta').value;
+
+  // Populate prov dropdown
+  const hprov = document.getElementById('hist-prov');
+  if(hprov.options.length <= 1) {
+    DB.proveedores.forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent=p.nombre; hprov.appendChild(o); });
+  }
+
+  let list = DB.historial.filter(h => {
+    const p = DB.proveedores.find(x=>x.id===h.provId);
+    const matchQ = !q || p.nombre.toLowerCase().includes(q) || h.ref.toLowerCase().includes(q) || h.facturas.some(f=>f.num.toLowerCase().includes(q));
+    const matchP = !provFilt || h.provId===parseInt(provFilt);
+    const matchE = !estFilt || h.estado===estFilt;
+    const d = h.fecha.split(' ')[0];
+    const matchD = (!desde || d >= desde) && (!hasta || d <= hasta);
+    return matchQ && matchP && matchE && matchD;
+  });
+
+  document.getElementById('hist-tbody').innerHTML = list.length ? list.map(h => {
+    const p = DB.proveedores.find(x=>x.id===h.provId);
+    const facNums = h.facturas.map(f=>f.num).join(', ');
+    return `<tr>
+      <td><span style="font-size:11px;font-family:monospace;color:var(--primary-l);font-weight:600">#${h.id}</span></td>
+      <td><div>${h.fecha.split(' ')[0]}</div><div style="font-size:11px;color:var(--muted)">${h.fecha.split(' ')[1]}</div></td>
+      <td><div style="font-weight:500;font-size:13px">${p.nombre.split(' ').slice(0,3).join(' ')}</div><div style="font-size:11px;color:var(--muted)">${p.rfc}</div></td>
+      <td style="font-size:12px">${facNums.length>40?facNums.slice(0,38)+'…':facNums}</td>
+      <td style="text-align:right;font-weight:600">${mxn(h.monto)}</td>
+      <td style="font-size:12px">${h.correo||'<span style="color:var(--muted)">—</span>'}</td>
+      <td><span style="font-size:11px;font-family:monospace;color:var(--muted)">${h.ref}</span></td>
+      <td class="tc">${estadoBadge(h.estado)}</td>
+      <td class="tc">
+        <div style="display:flex;gap:4px;justify-content:center">
+          <button class="btn btn-info btn-xs" onclick="verCorreo(${h.id})" title="Ver correo">📧</button>
+          ${h.estado!=='enviado'?`<button class="btn btn-warn btn-xs" onclick="openReenvio(${h.id})" title="Reenviar">🔁</button>`:''}
+        </div>
+      </td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="9"><div class="empty"><div class="e-ic">📋</div><h3>Sin registros</h3><p>Ajusta los filtros para ver resultados</p></div></td></tr>`;
+
+  document.getElementById('hist-count').textContent = `Mostrando ${list.length} de ${DB.historial.length} registros`;
+}
+
+function clearHFilt() {
+  document.getElementById('hist-search').value='';
+  document.getElementById('hist-prov').value='';
+  document.getElementById('hist-est').value='';
+  document.getElementById('hist-desde').value='2026-07-01';
+  document.getElementById('hist-hasta').value='2026-07-07';
+  renderHist();
+}
+
+function verCorreo(id) {
+  const h = DB.historial.find(x=>x.id===id);
+  const p = DB.proveedores.find(x=>x.id===h.provId);
+  document.getElementById('mhe-title').textContent = `Aviso #${id} · ${p.nombre.split(' ').slice(0,3).join(' ')}`;
+  document.getElementById('hist-email-content').innerHTML = generateEmailHTML({ prov:p, ...h, correo:h.correo||p.correoA||p.correoC });
+  openModal('modal-hist-email');
+}
+
+function openReenvio(id) {
+  pendingReenvioId = id;
+  const h = DB.historial.find(x=>x.id===id);
+  const p = DB.proveedores.find(x=>x.id===h.provId);
+  document.getElementById('reenv-txt').innerHTML = `¿Reenviar aviso de pago a <strong>${p.nombre}</strong>?`;
+  document.getElementById('reenv-email').value = p.correoA || p.correoC;
+  openModal('modal-reenvio');
+}
+
+function confirmReenvio() {
+  const email = document.getElementById('reenv-email').value.trim();
+  if(!email || !/\S+@\S+\.\S+/.test(email)) { toast('warn','Correo inválido','Ingresa un correo válido.'); return; }
+  const h = DB.historial.find(x=>x.id===pendingReenvioId);
+  h.estado = 'enviado';
+  h.correo = email;
+  closeModal('modal-reenvio');
+  toast('ok','Aviso reenviado',`Correo enviado exitosamente a ${email}`);
+  const badge = document.getElementById('err-badge');
+  const errC = DB.historial.filter(x=>x.estado==='error'||x.estado==='sin_correo').length;
+  badge.textContent = errC; badge.style.display = errC ? '' : 'none';
+  renderHist();
+}
+
+function exportHist() {
+  toast('ok','Exportando historial','Descargando CSV del historial de avisos...');
+  const rows = [['Folio','Fecha','Proveedor','RFC','Facturas','Monto','Correo Enviado','Referencia SPEI','Estado'],
+    ...DB.historial.map(h=>{ const p=DB.proveedores.find(x=>x.id===h.provId); return [h.id,h.fecha,p.nombre,p.rfc,h.facturas.map(f=>f.num).join(' | '),h.monto,h.correo,h.ref,h.estado]; })
+  ];
+  const csv = rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const a = document.createElement('a'); a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='historial_avisos_pago.csv'; a.click();
+}
+
+function printEmail() {
+  const content = document.getElementById('hist-email-content').innerHTML;
+  const w = window.open('','_blank'); w.document.write(`<html><head><title>Aviso de Pago</title></head><body>${content}</body></html>`); w.print(); w.close();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// EMAIL HTML GENERATOR
+// ═══════════════════════════════════════════════════════════════════════════════
+function generateEmailHTML(d) {
+  const empresa = 'TPS Intelisis';
+  const saldoPendTotal = d.facturas.reduce((a,f)=>a+(f.saldoRest||0),0);
+  const facRows = d.facturas.map(f=>`
+    <tr>
+      <td style="padding:9px 13px;border-bottom:1px solid #e2e8f0">${f.num||'—'}</td>
+      <td style="padding:9px 13px;border-bottom:1px solid #e2e8f0">${f.desc||'—'}</td>
+      <td style="padding:9px 13px;border-bottom:1px solid #e2e8f0;text-align:right">${mxn(f.sub||0)}</td>
+      <td style="padding:9px 13px;border-bottom:1px solid #e2e8f0;text-align:right">${mxn(f.iva||0)}</td>
+      <td style="padding:9px 13px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:700;color:#2563eb">${mxn(f.tot||0)}</td>
+      <td style="padding:9px 13px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:700;color:${(f.saldoRest||0)>0?'#d97706':'#16a34a'}">${(f.saldoRest||0)>0?mxn(f.saldoRest):'<span style="color:#16a34a">✓ Liquidada</span>'}</td>
+    </tr>
+  `).join('');
+
+  const total = d.facturas.reduce((a,f)=>a+(f.tot||0),0);
+  const nombre = d.prov ? d.prov.nombre : '—';
+  const contacto = d.prov ? d.prov.contacto : '—';
+  const correo = d.correo || (d.prov ? (d.prov.correoA||d.prov.correoC) : '');
+  const fecha = d.fecha || new Date().toISOString().slice(0,10);
+  const ref = d.ref || d.referenciaSPEI || '—';
+  const banco = d.banco || '—';
+  const folio = d.folio || d.id || '';
+
+  return `
+  <div style="font-family:Arial,sans-serif;max-width:680px;margin:0 auto;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden">
+    <!-- HEADER -->
+    <div style="background:#1e3a5f;padding:22px 28px;text-align:center">
+      <div style="color:#38bdf8;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">Sistema de Pagos Automáticos</div>
+      <div style="color:#fff;font-size:20px;font-weight:700">${empresa}</div>
+      <div style="color:rgba(255,255,255,.7);font-size:13px;margin-top:4px">Aviso de Pago</div>
+      ${folio?`<div style="display:inline-block;background:rgba(255,255,255,.15);color:#fff;font-family:monospace;font-size:12px;padding:4px 12px;border-radius:20px;margin-top:8px">Folio ERP: ${folio}</div>`:''}
+    </div>
+
+    <!-- META CORREO -->
+    <div style="background:#f8fafc;border-bottom:1px solid #e2e8f0;padding:10px 28px;font-size:11px;color:#64748b">
+      <span style="margin-right:16px"><strong>Para:</strong> ${correo||nombre}</span>
+      <span style="margin-right:16px"><strong>CC:</strong> cxp@empresa.com.mx</span>
+      <span><strong>Asunto:</strong> Confirmación de Pago — ${nombre.split(' ').slice(0,3).join(' ')} — Ref. ${ref}</span>
+    </div>
+
+    <!-- SALUDO -->
+    <div style="padding:24px 28px;background:#fff">
+      <p style="font-size:14px;color:#1e293b;margin-bottom:8px">Estimado(a) <strong>${contacto}</strong> — ${nombre},</p>
+      <p style="font-size:13px;color:#475569;line-height:1.7">Le informamos que se ha procesado exitosamente el pago correspondiente a las siguientes facturas. Este aviso es generado automáticamente al momento de registrar el egreso en TPS Intelisis.${folio?` <strong>Folio de referencia: ${folio}.</strong>`:''}</p>
+    </div>
+
+    <!-- DATOS DEL PAGO -->
+    <div style="padding:0 28px 20px;background:#fff">
+      <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:9px;padding:16px 18px;display:flex;gap:24px;flex-wrap:wrap">
+        <div><div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.5px">Fecha de Pago</div><div style="font-weight:700;font-size:14px;margin-top:3px">${fecha}</div></div>
+        <div><div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.5px">Referencia SPEI</div><div style="font-weight:700;font-size:14px;margin-top:3px;font-family:monospace;color:#2563eb">${ref}</div></div>
+        <div><div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.5px">Banco</div><div style="font-weight:700;font-size:14px;margin-top:3px">${banco}</div></div>
+        <div><div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.5px">Monto Total</div><div style="font-weight:700;font-size:16px;margin-top:3px;color:#16a34a">${mxn(total)} MXN</div></div>
+      </div>
+    </div>
+
+    <!-- FACTURAS -->
+    <div style="padding:0 28px 22px;background:#fff">
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px;color:#1e293b">📄 Detalle de Facturas</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="background:#1e3a5f">
+            <th style="padding:10px 13px;text-align:left;color:#fff;font-size:12px"># Factura</th>
+            <th style="padding:10px 13px;text-align:left;color:#fff;font-size:12px">Descripción</th>
+            <th style="padding:10px 13px;text-align:right;color:#fff;font-size:12px">Subtotal</th>
+            <th style="padding:10px 13px;text-align:right;color:#fff;font-size:12px">IVA 16%</th>
+            <th style="padding:10px 13px;text-align:right;color:#fff;font-size:12px">Monto Pagado</th>
+            <th style="padding:10px 13px;text-align:right;color:#fff;font-size:12px">Saldo Restante</th>
+          </tr>
+        </thead>
+        <tbody>${facRows}</tbody>
+        <tfoot>
+          <tr style="background:#f0f9ff">
+            <td colspan="4" style="padding:11px 13px;text-align:right;font-weight:700;font-size:14px;color:#1e293b">TOTAL PAGADO EN ESTE EGRESO:</td>
+            <td style="padding:11px 13px;text-align:right;font-weight:700;font-size:15px;color:#16a34a">${mxn(total)} MXN</td>
+            <td style="padding:11px 13px;text-align:right;font-weight:700;font-size:15px;color:${saldoPendTotal>0?'#d97706':'#16a34a'}">${saldoPendTotal>0?mxn(saldoPendTotal)+' MXN':'—'}</td>
+          </tr>
+        </tfoot>
+      </table>
+      ${saldoPendTotal>0?`<div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:11px 14px;margin-top:10px;font-size:12px;color:#92400e">
+        ⚠️ <strong>Nota:</strong> Una o más facturas incluidas en este pago tienen saldo restante pendiente de liquidar por <strong>${mxn(saldoPendTotal)} MXN</strong>. Este saldo se liquidará en el siguiente ciclo de pagos.
+      </div>`:''}
+    </div>
+
+    <!-- AVISO -->
+    <div style="padding:0 28px 22px;background:#fff">
+      <div style="background:#dcfce7;border:1px solid #bbf7d0;border-radius:8px;padding:13px 16px;font-size:13px;color:#15803d">
+        ✅ <strong>Su pago ha sido procesado.</strong> Si tiene alguna aclaración sobre este aviso, comuníquese con el área de Cuentas por Pagar dentro de las próximas 48 horas hábiles.
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div style="background:#1e3a5f;padding:18px 28px;text-align:center">
+      <div style="color:rgba(255,255,255,.8);font-size:12px;line-height:1.8">
+        Tesorería · TPS Intelisis · Tel: 55-1234-5678 · finanzas@empresa.com.mx<br>
+        <span style="font-size:11px;color:rgba(255,255,255,.5)">Este es un mensaje automático. Por favor no responder directamente a este correo.</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONFIGURACIÓN
+// ═══════════════════════════════════════════════════════════════════════════════
+function togglePass() {
+  const inp = document.getElementById('cfg-pass');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function testSMTP() {
+  const btn = event.target;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Probando...';
+  setTimeout(()=>{
+    btn.disabled = false;
+    btn.innerHTML = '🔗 Probar Conexión';
+    toast('ok','Conexión exitosa',`SMTP conectado en ${document.getElementById('cfg-smtp').value}:${document.getElementById('cfg-port').value}`);
+  }, 2000);
+}
+
+function saveCfg(tab) {
+  toast('ok','Configuración guardada',`Los cambios en ${tab==='smtp'?'SMTP':tab==='plantilla'?'plantilla':'configuración general'} fueron guardados.`);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TEMPLATE PREVIEW
+// ═══════════════════════════════════════════════════════════════════════════════
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  if(id==='modal-preview-tmpl') {
+    const sample = {
+      prov:{ nombre:'Papelería García S.A. de C.V.', rfc:'PCG200115MX1', contacto:'José García Martínez', correoA:'pagos@papeleriagarcia.com.mx', correoC:'ventas@papeleriagarcia.com.mx' },
+      fecha:'2026-07-07', ref:'SPEI202607070002', banco:'Santander → BBVA',
+      correo:'pagos@papeleriagarcia.com.mx',
+      facturas:[{num:'FAC-2026-0448',desc:'Papelería y consumibles',sub:39068.97,iva:6251.03,tot:45320}]
+    };
+    document.getElementById('tmpl-full-preview').innerHTML = generateEmailHTML(sample);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════════
+renderDash();
+</script>
+</body>
+</html>

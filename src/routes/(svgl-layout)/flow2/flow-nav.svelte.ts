@@ -18,110 +18,95 @@ export type FlowTransition =
 
 export type FlowDirection = 'forward' | 'backward';
 
-// ─── Persistencia en sessionStorage ─────────────────────────────────────────
-// Cada pestaña tiene su propia sessionStorage, así que no hay colisiones.
-const BACK_KEY = 'flow2:back';
-const FWD_KEY  = 'flow2:fwd';
-
-function readStack(key: string): FlowTransition[] {
-	if (!browser) return [];
-	try { return JSON.parse(sessionStorage.getItem(key) ?? '[]'); } catch { return []; }
-}
-
-function writeStack(key: string, stack: FlowTransition[]) {
-	if (!browser) return;
-	try { sessionStorage.setItem(key, JSON.stringify(stack)); } catch { /* noop */ }
-}
-
-// ─── Estado reactivo ─────────────────────────────────────────────────────────
+/**
+ * Transición POR DEFECTO de cada ruta.
+ *
+ * Modelo: la transición es una propiedad de la RUTA, no de un botón.
+ *  - Al navegar HACIA la ruta (forward) → se reproduce.
+ *  - Al SALIR de la ruta (backward)     → se reproduce invertida.
+ *
+ * La animación se deriva puramente de (from, to, dirección); no hay stack
+ * ni registro de navegación que mantener. Por eso romper la secuencia
+ * (p. ej. hacer clic en otro enlace en vez de «atrás») nunca la corrompe.
+ */
+export const routeTransitions: Record<string, FlowTransition> = {
+	'/flow2': 'fade',
+	'/flow2/detail': 'push',
+	'/flow2/extra': 'parallax'
+};
 
 /**
- * Estado reactivo compartido entre el layout y las páginas de /flow2.
+ * Memo de «última transición con la que se entró a cada ruta».
  *
- * - `backStack`: transiciones usadas para llegar aquí (más reciente al final).
- *   Al retroceder: pop → usamos esa transición invertida.
- * - `fwdStack`: transiciones guardadas al retroceder (más reciente al final).
- *   Al avanzar con el botón forward del navegador: pop → usamos esa transición.
- *
- * Ambos stacks se persisten en sessionStorage para sobrevivir recargas.
- * La hidratación ocurre en el onMount del layout (cliente).
+ * NO es un stack: hay como mucho UNA entrada por ruta y se sobrescribe en
+ * cada navegación forward, así que siempre refleja cómo llegaste por última
+ * vez a esa ruta. Sirve para dos cosas:
+ *   1. Al volver atrás (backward)             → invertir esa misma transición.
+ *   2. Con el botón «adelante» del navegador  → repetir esa misma transición.
+ * Al estar acotado a una entrada por ruta, es imposible que se corrompa
+ * aunque el usuario navegue de forma no lineal.
  */
-class FlowNav {
-	transition = $state<FlowTransition>('fade');
-	direction  = $state<FlowDirection>('forward');
-
-	private _back = $state<FlowTransition[]>([]);
-	private _fwd  = $state<FlowTransition[]>([]);
-
-	/** Hidrata los stacks desde sessionStorage (llamar en onMount). */
-	hydrate() {
-		this._back = readStack(BACK_KEY);
-		this._fwd  = readStack(FWD_KEY);
-	}
-
-	get canGoBack()    { return this._back.length > 0; }
-	get canGoForward() { return this._fwd.length > 0; }
-
-	pushBack(t: FlowTransition) {
-		this._back = [...this._back, t];
-		writeStack(BACK_KEY, this._back);
-	}
-
-	/** Quita y devuelve la transición más reciente del back-stack. */
-	popBack(): FlowTransition | undefined {
-		const last = this._back.at(-1);
-		this._back = this._back.slice(0, -1);
-		writeStack(BACK_KEY, this._back);
-		return last;
-	}
-
-	pushFwd(t: FlowTransition) {
-		this._fwd = [...this._fwd, t];
-		writeStack(FWD_KEY, this._fwd);
-	}
-
-	/** Quita y devuelve la transición más reciente del forward-stack. */
-	popFwd(): FlowTransition | undefined {
-		const last = this._fwd.at(-1);
-		this._fwd = this._fwd.slice(0, -1);
-		writeStack(FWD_KEY, this._fwd);
-		return last;
-	}
-
-	/** Borra el forward-stack (nueva rama de navegación). */
-	clearFwd() {
-		this._fwd = [];
-		writeStack(FWD_KEY, []);
-	}
-}
-
-export const flowNav = new FlowNav();
-
-// ─── API pública ──────────────────────────────────────────────────────────────
+const lastEnter = new Map<string, FlowTransition>();
 
 /**
- * Navega hacia adelante aplicando `transition`.
- * Limpia el forward-stack porque se inicia una nueva rama.
- *
- * @param _from  ruta actual (ya no se usa para navegar, el browser la recuerda)
- * @param to     ruta destino
- * @param transition tipo de animación
+ * Override de un solo uso para la SIGUIENTE navegación forward.
+ * Lo usa el «picker» de la home para forzar una transición concreta hacia
+ * un mismo destino. La navegación normal (goto/href) no lo toca.
  */
-export function flowForward(_from: string, to: string, transition: FlowTransition) {
-	flowNav.pushBack(transition);
-	flowNav.clearFwd();
-	flowNav.transition = transition;
-	flowNav.direction  = 'forward';
+let pendingOverride: FlowTransition | null = null;
+
+/**
+ * Navega forzando una transición concreta (picker de la demo).
+ * Para navegación NORMAL usa `goto(...)` o `<a href>` directamente: la ruta
+ * destino ya define su propia transición por defecto.
+ */
+export function navigateWith(to: string, transition: FlowTransition) {
+	pendingOverride = transition;
 	return goto(to);
 }
 
-/**
- * Retrocede en el historial del navegador.
- *
- * Usa `history.back()` en lugar de `goto()` para que TODOS los retrocesos
- * (botón interno o back del navegador) pasen por el mismo handler `popstate`
- * del layout, que pop-ea el back-stack y aplica la transición correcta.
- */
+/** Vuelve atrás en el historial del navegador (equivale al botón «atrás»). */
 export function flowBack() {
 	if (browser) window.history.back();
+}
+
+type NavInfo = {
+	type: string;
+	delta?: number | null;
+	from?: { url: URL } | null;
+	to?: { url: URL } | null;
+};
+
+/**
+ * Resuelve `[transición, dirección]` para una navegación a partir SÓLO del
+ * objeto `navigation` del router. Es la única fuente de verdad; no depende
+ * de estado externo que pueda quedar desincronizado.
+ *
+ *  - popstate delta < 0  → «atrás» (botón interno o del navegador):
+ *      invierte la transición con la que se entró a la página que dejamos.
+ *  - popstate delta > 0  → «adelante» del navegador:
+ *      repite la transición con la que se entró a la página destino.
+ *  - resto (goto/href)   → forward:
+ *      usa el override (si lo hay) o la transición por defecto del destino,
+ *      y la memoriza para el back futuro.
+ */
+export function resolveTransition(nav: NavInfo): [FlowTransition, FlowDirection] {
+	const delta = nav.delta ?? 0;
+
+	if (nav.type === 'popstate' && delta < 0) {
+		const path = nav.from?.url.pathname ?? '';
+		return [lastEnter.get(path) ?? routeTransitions[path] ?? 'fade', 'backward'];
+	}
+
+	if (nav.type === 'popstate' && delta > 0) {
+		const path = nav.to?.url.pathname ?? '';
+		return [lastEnter.get(path) ?? routeTransitions[path] ?? 'fade', 'forward'];
+	}
+
+	// Navegación forward normal (goto / href / navigateWith).
+	const path = nav.to?.url.pathname ?? '';
+	const t = pendingOverride ?? routeTransitions[path] ?? 'fade';
+	pendingOverride = null;
+	lastEnter.set(path, t);
+	return [t, 'forward'];
 }

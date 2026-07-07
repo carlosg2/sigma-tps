@@ -52,6 +52,8 @@
 	padding: 1.25rem 1rem;
 	text-align: center;
 	cursor: pointer;
+	text-decoration: none;
+	color: inherit;
 	background: #fff;
 	border: 2px solid #e1e5e9;
 	border-radius: 16px;

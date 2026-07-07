@@ -32,6 +32,12 @@
 	import QrCode from '@lucide/svelte/icons/qr-code';
 	import Zap from '@lucide/svelte/icons/zap';
 	import ClipboardCheck from '@lucide/svelte/icons/clipboard-check';
+	import Wallet from '@lucide/svelte/icons/wallet';
+	import Building2 from '@lucide/svelte/icons/building-2';
+	import CreditCard from '@lucide/svelte/icons/credit-card';
+	import KeyRound from '@lucide/svelte/icons/key-round';
+	import FileText from '@lucide/svelte/icons/file-text';
+	import ShieldCheck from '@lucide/svelte/icons/shield-check';
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 
@@ -93,6 +99,25 @@
 				{ label: 'Confirmación de Kits', href: '/inventarios/confirmacion', icon: QrCode },
 				{ label: 'Linekeeper Digital', href: '/inventarios/linekeeper', icon: Zap },
 				{ label: 'Trazabilidad', href: '/inventarios/trazabilidad', icon: ClipboardCheck }
+			]
+		},
+		{
+			label: 'Finanzas',
+			items: [
+				{ label: 'Dashboard', href: '/finanzas', icon: Wallet },
+				{ label: 'Proveedores', href: '/finanzas/proveedores', icon: Building2 },
+				{ label: 'Egresos ERP', href: '/finanzas/egresos', icon: CreditCard },
+				{ label: 'Historial de Avisos', href: '/finanzas/historial', icon: History },
+				{ label: 'Configuración', href: '/finanzas/configuracion', icon: SlidersHorizontal }
+			]
+		},
+		{
+			label: 'Rentas',
+			items: [
+				{ label: 'Executive Pulse', href: '/rentas', icon: KeyRound },
+				{ label: 'Cotizador', href: '/rentas/cotizador', icon: FileText },
+				{ label: 'Cotizaciones', href: '/rentas/cotizaciones', icon: ClipboardList },
+				{ label: 'Compliance', href: '/rentas/compliance', icon: ShieldCheck }
 			]
 		},
 		{

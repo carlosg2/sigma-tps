@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { setupViewTransition } from '$lib/vewtransitions';
-	import { flowNav } from './flow-nav.svelte';
+	import { resolveTransition } from './flow-nav.svelte';
 	import PageCard from '$lib/components/layout/pageCard.svelte';
 	import './transitions.css';
 
@@ -9,52 +9,27 @@
 
 	const { transition, classes } = setupViewTransition();
 
-	// En cada navegación aplica al <html> la clase del tipo de transición
-	// elegido + la dirección. transitions.css usa estas clases para decidir
-	// qué keyframes correr sobre el grupo `content`.
+	// En cada navegación aplica al <html> `[tipoDeTransición, dirección]`.
+	// transitions.css usa estas clases (p. ej. `html.push.forward`) para
+	// decidir qué keyframes correr sobre el grupo `content`.
 	//
-	// Lógica de decisión:
-	//  - flowForward() → goto() → navigation.type === 'goto': usa flowNav.transition
-	//    y flowNav.direction ('forward'), ya puestos por flowForward().
-	//  - flowBack() → history.back() → navigation.type === 'popstate', delta=-1:
-	//    pop del back-stack → transición correcta, push al fwd-stack.
-	//  - Botón back del NAVEGADOR → mismo popstate, delta=-1: mismo handler.
-	//  - Botón forward del NAVEGADOR → popstate, delta=+1: pop del fwd-stack
-	//    → transición original, push al back-stack.
-	//
-	// Resultado: el bot\u00f3n interno y el back/forward del navegador usan
-	// el mismo code path y siempre recuerdan la transici\u00f3n correcta.
-	classes(({ navigation }) => {
-		if (navigation.type === 'popstate') {
-			const delta = navigation.delta ?? 0;
-			if (delta < 0) {
-				// Retroceso (bot\u00f3n interno o back del navegador)
-				const t = flowNav.popBack();
-				if (t) {
-					flowNav.pushFwd(t);
-					flowNav.transition = t;
-				}
-				return [flowNav.transition, 'backward'];
-			} else if (delta > 0) {
-				// Avance con el bot\u00f3n forward del navegador
-				const t = flowNav.popFwd();
-				if (t) {
-					flowNav.pushBack(t);
-					flowNav.transition = t;
-				}
-				return [flowNav.transition, 'forward'];
-			}
-		}
-		return [flowNav.transition, flowNav.direction];
-	});
+	// TODO se deriva del objeto `navigation` (from/to/type/delta) dentro de
+	// `resolveTransition`: no hay estado que mantener ni sincronizar, así que
+	// la navegación no lineal (romper la secuencia) nunca produce la animación
+	// equivocada. Ver flow-nav.svelte.ts para la lógica completa.
+	classes(({ navigation }) =>
+		resolveTransition({
+			type: navigation.type,
+			delta: navigation.delta,
+			from: navigation.from ? { url: navigation.from.url } : null,
+			to: navigation.to ? { url: navigation.to.url } : null
+		})
+	);
 
 	// Mientras el layout de /flow2 esté montado, marcamos el <html> para
 	// dejar el `root` estático (sidebar + header no animan, ver transitions.css)
 	// y que sólo anime el panel de contenido (grupo `content`).
 	onMount(() => {
-		// Hidrata los stacks de transición desde sessionStorage.
-		// Esto garantiza que los back/forward stacks sobrevivan recargas de página.
-		flowNav.hydrate();
 		document.documentElement.classList.add('flow2-active');
 		return () => document.documentElement.classList.remove('flow2-active');
 	});

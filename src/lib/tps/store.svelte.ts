@@ -58,7 +58,17 @@ export class TpsStore {
   }
 
   resetData = () => {
-    if (browser) localStorage.removeItem(STORAGE_KEY)
+    if (browser) {
+      // Limpia el estado principal y el de todos los modulos (compras, inventarios,
+      // finanzas, spec-v2), que persisten con su propia clave 'tps-*', y recarga para
+      // reconstruir cada store desde su seed.
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i)
+        if (key?.startsWith("tps-")) localStorage.removeItem(key)
+      }
+      location.reload()
+      return
+    }
     this.state = createInitialState()
     saveState(this.state)
   }

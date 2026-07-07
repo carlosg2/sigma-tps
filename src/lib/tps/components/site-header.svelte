@@ -32,7 +32,16 @@
 		'/inventarios/carritos': 'Gestión de Carritos por Folio',
 		'/inventarios/confirmacion': 'Confirmación Electrónica de Kits',
 		'/inventarios/linekeeper': 'Linekeeper Digital',
-		'/inventarios/trazabilidad': 'Registro y Trazabilidad'
+		'/inventarios/trazabilidad': 'Registro y Trazabilidad',
+		'/finanzas': 'Avisos de Pago Automáticos',
+		'/finanzas/proveedores': 'Proveedores',
+		'/finanzas/egresos': 'Egresos del ERP',
+		'/finanzas/historial': 'Historial de Avisos',
+		'/finanzas/configuracion': 'Configuración de Finanzas',
+		'/rentas': 'Rentas · Executive Pulse',
+		'/rentas/cotizador': 'Cotizador de Rentas',
+		'/rentas/cotizaciones': 'Cotizaciones Guardadas',
+		'/rentas/compliance': 'Cumplimiento y Stop-Gate'
 	};
 
 	const pageTitle = $derived.by(() => {
@@ -44,6 +53,8 @@
 		if (path.startsWith('/inventarios')) return 'Inventarios';
 		if (path.startsWith('/lmat')) return 'LMAT';
 		if (path.startsWith('/proyectos')) return 'Proyectos';
+		if (path.startsWith('/finanzas')) return 'Finanzas';
+		if (path.startsWith('/rentas')) return 'Rentas';
 		return 'TPS ERP';
 	});
 

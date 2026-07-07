@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { flowForward, type FlowTransition } from '../flow-nav.svelte';
+	import { navigateWith, type FlowTransition } from '../flow-nav.svelte';
 	import FlowHeader from '../FlowHeader.svelte';
 	import '../screens.css';
 
@@ -9,8 +9,9 @@
 		{ id: 'dive', icon: '🏊', label: 'Dive' }
 	];
 
+	// El picker fuerza la transición hacia /flow2/extra (override).
 	function goExtra(transition: FlowTransition) {
-		flowForward('/flow2/detail', '/flow2/extra', transition);
+		navigateWith('/flow2/extra', transition);
 	}
 </script>
 

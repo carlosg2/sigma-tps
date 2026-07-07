@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { flowForward, type FlowTransition } from './flow-nav.svelte';
+	import { navigateWith, type FlowTransition } from './flow-nav.svelte';
 	import FlowHeader from './FlowHeader.svelte';
 	import './screens.css';
 
@@ -14,8 +14,10 @@
 		{ id: 'circle', icon: '⭕', label: 'Circle', desc: 'Revelado circular' }
 	];
 
+	// El picker fuerza una transición concreta hacia /flow2/detail (override).
+	// La navegación normal usaría simplemente goto('/flow2/detail').
 	function go(transition: FlowTransition) {
-		flowForward('/flow2', '/flow2/detail', transition);
+		navigateWith('/flow2/detail', transition);
 	}
 </script>
 
