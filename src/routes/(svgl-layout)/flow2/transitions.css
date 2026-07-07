@@ -1,0 +1,555 @@
+/* =============================================================
+   /flow2 — Transiciones de página de Framework7 reimplementadas
+   de forma FIEL con la View Transitions API.
+   =============================================================
+
+   Modelo de Framework7:
+     - .page-current   → la página que se está abandonando
+     - .page-next      → la página entrante (navegación forward)
+     - .page-previous  → la página entrante (navegación backward)
+
+   Mapeo a View Transitions (el panel lleva view-transition-name: content):
+     - ::view-transition-old(content) === .page-current  (siempre la saliente)
+     - ::view-transition-new(content) === .page-next   (forward)
+                                       === .page-previous (backward)
+
+   Por eso cada transición usa keyframes DISTINTOS según la dirección,
+   exactamente como F7 asigna animaciones distintas a next/previous.
+
+   Apilado (z-index): en View Transitions `new` va por defecto encima de
+   `old`. Eso vale cuando la entrante cubre a la saliente (push/cover/
+   parallax/circle forward). Pero en backward de cover/parallax/circle la
+   saliente va ENCIMA y se retira revelando la entrante detrás → invertimos
+   el z-index en esos casos.
+   ============================================================= */
+
+/* Color del "vacío" 3D de cover/cover-v/flip. En F7 es siempre #000, pero aquí
+   lo hacemos SENSIBLE AL TEMA para no romper el modo claro: neutro claro (mezcla
+   con el fondo de la app) en claro, casi negro en oscuro. Se define en :root/.dark
+   para que lo herede el árbol ::view-transition. */
+:root {
+	--flow2-void: oklch(0.97 0 0);
+}
+html.dark {
+	--flow2-void: oklch(0.145 0 0);
+}
+
+/* Root ESTÁTICO en /flow2: el sidebar y el header principal no animan ni se
+   despintan (animation:none mantiene el snapshot fijo). Sólo anima `content`. */
+html.flow2-active::view-transition-old(root),
+html.flow2-active::view-transition-new(root) {
+	animation: none;
+}
+
+/* El panel se recorta a su caja para no invadir el sidebar.
+   Fondo SÓLIDO en el grupo: rellena cualquier zona que se revele durante el
+   movimiento (deslizamientos, cruces de opacidad, recesión 3D) para que nunca
+   se transparente el contenido — equivalente al `background` del contenedor de
+   transición de F7. Por defecto usa el color de la tarjeta. */
+::view-transition-group(content) {
+	overflow: clip;
+	background-color: var(--card);
+	/* El grupo es lo que se pinta/recorta durante la transición; sin radio, las
+	   esquinas se rellenan y el panel se ve rectangular. Le damos el mismo radio
+	   que PageCard (rounded-md) para conservar los bordes redondeados. El
+	   overflow:clip recorta los snapshots old/new a esta forma redondeada.
+	   (equivale a rounded-md = calc(var(--radius) - 2px); --radius vive en :root
+	   y por tanto lo hereda el árbol ::view-transition). */
+	border-radius: calc(var(--radius) - 2px);
+}
+
+/* cover / cover-v / flip usan un vacío detrás de las páginas que se hunden en Z
+   (bajan a opacity 0.5). Usamos --flow2-void, que respeta el tema (claro/oscuro)
+   en lugar del #000 fijo de F7. */
+html.cover::view-transition-group(content),
+html.cover-v::view-transition-group(content),
+html.flip::view-transition-group(content) {
+	background-color: var(--flow2-void);
+}
+
+/* Base de ambas capas: ocupan todo el panel y su apilado por defecto. */
+::view-transition-old(content),
+::view-transition-new(content) {
+	animation-fill-mode: both;
+	height: 100%;
+	width: 100%;
+	transform-origin: center;
+}
+::view-transition-old(content) {
+	z-index: 1;
+}
+::view-transition-new(content) {
+	z-index: 2;
+}
+
+/* Perspectiva 3D para las transiciones con profundidad (cover/dive/flip).
+   Se aplica en el image-pair, que es el contenedor directo de old/new. */
+html.cover::view-transition-image-pair(content),
+html.cover-v::view-transition-image-pair(content),
+html.dive::view-transition-image-pair(content),
+html.flip::view-transition-image-pair(content) {
+	perspective: 1200px;
+}
+
+/* Backward de cover/cover-v/parallax/circle: la saliente va ENCIMA. */
+html.cover.backward::view-transition-old(content),
+html.cover-v.backward::view-transition-old(content),
+html.parallax.backward::view-transition-old(content),
+html.circle.backward::view-transition-old(content) {
+	z-index: 2;
+}
+html.cover.backward::view-transition-new(content),
+html.cover-v.backward::view-transition-new(content),
+html.parallax.backward::view-transition-new(content),
+html.circle.backward::view-transition-new(content) {
+	z-index: 1;
+}
+
+/* =====================================================================
+   FADE — crossfade suave (misma animación en ambas direcciones)
+   page-current → fade-out · page-next/previous → fade-in
+
+   Nota: NO usamos el keyframe original de F7 (que mantiene opacity:0 al 50%),
+   porque ahí el panel queda en blanco a mitad de camino y se percibe como un
+   parpadeo. Aquí las dos capas se solapan (crossfade real) y con más duración
+   + easing suave, para que el fundido se note bien. */
+html.fade::view-transition-old(content) {
+	animation: f7-fade-out 500ms ease-in-out both;
+}
+html.fade::view-transition-new(content) {
+	animation: f7-fade-in 500ms ease-in-out both;
+}
+
+@keyframes f7-fade-out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+@keyframes f7-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/* =====================================================================
+   PUSH — f7-push
+   forward:  old=current-to-prev (0→-100%) · new=next-to-current (100%→0)
+   backward: old=current-to-next (0→100%)  · new=prev-to-current (-100%→0)
+   ===================================================================== */
+html.push.forward::view-transition-old(content) {
+	animation: f7-push-current-to-prev 400ms both;
+}
+html.push.forward::view-transition-new(content) {
+	animation: f7-push-next-to-current 400ms both;
+}
+html.push.backward::view-transition-old(content) {
+	animation: f7-push-current-to-next 400ms both;
+}
+html.push.backward::view-transition-new(content) {
+	animation: f7-push-prev-to-current 400ms both;
+}
+
+@keyframes f7-push-next-to-current {
+	from {
+		transform: translateX(100%);
+	}
+	to {
+		transform: translateX(0%);
+	}
+}
+@keyframes f7-push-current-to-next {
+	from {
+		transform: translateX(0%);
+	}
+	to {
+		transform: translateX(100%);
+	}
+}
+@keyframes f7-push-current-to-prev {
+	from {
+		transform: translateX(0%);
+	}
+	to {
+		transform: translateX(-100%);
+	}
+}
+@keyframes f7-push-prev-to-current {
+	from {
+		transform: translateX(-100%);
+	}
+	to {
+		transform: translateX(0%);
+	}
+}
+
+/* =====================================================================
+   PARALLAX — f7-parallax (la saliente se desplaza sólo -20%)
+   forward:  old=current-to-prev (0→-20%) · new=next-to-current (100%→0)
+   backward: old=current-to-next (0→100%) · new=prev-to-current (-20%→0)
+   ===================================================================== */
+html.parallax.forward::view-transition-old(content) {
+	animation: f7-parallax-current-to-prev 450ms both;
+}
+html.parallax.forward::view-transition-new(content) {
+	animation: f7-parallax-next-to-current 450ms both;
+}
+html.parallax.backward::view-transition-old(content) {
+	animation: f7-parallax-current-to-next 450ms both;
+}
+html.parallax.backward::view-transition-new(content) {
+	animation: f7-parallax-prev-to-current 450ms both;
+}
+
+@keyframes f7-parallax-next-to-current {
+	from {
+		transform: translateX(100%);
+	}
+	to {
+		transform: translateX(0%);
+	}
+}
+@keyframes f7-parallax-current-to-next {
+	from {
+		transform: translateX(0%);
+	}
+	to {
+		transform: translateX(100%);
+	}
+}
+@keyframes f7-parallax-current-to-prev {
+	from {
+		transform: translateX(0%);
+		opacity: 1;
+	}
+	to {
+		transform: translateX(-20%);
+		opacity: 0.3;
+	}
+}
+@keyframes f7-parallax-prev-to-current {
+	from {
+		transform: translateX(-20%);
+		opacity: 0.3;
+	}
+	to {
+		transform: translateX(0%);
+		opacity: 1;
+	}
+}
+
+/* =====================================================================
+   COVER — f7-cover (la entrante cubre; la saliente se hunde en Z)
+   forward:  old=current-to-prev (Z0→-300px, op1→.5) · new=next-to-current (X100%→0)
+   backward: old=current-to-next (X0→100%)           · new=prev-to-current (Z-300px→0, op.5→1)
+   ===================================================================== */
+html.cover.forward::view-transition-old(content) {
+	animation: f7-cover-current-to-prev 450ms both;
+}
+html.cover.forward::view-transition-new(content) {
+	animation: f7-cover-next-to-current 450ms both;
+}
+html.cover.backward::view-transition-old(content) {
+	animation: f7-cover-current-to-next 450ms both;
+}
+html.cover.backward::view-transition-new(content) {
+	animation: f7-cover-prev-to-current 450ms both;
+}
+
+@keyframes f7-cover-next-to-current {
+	from {
+		transform: translateX(100%);
+	}
+	to {
+		transform: translateX(0%);
+	}
+}
+@keyframes f7-cover-current-to-next {
+	from {
+		transform: translateX(0%);
+	}
+	to {
+		transform: translateX(100%);
+	}
+}
+@keyframes f7-cover-current-to-prev {
+	from {
+		transform: translateZ(0);
+		opacity: 1;
+	}
+	to {
+		transform: translateZ(-300px);
+		opacity: 0.3;
+	}
+}
+@keyframes f7-cover-prev-to-current {
+	from {
+		transform: translateZ(-300px);
+		opacity: 0.3;
+	}
+	to {
+		transform: translateZ(0);
+		opacity: 1;
+	}
+}
+
+/* =====================================================================
+   COVER-V — f7-cover-v (idéntico a cover pero en vertical)
+   forward:  old=current-to-prev (hunde Z) · new=next-to-current (Y100%→0)
+   backward: old=current-to-next (Y0→100%) · new=prev-to-current (Z-300px→0)
+   ===================================================================== */
+html.cover-v.forward::view-transition-old(content) {
+	animation: f7-cover-v-current-to-prev 450ms both;
+}
+html.cover-v.forward::view-transition-new(content) {
+	animation: f7-cover-v-next-to-current 450ms both;
+}
+html.cover-v.backward::view-transition-old(content) {
+	animation: f7-cover-v-current-to-next 450ms both;
+}
+html.cover-v.backward::view-transition-new(content) {
+	animation: f7-cover-v-prev-to-current 450ms both;
+}
+
+@keyframes f7-cover-v-next-to-current {
+	from {
+		transform: translateY(100%);
+	}
+	to {
+		transform: translateY(0%);
+	}
+}
+@keyframes f7-cover-v-current-to-next {
+	from {
+		transform: translateY(0%);
+	}
+	to {
+		transform: translateY(100%);
+	}
+}
+@keyframes f7-cover-v-current-to-prev {
+	from {
+		transform: translateZ(0);
+		opacity: 1;
+	}
+	to {
+		transform: translateZ(-300px);
+		opacity: 0.3;
+	}
+}
+@keyframes f7-cover-v-prev-to-current {
+	from {
+		transform: translateZ(-300px);
+		opacity: 0.3;
+	}
+	to {
+		transform: translateZ(0);
+		opacity: 1;
+	}
+}
+
+/* =====================================================================
+   DIVE — f7-dive (inmersión en Z con cruce de opacidad al 50%)
+   forward:  old=current-to-prev (Z0→+150, fade) · new=next-to-current (Z-150→0, fade)
+   backward: old=current-to-next (Z0→-150, fade) · new=prev-to-current (Z+150→0, fade)
+   ===================================================================== */
+html.dive.forward::view-transition-old(content) {
+	animation: f7-dive-current-to-prev 500ms both;
+}
+html.dive.forward::view-transition-new(content) {
+	animation: f7-dive-next-to-current 500ms both;
+}
+html.dive.backward::view-transition-old(content) {
+	animation: f7-dive-current-to-next 500ms both;
+}
+html.dive.backward::view-transition-new(content) {
+	animation: f7-dive-prev-to-current 500ms both;
+}
+
+@keyframes f7-dive-next-to-current {
+	from {
+		opacity: 0;
+		transform: translateZ(-150px);
+	}
+	50% {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+		transform: translateZ(0px);
+	}
+}
+@keyframes f7-dive-current-to-next {
+	from {
+		opacity: 1;
+		transform: translateZ(0px);
+	}
+	50% {
+		opacity: 0;
+	}
+	to {
+		opacity: 0;
+		transform: translateZ(-150px);
+	}
+}
+@keyframes f7-dive-current-to-prev {
+	from {
+		transform: translateZ(0px);
+		opacity: 1;
+	}
+	50% {
+		opacity: 0;
+	}
+	to {
+		opacity: 0;
+		transform: translateZ(150px);
+	}
+}
+@keyframes f7-dive-prev-to-current {
+	from {
+		opacity: 0;
+		transform: translateZ(150px);
+	}
+	50% {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+		transform: translateZ(0px);
+	}
+}
+
+/* =====================================================================
+   FLIP — f7-flip (rotación 3D con recesión de -100vmax en Z)
+   forward:  old=current-to-prev (rotateY 0→-180) · new=next-to-current (rotateY 180→0)
+   backward: old=current-to-next (rotateY 0→180)  · new=prev-to-current (rotateY -180→0)
+   ===================================================================== */
+html.flip::view-transition-old(content),
+html.flip::view-transition-new(content) {
+	backface-visibility: hidden;
+}
+
+html.flip.forward::view-transition-old(content) {
+	animation: f7-flip-current-to-prev 600ms both;
+}
+html.flip.forward::view-transition-new(content) {
+	animation: f7-flip-next-to-current 600ms both;
+}
+html.flip.backward::view-transition-old(content) {
+	animation: f7-flip-current-to-next 600ms both;
+}
+html.flip.backward::view-transition-new(content) {
+	animation: f7-flip-prev-to-current 600ms both;
+}
+
+@keyframes f7-flip-next-to-current {
+	from {
+		border-radius: 32px;
+		transform: translateZ(-100vmax) rotateY(180deg);
+	}
+	to {
+		border-radius: 0;
+		transform: translateZ(0px) rotateY(0deg);
+	}
+}
+@keyframes f7-flip-current-to-next {
+	from {
+		border-radius: 0px;
+		transform: translateZ(0px) rotateY(0deg);
+	}
+	to {
+		border-radius: 32px;
+		transform: translateZ(-100vmax) rotateY(180deg);
+	}
+}
+@keyframes f7-flip-current-to-prev {
+	from {
+		border-radius: 0px;
+		transform: translateZ(0px) rotateY(0deg);
+	}
+	to {
+		border-radius: 32px;
+		transform: translateZ(-100vmax) rotateY(-180deg);
+	}
+}
+@keyframes f7-flip-prev-to-current {
+	from {
+		border-radius: 32px;
+		transform: translateZ(-100vmax) rotateY(-180deg);
+	}
+	to {
+		border-radius: 0px;
+		transform: translateZ(0px) rotateY(0deg);
+	}
+}
+
+/* =====================================================================
+   CIRCLE — f7-circle (revelado circular desde el centro)
+
+   F7 usa un pseudo-elemento :after con un círculo que escala; aquí se
+   adapta con clip-path: circle() sobre la capa que se revela/oculta,
+   conservando el rebote de escala (0.9 → 1.035 → 1) del page-next/current.
+
+   forward:  new se revela (círculo crece) sobre old estático.
+   backward: old se oculta (círculo mengua) revelando new estático detrás.
+   ===================================================================== */
+html.circle.forward::view-transition-old(content) {
+	animation: none; /* la saliente queda fija debajo mientras se revela la entrante */
+}
+html.circle.forward::view-transition-new(content) {
+	animation: f7-circle-reveal-in 550ms both;
+}
+html.circle.backward::view-transition-old(content) {
+	animation: f7-circle-reveal-out 550ms both;
+}
+html.circle.backward::view-transition-new(content) {
+	animation: none; /* la entrante queda fija debajo mientras se oculta la saliente */
+}
+
+@keyframes f7-circle-reveal-in {
+	from {
+		clip-path: circle(0% at 50% 50%);
+		transform: scale(0.9);
+	}
+	40% {
+		clip-path: circle(56% at 50% 50%);
+		transform: scale(1.035);
+	}
+	to {
+		clip-path: circle(150% at 50% 50%);
+		transform: scale(1);
+	}
+}
+@keyframes f7-circle-reveal-out {
+	from {
+		clip-path: circle(150% at 50% 50%);
+		transform: scale(1);
+	}
+	34% {
+		transform: scale(1.035);
+	}
+	57% {
+		clip-path: circle(56% at 50% 50%);
+		transform: scale(0.9);
+	}
+	to {
+		clip-path: circle(0% at 50% 50%);
+		transform: scale(0.9);
+	}
+}
+
+/* Respeta prefers-reduced-motion: sin animaciones de movimiento. */
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-old(content),
+	::view-transition-new(content) {
+		animation: f7-fade-out 150ms both;
+	}
+	::view-transition-new(content) {
+		animation-name: f7-fade-in;
+	}
+}

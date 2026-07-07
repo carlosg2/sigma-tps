@@ -357,11 +357,11 @@ html .sv-grid-cell.sv-grid-cell-editing {
 }
 
 /* Cell range selection (#eef4ff hardcoded → theme tint) */
-     .sv-grid-cell[data-selected-range="true"]  { background: var(--sg-selection-bg) !important; color: var(--sg-fg); }
+.sv-grid-cell[data-selected-range="true"]  { background: var(--sg-selection-bg) !important; color: var(--sg-fg); }
 html.dark .sv-grid-cell[data-selected-range="true"] { background: color-mix(in oklch, var(--primary) 8%, var(--card)) !important; }
 
 /* Fill handle */
-html .sv-grid-fill-handle                       { background: var(--ring); }
+html .sv-grid-fill-handle { background: var(--ring); }
 
 
 /* En layout.css o app.css */
