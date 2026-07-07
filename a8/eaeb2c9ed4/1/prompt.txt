@@ -1,0 +1,3348 @@
+porque esta pagina no se ve nada. carga en blanco?
+
+---
+
+que hace esta pagina? y porque el sidebar estorba durante las transiciones. deberia de suceder todo dentro del content panel.
+
+---
+
+sigo viendo que la animacion se desbordan, al parecer el overflow no tuvo ningun efecto.
+
+---
+
+crea una nueva ruta (flow2) con una nueva implementacion de la ruta /flow pero que use la libreria viewtransitions (puedes leer mas de esta libreria aqui https://github.com/paoloricciuti/sveltekit-view-transition) y como esta liberia fue copiada en vez de instalada. si se requiere modificar, lo podemos hacer. todo para lograr una mejor implentacion mas versatil
+
+---
+
+ya se ve. pero las animaciones no se ven como las originales.
+
+haz que sigan fielmente el mismo diseño de trasicion. aqui tienes las originales de referencia:
+
+
+================================================
+FILE: src/core/components/page/page-transitions/circle.less
+================================================
+// f7-circle
+.router-transition-f7-circle-forward,
+.router-transition-f7-circle-backward {
+  &:after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100vmax;
+    height: 100vmax;
+    margin-left: -50vmax;
+    margin-top: -50vmax;
+    background: var(--f7-page-bg-color);
+    z-index: 100;
+  }
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-circle-forward {
+  &:after {
+    transform: scale(0);
+    border-radius: 50%;
+    animation: f7-circle-circle-in 400ms forwards;
+  }
+  .ios &,
+  .md & {
+    .page-next {
+      opacity: 0;
+      transform: scale(0.9);
+      animation: f7-circle-next-to-current 300ms forwards;
+      animation-delay: 300ms;
+      z-index: 150;
+    }
+  }
+}
+.router-transition-f7-circle-backward {
+  &:after {
+    animation: f7-circle-circle-out 300ms forwards;
+    animation-delay: 350ms;
+  }
+  .ios &,
+  .md & {
+    .page-current {
+      animation: f7-circle-current-to-next 700ms forwards;
+      z-index: 150;
+    }
+  }
+}
+@keyframes f7-circle-circle-in {
+  from {
+    transform: scale(0);
+    border-radius: 50%;
+  }
+  50% {
+    border-radius: 50%;
+  }
+  to {
+    transform: scale(1);
+    border-radius: 0%;
+  }
+}
+@keyframes f7-circle-circle-out {
+  from {
+    transform: scale(1);
+    border-radius: 0%;
+  }
+  50% {
+    border-radius: 50%;
+  }
+  to {
+    transform: scale(0);
+    border-radius: 50%;
+  }
+}
+@keyframes f7-circle-next-to-current {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.035);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes f7-circle-current-to-next {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  34% {
+    transform: scale(1.035);
+    opacity: 1;
+  }
+  57% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/cover-v.less
+================================================
+// f7-cover-v
+.router-transition-f7-cover-v-forward,
+.router-transition-f7-cover-v-backward {
+  background: #000;
+  perspective: 1200px;
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-cover-v-forward {
+  .page-next {
+    animation: f7-cover-v-next-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-cover-v-current-to-prev var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+.router-transition-f7-cover-v-backward {
+  .page-current {
+    animation: f7-cover-v-current-to-next var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-cover-v-prev-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+@keyframes f7-cover-v-next-to-current {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+@keyframes f7-cover-v-current-to-next {
+  from {
+    transform: translateY(0%);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes f7-cover-v-current-to-prev {
+  from {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+}
+@keyframes f7-cover-v-prev-to-current {
+  from {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/cover.less
+================================================
+// f7-cover
+.router-transition-f7-cover-forward,
+.router-transition-f7-cover-backward {
+  background: #000;
+  perspective: 1200px;
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-cover-forward {
+  .page-next {
+    animation: f7-cover-next-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-cover-current-to-prev var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+.router-transition-f7-cover-backward {
+  .page-current {
+    animation: f7-cover-current-to-next var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-cover-prev-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+@keyframes f7-cover-next-to-current {
+  from {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+@keyframes f7-cover-current-to-next {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+}
+@keyframes f7-cover-current-to-prev {
+  from {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+}
+@keyframes f7-cover-prev-to-current {
+  from {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/dive.less
+================================================
+// f7-dive
+.router-transition-f7-dive-forward,
+.router-transition-f7-dive-backward {
+  background: var(--f7-page-bg-color);
+  perspective: 1200px;
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-dive-forward {
+  .page-next {
+    animation: f7-dive-next-to-current var(--f7-page-dive-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-dive-current-to-prev var(--f7-page-dive-transition-duration) forwards;
+  }
+}
+.router-transition-f7-dive-backward {
+  .page-current {
+    animation: f7-dive-current-to-next var(--f7-page-dive-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-dive-prev-to-current var(--f7-page-dive-transition-duration) forwards;
+  }
+}
+@keyframes f7-dive-next-to-current {
+  from {
+    opacity: 0;
+    transform: translateZ(-150px);
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateZ(0px);
+  }
+}
+@keyframes f7-dive-current-to-next {
+  from {
+    opacity: 1;
+    transform: translateZ(0px);
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translateZ(-150px);
+  }
+}
+@keyframes f7-dive-current-to-prev {
+  from {
+    transform: translateZ(0px);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translateZ(150px);
+  }
+}
+@keyframes f7-dive-prev-to-current {
+  from {
+    opacity: 0;
+    transform: translateZ(150px);
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateZ(0px);
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/fade.less
+================================================
+// fade
+.router-transition-f7-fade-forward,
+.router-transition-f7-fade-backward {
+  background: var(--f7-page-bg-color);
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-fade-forward {
+  .ios &,
+  .md & {
+    .page-next {
+      opacity: 0;
+      animation: f7-fade-in var(--f7-page-fade-transition-duration) forwards;
+    }
+    .page-current {
+      animation: f7-fade-out var(--f7-page-fade-transition-duration) forwards;
+    }
+  }
+}
+.router-transition-f7-fade-backward {
+  .ios &,
+  .md & {
+    .page-current {
+      animation: f7-fade-out var(--f7-page-fade-transition-duration) forwards;
+    }
+    .page-previous {
+      animation: f7-fade-in var(--f7-page-fade-transition-duration) forwards;
+    }
+  }
+}
+@keyframes f7-fade-in {
+  from {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes f7-fade-out {
+  from {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/flip.less
+================================================
+// f7-flip
+.router-transition-f7-flip-forward,
+.router-transition-f7-flip-backward {
+  background: #000;
+  perspective: 1200px;
+  .page {
+    backface-visibility: hidden;
+    overflow: hidden;
+    pointer-events: none;
+  }
+}
+.router-transition-f7-flip-forward {
+  .page-next {
+    transform-style: preserve-3d;
+    animation: f7-flip-next-to-current var(--f7-page-flip-transition-duration) forwards;
+  }
+  .page-current {
+    transform-style: preserve-3d;
+    animation: f7-flip-current-to-prev var(--f7-page-flip-transition-duration) forwards;
+  }
+}
+.router-transition-f7-flip-backward {
+  .page-current {
+    transform-style: preserve-3d;
+    animation: f7-flip-current-to-next var(--f7-page-flip-transition-duration) forwards;
+  }
+  .page-previous {
+    transform-style: preserve-3d;
+    animation: f7-flip-prev-to-current var(--f7-page-flip-transition-duration) forwards;
+  }
+}
+@keyframes f7-flip-next-to-current {
+  from {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+  }
+  to {
+    border-radius: 0;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+}
+@keyframes f7-flip-current-to-next {
+  from {
+    border-radius: 0px;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+  to {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+  }
+}
+@keyframes f7-flip-current-to-prev {
+  from {
+    border-radius: 0px;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+  to {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+  }
+}
+@keyframes f7-flip-prev-to-current {
+  from {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+  }
+  to {
+    border-radius: 0px;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/parallax.less
+================================================
+// f7-parallax
+.router-transition-f7-parallax-forward {
+  .page {
+    pointer-events: none;
+  }
+  .page-next {
+    animation: f7-parallax-next-to-current var(--f7-page-parallax-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-parallax-current-to-prev var(--f7-page-parallax-transition-duration) forwards;
+  }
+}
+.router-transition-f7-parallax-backward {
+  .page {
+    pointer-events: none;
+  }
+  .page-current {
+    animation: f7-parallax-current-to-next var(--f7-page-parallax-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-parallax-prev-to-current var(--f7-page-parallax-transition-duration) forwards;
+  }
+}
+@keyframes f7-parallax-next-to-current {
+  from {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+@keyframes f7-parallax-current-to-next {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+}
+@keyframes f7-parallax-current-to-prev {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(-20%);
+    });
+    .rtl({
+      transform: translateX(20%);
+    });
+  }
+}
+@keyframes f7-parallax-prev-to-current {
+  from {
+    .ltr({
+      transform: translateX(-20%);
+    });
+    .rtl({
+      transform: translateX(20%);
+    });
+  }
+  to {
+    transform: translateX(-0%);
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/push.less
+================================================
+// f7-Push
+.router-transition-f7-push-forward {
+  .page {
+    pointer-events: none;
+  }
+  .page-next {
+    animation: f7-push-next-to-current var(--f7-page-push-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-push-current-to-prev var(--f7-page-push-transition-duration) forwards;
+  }
+}
+.router-transition-f7-push-backward {
+  .page {
+    pointer-events: none;
+  }
+  .page-current {
+    animation: f7-push-current-to-next var(--f7-page-push-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-push-prev-to-current var(--f7-page-push-transition-duration) forwards;
+  }
+}
+@keyframes f7-push-next-to-current {
+  from {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+@keyframes f7-push-current-to-next {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+}
+@keyframes f7-push-current-to-prev {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(-100%);
+    });
+    .rtl({
+      transform: translateX(100%);
+    });
+  }
+}
+@keyframes f7-push-prev-to-current {
+  from {
+    .ltr({
+      transform: translateX(-100%);
+    });
+    .rtl({
+      transform: translateX(100%);
+    });
+  }
+  to {
+    transform: translateX(-0%);
+  }
+}
+
+---
+
+ya se ve. pero las animaciones no se ven como las originales.
+
+haz que sigan fielmente el mismo diseño de trasicion. aqui tienes las originales de referencia:
+
+
+================================================
+FILE: src/core/components/page/page-transitions/circle.less
+================================================
+// f7-circle
+.router-transition-f7-circle-forward,
+.router-transition-f7-circle-backward {
+  &:after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100vmax;
+    height: 100vmax;
+    margin-left: -50vmax;
+    margin-top: -50vmax;
+    background: var(--f7-page-bg-color);
+    z-index: 100;
+  }
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-circle-forward {
+  &:after {
+    transform: scale(0);
+    border-radius: 50%;
+    animation: f7-circle-circle-in 400ms forwards;
+  }
+  .ios &,
+  .md & {
+    .page-next {
+      opacity: 0;
+      transform: scale(0.9);
+      animation: f7-circle-next-to-current 300ms forwards;
+      animation-delay: 300ms;
+      z-index: 150;
+    }
+  }
+}
+.router-transition-f7-circle-backward {
+  &:after {
+    animation: f7-circle-circle-out 300ms forwards;
+    animation-delay: 350ms;
+  }
+  .ios &,
+  .md & {
+    .page-current {
+      animation: f7-circle-current-to-next 700ms forwards;
+      z-index: 150;
+    }
+  }
+}
+@keyframes f7-circle-circle-in {
+  from {
+    transform: scale(0);
+    border-radius: 50%;
+  }
+  50% {
+    border-radius: 50%;
+  }
+  to {
+    transform: scale(1);
+    border-radius: 0%;
+  }
+}
+@keyframes f7-circle-circle-out {
+  from {
+    transform: scale(1);
+    border-radius: 0%;
+  }
+  50% {
+    border-radius: 50%;
+  }
+  to {
+    transform: scale(0);
+    border-radius: 50%;
+  }
+}
+@keyframes f7-circle-next-to-current {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.035);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes f7-circle-current-to-next {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  34% {
+    transform: scale(1.035);
+    opacity: 1;
+  }
+  57% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/cover-v.less
+================================================
+// f7-cover-v
+.router-transition-f7-cover-v-forward,
+.router-transition-f7-cover-v-backward {
+  background: #000;
+  perspective: 1200px;
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-cover-v-forward {
+  .page-next {
+    animation: f7-cover-v-next-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-cover-v-current-to-prev var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+.router-transition-f7-cover-v-backward {
+  .page-current {
+    animation: f7-cover-v-current-to-next var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-cover-v-prev-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+@keyframes f7-cover-v-next-to-current {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+@keyframes f7-cover-v-current-to-next {
+  from {
+    transform: translateY(0%);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes f7-cover-v-current-to-prev {
+  from {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+}
+@keyframes f7-cover-v-prev-to-current {
+  from {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/cover.less
+================================================
+// f7-cover
+.router-transition-f7-cover-forward,
+.router-transition-f7-cover-backward {
+  background: #000;
+  perspective: 1200px;
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-cover-forward {
+  .page-next {
+    animation: f7-cover-next-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-cover-current-to-prev var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+.router-transition-f7-cover-backward {
+  .page-current {
+    animation: f7-cover-current-to-next var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-cover-prev-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+@keyframes f7-cover-next-to-current {
+  from {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+@keyframes f7-cover-current-to-next {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+}
+@keyframes f7-cover-current-to-prev {
+  from {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+}
+@keyframes f7-cover-prev-to-current {
+  from {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/dive.less
+================================================
+// f7-dive
+.router-transition-f7-dive-forward,
+.router-transition-f7-dive-backward {
+  background: var(--f7-page-bg-color);
+  perspective: 1200px;
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-dive-forward {
+  .page-next {
+    animation: f7-dive-next-to-current var(--f7-page-dive-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-dive-current-to-prev var(--f7-page-dive-transition-duration) forwards;
+  }
+}
+.router-transition-f7-dive-backward {
+  .page-current {
+    animation: f7-dive-current-to-next var(--f7-page-dive-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-dive-prev-to-current var(--f7-page-dive-transition-duration) forwards;
+  }
+}
+@keyframes f7-dive-next-to-current {
+  from {
+    opacity: 0;
+    transform: translateZ(-150px);
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateZ(0px);
+  }
+}
+@keyframes f7-dive-current-to-next {
+  from {
+    opacity: 1;
+    transform: translateZ(0px);
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translateZ(-150px);
+  }
+}
+@keyframes f7-dive-current-to-prev {
+  from {
+    transform: translateZ(0px);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translateZ(150px);
+  }
+}
+@keyframes f7-dive-prev-to-current {
+  from {
+    opacity: 0;
+    transform: translateZ(150px);
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateZ(0px);
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/fade.less
+================================================
+// fade
+.router-transition-f7-fade-forward,
+.router-transition-f7-fade-backward {
+  background: var(--f7-page-bg-color);
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-fade-forward {
+  .ios &,
+  .md & {
+    .page-next {
+      opacity: 0;
+      animation: f7-fade-in var(--f7-page-fade-transition-duration) forwards;
+    }
+    .page-current {
+      animation: f7-fade-out var(--f7-page-fade-transition-duration) forwards;
+    }
+  }
+}
+.router-transition-f7-fade-backward {
+  .ios &,
+  .md & {
+    .page-current {
+      animation: f7-fade-out var(--f7-page-fade-transition-duration) forwards;
+    }
+    .page-previous {
+      animation: f7-fade-in var(--f7-page-fade-transition-duration) forwards;
+    }
+  }
+}
+@keyframes f7-fade-in {
+  from {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes f7-fade-out {
+  from {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/flip.less
+================================================
+// f7-flip
+.router-transition-f7-flip-forward,
+.router-transition-f7-flip-backward {
+  background: #000;
+  perspective: 1200px;
+  .page {
+    backface-visibility: hidden;
+    overflow: hidden;
+    pointer-events: none;
+  }
+}
+.router-transition-f7-flip-forward {
+  .page-next {
+    transform-style: preserve-3d;
+    animation: f7-flip-next-to-current var(--f7-page-flip-transition-duration) forwards;
+  }
+  .page-current {
+    transform-style: preserve-3d;
+    animation: f7-flip-current-to-prev var(--f7-page-flip-transition-duration) forwards;
+  }
+}
+.router-transition-f7-flip-backward {
+  .page-current {
+    transform-style: preserve-3d;
+    animation: f7-flip-current-to-next var(--f7-page-flip-transition-duration) forwards;
+  }
+  .page-previous {
+    transform-style: preserve-3d;
+    animation: f7-flip-prev-to-current var(--f7-page-flip-transition-duration) forwards;
+  }
+}
+@keyframes f7-flip-next-to-current {
+  from {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+  }
+  to {
+    border-radius: 0;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+}
+@keyframes f7-flip-current-to-next {
+  from {
+    border-radius: 0px;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+  to {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+  }
+}
+@keyframes f7-flip-current-to-prev {
+  from {
+    border-radius: 0px;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+  to {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+  }
+}
+@keyframes f7-flip-prev-to-current {
+  from {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+  }
+  to {
+    border-radius: 0px;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/parallax.less
+================================================
+// f7-parallax
+.router-transition-f7-parallax-forward {
+  .page {
+    pointer-events: none;
+  }
+  .page-next {
+    animation: f7-parallax-next-to-current var(--f7-page-parallax-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-parallax-current-to-prev var(--f7-page-parallax-transition-duration) forwards;
+  }
+}
+.router-transition-f7-parallax-backward {
+  .page {
+    pointer-events: none;
+  }
+  .page-current {
+    animation: f7-parallax-current-to-next var(--f7-page-parallax-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-parallax-prev-to-current var(--f7-page-parallax-transition-duration) forwards;
+  }
+}
+@keyframes f7-parallax-next-to-current {
+  from {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+@keyframes f7-parallax-current-to-next {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+}
+@keyframes f7-parallax-current-to-prev {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(-20%);
+    });
+    .rtl({
+      transform: translateX(20%);
+    });
+  }
+}
+@keyframes f7-parallax-prev-to-current {
+  from {
+    .ltr({
+      transform: translateX(-20%);
+    });
+    .rtl({
+      transform: translateX(20%);
+    });
+  }
+  to {
+    transform: translateX(-0%);
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/push.less
+================================================
+// f7-Push
+.router-transition-f7-push-forward {
+  .page {
+    pointer-events: none;
+  }
+  .page-next {
+    animation: f7-push-next-to-current var(--f7-page-push-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-push-current-to-prev var(--f7-page-push-transition-duration) forwards;
+  }
+}
+.router-transition-f7-push-backward {
+  .page {
+    pointer-events: none;
+  }
+  .page-current {
+    animation: f7-push-current-to-next var(--f7-page-push-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-push-prev-to-current var(--f7-page-push-transition-duration) forwards;
+  }
+}
+@keyframes f7-push-next-to-current {
+  from {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+@keyframes f7-push-current-to-next {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+}
+@keyframes f7-push-current-to-prev {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(-100%);
+    });
+    .rtl({
+      transform: translateX(100%);
+    });
+  }
+}
+@keyframes f7-push-prev-to-current {
+  from {
+    .ltr({
+      transform: translateX(-100%);
+    });
+    .rtl({
+      transform: translateX(100%);
+    });
+  }
+  to {
+    transform: translateX(-0%);
+  }
+}
+
+
+--
+
+contempla que el sidebar y el header deberian quedarse en su lugar, no animarse. solo el content panel
+
+---
+
+ya se ve. pero las animaciones no se ven como las originales.
+
+haz que sigan fielmente el mismo diseño de trasicion. aqui tienes las originales de referencia:
+
+
+================================================
+FILE: src/core/components/page/page-transitions/circle.less
+================================================
+// f7-circle
+.router-transition-f7-circle-forward,
+.router-transition-f7-circle-backward {
+  &:after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100vmax;
+    height: 100vmax;
+    margin-left: -50vmax;
+    margin-top: -50vmax;
+    background: var(--f7-page-bg-color);
+    z-index: 100;
+  }
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-circle-forward {
+  &:after {
+    transform: scale(0);
+    border-radius: 50%;
+    animation: f7-circle-circle-in 400ms forwards;
+  }
+  .ios &,
+  .md & {
+    .page-next {
+      opacity: 0;
+      transform: scale(0.9);
+      animation: f7-circle-next-to-current 300ms forwards;
+      animation-delay: 300ms;
+      z-index: 150;
+    }
+  }
+}
+.router-transition-f7-circle-backward {
+  &:after {
+    animation: f7-circle-circle-out 300ms forwards;
+    animation-delay: 350ms;
+  }
+  .ios &,
+  .md & {
+    .page-current {
+      animation: f7-circle-current-to-next 700ms forwards;
+      z-index: 150;
+    }
+  }
+}
+@keyframes f7-circle-circle-in {
+  from {
+    transform: scale(0);
+    border-radius: 50%;
+  }
+  50% {
+    border-radius: 50%;
+  }
+  to {
+    transform: scale(1);
+    border-radius: 0%;
+  }
+}
+@keyframes f7-circle-circle-out {
+  from {
+    transform: scale(1);
+    border-radius: 0%;
+  }
+  50% {
+    border-radius: 50%;
+  }
+  to {
+    transform: scale(0);
+    border-radius: 50%;
+  }
+}
+@keyframes f7-circle-next-to-current {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.035);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes f7-circle-current-to-next {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  34% {
+    transform: scale(1.035);
+    opacity: 1;
+  }
+  57% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/cover-v.less
+================================================
+// f7-cover-v
+.router-transition-f7-cover-v-forward,
+.router-transition-f7-cover-v-backward {
+  background: #000;
+  perspective: 1200px;
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-cover-v-forward {
+  .page-next {
+    animation: f7-cover-v-next-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-cover-v-current-to-prev var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+.router-transition-f7-cover-v-backward {
+  .page-current {
+    animation: f7-cover-v-current-to-next var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-cover-v-prev-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+@keyframes f7-cover-v-next-to-current {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+@keyframes f7-cover-v-current-to-next {
+  from {
+    transform: translateY(0%);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes f7-cover-v-current-to-prev {
+  from {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+}
+@keyframes f7-cover-v-prev-to-current {
+  from {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/cover.less
+================================================
+// f7-cover
+.router-transition-f7-cover-forward,
+.router-transition-f7-cover-backward {
+  background: #000;
+  perspective: 1200px;
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-cover-forward {
+  .page-next {
+    animation: f7-cover-next-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-cover-current-to-prev var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+.router-transition-f7-cover-backward {
+  .page-current {
+    animation: f7-cover-current-to-next var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-cover-prev-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+@keyframes f7-cover-next-to-current {
+  from {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+@keyframes f7-cover-current-to-next {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+}
+@keyframes f7-cover-current-to-prev {
+  from {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+}
+@keyframes f7-cover-prev-to-current {
+  from {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/dive.less
+================================================
+// f7-dive
+.router-transition-f7-dive-forward,
+.router-transition-f7-dive-backward {
+  background: var(--f7-page-bg-color);
+  perspective: 1200px;
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-dive-forward {
+  .page-next {
+    animation: f7-dive-next-to-current var(--f7-page-dive-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-dive-current-to-prev var(--f7-page-dive-transition-duration) forwards;
+  }
+}
+.router-transition-f7-dive-backward {
+  .page-current {
+    animation: f7-dive-current-to-next var(--f7-page-dive-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-dive-prev-to-current var(--f7-page-dive-transition-duration) forwards;
+  }
+}
+@keyframes f7-dive-next-to-current {
+  from {
+    opacity: 0;
+    transform: translateZ(-150px);
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateZ(0px);
+  }
+}
+@keyframes f7-dive-current-to-next {
+  from {
+    opacity: 1;
+    transform: translateZ(0px);
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translateZ(-150px);
+  }
+}
+@keyframes f7-dive-current-to-prev {
+  from {
+    transform: translateZ(0px);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translateZ(150px);
+  }
+}
+@keyframes f7-dive-prev-to-current {
+  from {
+    opacity: 0;
+    transform: translateZ(150px);
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateZ(0px);
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/fade.less
+================================================
+// fade
+.router-transition-f7-fade-forward,
+.router-transition-f7-fade-backward {
+  background: var(--f7-page-bg-color);
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-fade-forward {
+  .ios &,
+  .md & {
+    .page-next {
+      opacity: 0;
+      animation: f7-fade-in var(--f7-page-fade-transition-duration) forwards;
+    }
+    .page-current {
+      animation: f7-fade-out var(--f7-page-fade-transition-duration) forwards;
+    }
+  }
+}
+.router-transition-f7-fade-backward {
+  .ios &,
+  .md & {
+    .page-current {
+      animation: f7-fade-out var(--f7-page-fade-transition-duration) forwards;
+    }
+    .page-previous {
+      animation: f7-fade-in var(--f7-page-fade-transition-duration) forwards;
+    }
+  }
+}
+@keyframes f7-fade-in {
+  from {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes f7-fade-out {
+  from {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/flip.less
+================================================
+// f7-flip
+.router-transition-f7-flip-forward,
+.router-transition-f7-flip-backward {
+  background: #000;
+  perspective: 1200px;
+  .page {
+    backface-visibility: hidden;
+    overflow: hidden;
+    pointer-events: none;
+  }
+}
+.router-transition-f7-flip-forward {
+  .page-next {
+    transform-style: preserve-3d;
+    animation: f7-flip-next-to-current var(--f7-page-flip-transition-duration) forwards;
+  }
+  .page-current {
+    transform-style: preserve-3d;
+    animation: f7-flip-current-to-prev var(--f7-page-flip-transition-duration) forwards;
+  }
+}
+.router-transition-f7-flip-backward {
+  .page-current {
+    transform-style: preserve-3d;
+    animation: f7-flip-current-to-next var(--f7-page-flip-transition-duration) forwards;
+  }
+  .page-previous {
+    transform-style: preserve-3d;
+    animation: f7-flip-prev-to-current var(--f7-page-flip-transition-duration) forwards;
+  }
+}
+@keyframes f7-flip-next-to-current {
+  from {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+  }
+  to {
+    border-radius: 0;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+}
+@keyframes f7-flip-current-to-next {
+  from {
+    border-radius: 0px;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+  to {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+  }
+}
+@keyframes f7-flip-current-to-prev {
+  from {
+    border-radius: 0px;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+  to {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+  }
+}
+@keyframes f7-flip-prev-to-current {
+  from {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+  }
+  to {
+    border-radius: 0px;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/parallax.less
+================================================
+// f7-parallax
+.router-transition-f7-parallax-forward {
+  .page {
+    pointer-events: none;
+  }
+  .page-next {
+    animation: f7-parallax-next-to-current var(--f7-page-parallax-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-parallax-current-to-prev var(--f7-page-parallax-transition-duration) forwards;
+  }
+}
+.router-transition-f7-parallax-backward {
+  .page {
+    pointer-events: none;
+  }
+  .page-current {
+    animation: f7-parallax-current-to-next var(--f7-page-parallax-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-parallax-prev-to-current var(--f7-page-parallax-transition-duration) forwards;
+  }
+}
+@keyframes f7-parallax-next-to-current {
+  from {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+@keyframes f7-parallax-current-to-next {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+}
+@keyframes f7-parallax-current-to-prev {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(-20%);
+    });
+    .rtl({
+      transform: translateX(20%);
+    });
+  }
+}
+@keyframes f7-parallax-prev-to-current {
+  from {
+    .ltr({
+      transform: translateX(-20%);
+    });
+    .rtl({
+      transform: translateX(20%);
+    });
+  }
+  to {
+    transform: translateX(-0%);
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/push.less
+================================================
+// f7-Push
+.router-transition-f7-push-forward {
+  .page {
+    pointer-events: none;
+  }
+  .page-next {
+    animation: f7-push-next-to-current var(--f7-page-push-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-push-current-to-prev var(--f7-page-push-transition-duration) forwards;
+  }
+}
+.router-transition-f7-push-backward {
+  .page {
+    pointer-events: none;
+  }
+  .page-current {
+    animation: f7-push-current-to-next var(--f7-page-push-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-push-prev-to-current var(--f7-page-push-transition-duration) forwards;
+  }
+}
+@keyframes f7-push-next-to-current {
+  from {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+@keyframes f7-push-current-to-next {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+}
+@keyframes f7-push-current-to-prev {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(-100%);
+    });
+    .rtl({
+      transform: translateX(100%);
+    });
+  }
+}
+@keyframes f7-push-prev-to-current {
+  from {
+    .ltr({
+      transform: translateX(-100%);
+    });
+    .rtl({
+      transform: translateX(100%);
+    });
+  }
+  to {
+    transform: translateX(-0%);
+  }
+}
+
+
+--
+
+contempla que el sidebar y el header deberian quedarse en su lugar, no animarse. solo el content panel
+
+---
+
+ya se ve. pero las animaciones no se ven como las originales.
+
+haz que sigan fielmente el mismo diseño de trasicion. aqui tienes las originales de referencia:
+
+
+================================================
+FILE: src/core/components/page/page-transitions/circle.less
+================================================
+// f7-circle
+.router-transition-f7-circle-forward,
+.router-transition-f7-circle-backward {
+  &:after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100vmax;
+    height: 100vmax;
+    margin-left: -50vmax;
+    margin-top: -50vmax;
+    background: var(--f7-page-bg-color);
+    z-index: 100;
+  }
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-circle-forward {
+  &:after {
+    transform: scale(0);
+    border-radius: 50%;
+    animation: f7-circle-circle-in 400ms forwards;
+  }
+  .ios &,
+  .md & {
+    .page-next {
+      opacity: 0;
+      transform: scale(0.9);
+      animation: f7-circle-next-to-current 300ms forwards;
+      animation-delay: 300ms;
+      z-index: 150;
+    }
+  }
+}
+.router-transition-f7-circle-backward {
+  &:after {
+    animation: f7-circle-circle-out 300ms forwards;
+    animation-delay: 350ms;
+  }
+  .ios &,
+  .md & {
+    .page-current {
+      animation: f7-circle-current-to-next 700ms forwards;
+      z-index: 150;
+    }
+  }
+}
+@keyframes f7-circle-circle-in {
+  from {
+    transform: scale(0);
+    border-radius: 50%;
+  }
+  50% {
+    border-radius: 50%;
+  }
+  to {
+    transform: scale(1);
+    border-radius: 0%;
+  }
+}
+@keyframes f7-circle-circle-out {
+  from {
+    transform: scale(1);
+    border-radius: 0%;
+  }
+  50% {
+    border-radius: 50%;
+  }
+  to {
+    transform: scale(0);
+    border-radius: 50%;
+  }
+}
+@keyframes f7-circle-next-to-current {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.035);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes f7-circle-current-to-next {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  34% {
+    transform: scale(1.035);
+    opacity: 1;
+  }
+  57% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/cover-v.less
+================================================
+// f7-cover-v
+.router-transition-f7-cover-v-forward,
+.router-transition-f7-cover-v-backward {
+  background: #000;
+  perspective: 1200px;
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-cover-v-forward {
+  .page-next {
+    animation: f7-cover-v-next-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-cover-v-current-to-prev var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+.router-transition-f7-cover-v-backward {
+  .page-current {
+    animation: f7-cover-v-current-to-next var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-cover-v-prev-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+@keyframes f7-cover-v-next-to-current {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+@keyframes f7-cover-v-current-to-next {
+  from {
+    transform: translateY(0%);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes f7-cover-v-current-to-prev {
+  from {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+}
+@keyframes f7-cover-v-prev-to-current {
+  from {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/cover.less
+================================================
+// f7-cover
+.router-transition-f7-cover-forward,
+.router-transition-f7-cover-backward {
+  background: #000;
+  perspective: 1200px;
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-cover-forward {
+  .page-next {
+    animation: f7-cover-next-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-cover-current-to-prev var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+.router-transition-f7-cover-backward {
+  .page-current {
+    animation: f7-cover-current-to-next var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-cover-prev-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+@keyframes f7-cover-next-to-current {
+  from {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+@keyframes f7-cover-current-to-next {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+}
+@keyframes f7-cover-current-to-prev {
+  from {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+}
+@keyframes f7-cover-prev-to-current {
+  from {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/dive.less
+================================================
+// f7-dive
+.router-transition-f7-dive-forward,
+.router-transition-f7-dive-backward {
+  background: var(--f7-page-bg-color);
+  perspective: 1200px;
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-dive-forward {
+  .page-next {
+    animation: f7-dive-next-to-current var(--f7-page-dive-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-dive-current-to-prev var(--f7-page-dive-transition-duration) forwards;
+  }
+}
+.router-transition-f7-dive-backward {
+  .page-current {
+    animation: f7-dive-current-to-next var(--f7-page-dive-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-dive-prev-to-current var(--f7-page-dive-transition-duration) forwards;
+  }
+}
+@keyframes f7-dive-next-to-current {
+  from {
+    opacity: 0;
+    transform: translateZ(-150px);
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateZ(0px);
+  }
+}
+@keyframes f7-dive-current-to-next {
+  from {
+    opacity: 1;
+    transform: translateZ(0px);
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translateZ(-150px);
+  }
+}
+@keyframes f7-dive-current-to-prev {
+  from {
+    transform: translateZ(0px);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translateZ(150px);
+  }
+}
+@keyframes f7-dive-prev-to-current {
+  from {
+    opacity: 0;
+    transform: translateZ(150px);
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateZ(0px);
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/fade.less
+================================================
+// fade
+.router-transition-f7-fade-forward,
+.router-transition-f7-fade-backward {
+  background: var(--f7-page-bg-color);
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-fade-forward {
+  .ios &,
+  .md & {
+    .page-next {
+      opacity: 0;
+      animation: f7-fade-in var(--f7-page-fade-transition-duration) forwards;
+    }
+    .page-current {
+      animation: f7-fade-out var(--f7-page-fade-transition-duration) forwards;
+    }
+  }
+}
+.router-transition-f7-fade-backward {
+  .ios &,
+  .md & {
+    .page-current {
+      animation: f7-fade-out var(--f7-page-fade-transition-duration) forwards;
+    }
+    .page-previous {
+      animation: f7-fade-in var(--f7-page-fade-transition-duration) forwards;
+    }
+  }
+}
+@keyframes f7-fade-in {
+  from {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes f7-fade-out {
+  from {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/flip.less
+================================================
+// f7-flip
+.router-transition-f7-flip-forward,
+.router-transition-f7-flip-backward {
+  background: #000;
+  perspective: 1200px;
+  .page {
+    backface-visibility: hidden;
+    overflow: hidden;
+    pointer-events: none;
+  }
+}
+.router-transition-f7-flip-forward {
+  .page-next {
+    transform-style: preserve-3d;
+    animation: f7-flip-next-to-current var(--f7-page-flip-transition-duration) forwards;
+  }
+  .page-current {
+    transform-style: preserve-3d;
+    animation: f7-flip-current-to-prev var(--f7-page-flip-transition-duration) forwards;
+  }
+}
+.router-transition-f7-flip-backward {
+  .page-current {
+    transform-style: preserve-3d;
+    animation: f7-flip-current-to-next var(--f7-page-flip-transition-duration) forwards;
+  }
+  .page-previous {
+    transform-style: preserve-3d;
+    animation: f7-flip-prev-to-current var(--f7-page-flip-transition-duration) forwards;
+  }
+}
+@keyframes f7-flip-next-to-current {
+  from {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+  }
+  to {
+    border-radius: 0;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+}
+@keyframes f7-flip-current-to-next {
+  from {
+    border-radius: 0px;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+  to {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+  }
+}
+@keyframes f7-flip-current-to-prev {
+  from {
+    border-radius: 0px;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+  to {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+  }
+}
+@keyframes f7-flip-prev-to-current {
+  from {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+  }
+  to {
+    border-radius: 0px;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/parallax.less
+================================================
+// f7-parallax
+.router-transition-f7-parallax-forward {
+  .page {
+    pointer-events: none;
+  }
+  .page-next {
+    animation: f7-parallax-next-to-current var(--f7-page-parallax-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-parallax-current-to-prev var(--f7-page-parallax-transition-duration) forwards;
+  }
+}
+.router-transition-f7-parallax-backward {
+  .page {
+    pointer-events: none;
+  }
+  .page-current {
+    animation: f7-parallax-current-to-next var(--f7-page-parallax-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-parallax-prev-to-current var(--f7-page-parallax-transition-duration) forwards;
+  }
+}
+@keyframes f7-parallax-next-to-current {
+  from {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+@keyframes f7-parallax-current-to-next {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+}
+@keyframes f7-parallax-current-to-prev {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(-20%);
+    });
+    .rtl({
+      transform: translateX(20%);
+    });
+  }
+}
+@keyframes f7-parallax-prev-to-current {
+  from {
+    .ltr({
+      transform: translateX(-20%);
+    });
+    .rtl({
+      transform: translateX(20%);
+    });
+  }
+  to {
+    transform: translateX(-0%);
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/push.less
+================================================
+// f7-Push
+.router-transition-f7-push-forward {
+  .page {
+    pointer-events: none;
+  }
+  .page-next {
+    animation: f7-push-next-to-current var(--f7-page-push-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-push-current-to-prev var(--f7-page-push-transition-duration) forwards;
+  }
+}
+.router-transition-f7-push-backward {
+  .page {
+    pointer-events: none;
+  }
+  .page-current {
+    animation: f7-push-current-to-next var(--f7-page-push-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-push-prev-to-current var(--f7-page-push-transition-duration) forwards;
+  }
+}
+@keyframes f7-push-next-to-current {
+  from {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+@keyframes f7-push-current-to-next {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+}
+@keyframes f7-push-current-to-prev {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(-100%);
+    });
+    .rtl({
+      transform: translateX(100%);
+    });
+  }
+}
+@keyframes f7-push-prev-to-current {
+  from {
+    .ltr({
+      transform: translateX(-100%);
+    });
+    .rtl({
+      transform: translateX(100%);
+    });
+  }
+  to {
+    transform: translateX(-0%);
+  }
+}
+
+
+--
+
+contempla que el sidebar y el header deberian quedarse en su lugar, no animarse. solo el content panel
+
+---
+
+ya se ve. pero las animaciones no se ven como las originales.
+
+haz que sigan fielmente el mismo diseño de trasicion. aqui tienes las originales de referencia:
+
+
+================================================
+FILE: src/core/components/page/page-transitions/circle.less
+================================================
+// f7-circle
+.router-transition-f7-circle-forward,
+.router-transition-f7-circle-backward {
+  &:after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100vmax;
+    height: 100vmax;
+    margin-left: -50vmax;
+    margin-top: -50vmax;
+    background: var(--f7-page-bg-color);
+    z-index: 100;
+  }
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-circle-forward {
+  &:after {
+    transform: scale(0);
+    border-radius: 50%;
+    animation: f7-circle-circle-in 400ms forwards;
+  }
+  .ios &,
+  .md & {
+    .page-next {
+      opacity: 0;
+      transform: scale(0.9);
+      animation: f7-circle-next-to-current 300ms forwards;
+      animation-delay: 300ms;
+      z-index: 150;
+    }
+  }
+}
+.router-transition-f7-circle-backward {
+  &:after {
+    animation: f7-circle-circle-out 300ms forwards;
+    animation-delay: 350ms;
+  }
+  .ios &,
+  .md & {
+    .page-current {
+      animation: f7-circle-current-to-next 700ms forwards;
+      z-index: 150;
+    }
+  }
+}
+@keyframes f7-circle-circle-in {
+  from {
+    transform: scale(0);
+    border-radius: 50%;
+  }
+  50% {
+    border-radius: 50%;
+  }
+  to {
+    transform: scale(1);
+    border-radius: 0%;
+  }
+}
+@keyframes f7-circle-circle-out {
+  from {
+    transform: scale(1);
+    border-radius: 0%;
+  }
+  50% {
+    border-radius: 50%;
+  }
+  to {
+    transform: scale(0);
+    border-radius: 50%;
+  }
+}
+@keyframes f7-circle-next-to-current {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.035);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes f7-circle-current-to-next {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  34% {
+    transform: scale(1.035);
+    opacity: 1;
+  }
+  57% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/cover-v.less
+================================================
+// f7-cover-v
+.router-transition-f7-cover-v-forward,
+.router-transition-f7-cover-v-backward {
+  background: #000;
+  perspective: 1200px;
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-cover-v-forward {
+  .page-next {
+    animation: f7-cover-v-next-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-cover-v-current-to-prev var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+.router-transition-f7-cover-v-backward {
+  .page-current {
+    animation: f7-cover-v-current-to-next var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-cover-v-prev-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+@keyframes f7-cover-v-next-to-current {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+@keyframes f7-cover-v-current-to-next {
+  from {
+    transform: translateY(0%);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes f7-cover-v-current-to-prev {
+  from {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+}
+@keyframes f7-cover-v-prev-to-current {
+  from {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/cover.less
+================================================
+// f7-cover
+.router-transition-f7-cover-forward,
+.router-transition-f7-cover-backward {
+  background: #000;
+  perspective: 1200px;
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-cover-forward {
+  .page-next {
+    animation: f7-cover-next-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-cover-current-to-prev var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+.router-transition-f7-cover-backward {
+  .page-current {
+    animation: f7-cover-current-to-next var(--f7-page-cover-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-cover-prev-to-current var(--f7-page-cover-transition-duration) forwards;
+  }
+}
+@keyframes f7-cover-next-to-current {
+  from {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+@keyframes f7-cover-current-to-next {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+}
+@keyframes f7-cover-current-to-prev {
+  from {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+}
+@keyframes f7-cover-prev-to-current {
+  from {
+    transform: translateZ(-300px);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateZ(0);
+    opacity: 1;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/dive.less
+================================================
+// f7-dive
+.router-transition-f7-dive-forward,
+.router-transition-f7-dive-backward {
+  background: var(--f7-page-bg-color);
+  perspective: 1200px;
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-dive-forward {
+  .page-next {
+    animation: f7-dive-next-to-current var(--f7-page-dive-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-dive-current-to-prev var(--f7-page-dive-transition-duration) forwards;
+  }
+}
+.router-transition-f7-dive-backward {
+  .page-current {
+    animation: f7-dive-current-to-next var(--f7-page-dive-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-dive-prev-to-current var(--f7-page-dive-transition-duration) forwards;
+  }
+}
+@keyframes f7-dive-next-to-current {
+  from {
+    opacity: 0;
+    transform: translateZ(-150px);
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateZ(0px);
+  }
+}
+@keyframes f7-dive-current-to-next {
+  from {
+    opacity: 1;
+    transform: translateZ(0px);
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translateZ(-150px);
+  }
+}
+@keyframes f7-dive-current-to-prev {
+  from {
+    transform: translateZ(0px);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translateZ(150px);
+  }
+}
+@keyframes f7-dive-prev-to-current {
+  from {
+    opacity: 0;
+    transform: translateZ(150px);
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateZ(0px);
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/fade.less
+================================================
+// fade
+.router-transition-f7-fade-forward,
+.router-transition-f7-fade-backward {
+  background: var(--f7-page-bg-color);
+  .page {
+    pointer-events: none;
+  }
+}
+.router-transition-f7-fade-forward {
+  .ios &,
+  .md & {
+    .page-next {
+      opacity: 0;
+      animation: f7-fade-in var(--f7-page-fade-transition-duration) forwards;
+    }
+    .page-current {
+      animation: f7-fade-out var(--f7-page-fade-transition-duration) forwards;
+    }
+  }
+}
+.router-transition-f7-fade-backward {
+  .ios &,
+  .md & {
+    .page-current {
+      animation: f7-fade-out var(--f7-page-fade-transition-duration) forwards;
+    }
+    .page-previous {
+      animation: f7-fade-in var(--f7-page-fade-transition-duration) forwards;
+    }
+  }
+}
+@keyframes f7-fade-in {
+  from {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes f7-fade-out {
+  from {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/flip.less
+================================================
+// f7-flip
+.router-transition-f7-flip-forward,
+.router-transition-f7-flip-backward {
+  background: #000;
+  perspective: 1200px;
+  .page {
+    backface-visibility: hidden;
+    overflow: hidden;
+    pointer-events: none;
+  }
+}
+.router-transition-f7-flip-forward {
+  .page-next {
+    transform-style: preserve-3d;
+    animation: f7-flip-next-to-current var(--f7-page-flip-transition-duration) forwards;
+  }
+  .page-current {
+    transform-style: preserve-3d;
+    animation: f7-flip-current-to-prev var(--f7-page-flip-transition-duration) forwards;
+  }
+}
+.router-transition-f7-flip-backward {
+  .page-current {
+    transform-style: preserve-3d;
+    animation: f7-flip-current-to-next var(--f7-page-flip-transition-duration) forwards;
+  }
+  .page-previous {
+    transform-style: preserve-3d;
+    animation: f7-flip-prev-to-current var(--f7-page-flip-transition-duration) forwards;
+  }
+}
+@keyframes f7-flip-next-to-current {
+  from {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+  }
+  to {
+    border-radius: 0;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+}
+@keyframes f7-flip-current-to-next {
+  from {
+    border-radius: 0px;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+  to {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+  }
+}
+@keyframes f7-flip-current-to-prev {
+  from {
+    border-radius: 0px;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+  to {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+  }
+}
+@keyframes f7-flip-prev-to-current {
+  from {
+    border-radius: 32px;
+    .ltr({
+      transform: translateZ(-100vmax) rotateY(-180deg);
+    });
+    .rtl({
+      transform: translateZ(-100vmax) rotateY(180deg);
+    });
+  }
+  to {
+    border-radius: 0px;
+    transform: translateZ(0px) rotateY(0deg);
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/parallax.less
+================================================
+// f7-parallax
+.router-transition-f7-parallax-forward {
+  .page {
+    pointer-events: none;
+  }
+  .page-next {
+    animation: f7-parallax-next-to-current var(--f7-page-parallax-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-parallax-current-to-prev var(--f7-page-parallax-transition-duration) forwards;
+  }
+}
+.router-transition-f7-parallax-backward {
+  .page {
+    pointer-events: none;
+  }
+  .page-current {
+    animation: f7-parallax-current-to-next var(--f7-page-parallax-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-parallax-prev-to-current var(--f7-page-parallax-transition-duration) forwards;
+  }
+}
+@keyframes f7-parallax-next-to-current {
+  from {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+@keyframes f7-parallax-current-to-next {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+}
+@keyframes f7-parallax-current-to-prev {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(-20%);
+    });
+    .rtl({
+      transform: translateX(20%);
+    });
+  }
+}
+@keyframes f7-parallax-prev-to-current {
+  from {
+    .ltr({
+      transform: translateX(-20%);
+    });
+    .rtl({
+      transform: translateX(20%);
+    });
+  }
+  to {
+    transform: translateX(-0%);
+  }
+}
+
+
+
+================================================
+FILE: src/core/components/page/page-transitions/push.less
+================================================
+// f7-Push
+.router-transition-f7-push-forward {
+  .page {
+    pointer-events: none;
+  }
+  .page-next {
+    animation: f7-push-next-to-current var(--f7-page-push-transition-duration) forwards;
+  }
+  .page-current {
+    animation: f7-push-current-to-prev var(--f7-page-push-transition-duration) forwards;
+  }
+}
+.router-transition-f7-push-backward {
+  .page {
+    pointer-events: none;
+  }
+  .page-current {
+    animation: f7-push-current-to-next var(--f7-page-push-transition-duration) forwards;
+  }
+  .page-previous {
+    animation: f7-push-prev-to-current var(--f7-page-push-transition-duration) forwards;
+  }
+}
+@keyframes f7-push-next-to-current {
+  from {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+@keyframes f7-push-current-to-next {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(100%);
+    });
+    .rtl({
+      transform: translateX(-100%);
+    });
+  }
+}
+@keyframes f7-push-current-to-prev {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    .ltr({
+      transform: translateX(-100%);
+    });
+    .rtl({
+      transform: translateX(100%);
+    });
+  }
+}
+@keyframes f7-push-prev-to-current {
+  from {
+    .ltr({
+      transform: translateX(-100%);
+    });
+    .rtl({
+      transform: translateX(100%);
+    });
+  }
+  to {
+    transform: translateX(-0%);
+  }
+}
+
+
+--
+
+contempla que el sidebar y el header deberian quedarse en su lugar, no animarse. solo el content panel
