@@ -1,0 +1,11 @@
+actalmente cuando haces back varias desde el navegador veces, usa la misma transicion de regreso, no usa las transiciones con las que se fue navegando hasta llegar a esa pagina pero ahora en reversa. porque? como se podria hacer mas inteligete y que recuerde todo.
+
+---
+
+que pasa cuando el usuario rompe la navegacion, ejemplo en vez de regresar, hace click en otro link? actualmente veo que aplica las trasiciones de back, lo cual no es correcto.
+
+esta implementacion es deficiente y compleja.
+
+que si cada pagina define sus transiciones de entrada y salida? y cuando se navege a ella o se salga de ella esas son las nevaheaciones que se aplican. y noe s necesario ir teniendo un registro de cada transicion.
+
+y como consecuencia, no es necesario usar una fucnion personalizada para navegar (onclick={() => flowForward('/flow2/extra', '/flow2', 'circle')}) solo usamos el goto o href normal de sveltekit
