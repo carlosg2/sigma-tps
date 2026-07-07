@@ -1,0 +1,76 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "fac505c04dde",
+  "session_id": "a94affd0-d33d-4a34-9a0e-d7df742f85f1",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-07T23:17:52.243244Z",
+  "branch": "main",
+  "checkpoints_count": 3,
+  "save_step_count": 3,
+  "files_touched": [
+    "src/routes/(svgl-layout)/flow2/+layout.svelte",
+    "src/routes/(svgl-layout)/flow2/flow-nav.svelte.ts"
+  ],
+  "agent": "Copilot CLI",
+  "model": "",
+  "turn_id": "644497066efe",
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-07T23:17:52.23262Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 4,
+    "human_modified": 128,
+    "human_removed": 0,
+    "total_committed": 4,
+    "total_lines_changed": 132,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 1648,
+      "user_lines_removed": 36,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "documentacion/Finanzas/Fianzas.html": 1531,
+        "src/routes/(svgl-layout)/flow2/+layout.svelte": 33,
+        "src/routes/(svgl-layout)/flow2/flow-nav.svelte.ts": 84
+      },
+      "user_removed_per_file": {
+        "src/routes/(svgl-layout)/flow2/+layout.svelte": 9,
+        "src/routes/(svgl-layout)/flow2/flow-nav.svelte.ts": 27
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3385,
+      "agent_lines_removed": 75
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 3119,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3396,
+      "agent_lines_removed": 76,
+      "user_added_per_file": {
+        "documentacion/Rentas/app.js": 1714,
+        "documentacion/Rentas/index.html": 467,
+        "documentacion/Rentas/styles.css": 938
+      }
+    }
+  ]
+}
