@@ -1,0 +1,31 @@
+necesitamos rimplementar esta proyecto de finanzas.html en el proyecto de sigma tps en el folder de tps, siguiendo el design sistem actual (tomando como referencia dashboard-01 y preview, preview-01,) y el skill de shadcn-svelte
+
+debe quedar colocalizado en una nueva carpeta que se llame finanzas.
+
+el el sidebar el grupo seria Finanzas y ahi poner el acceso a todas las pantallas.
+
+recuerda seguir el design sistem. hay muchos ejemplos golden nuggets en la carpeta /ds
+
+todo debe ser funcional y es estricto usar solo componentes del design system.
+
+si tienes dudas. pregunta
+
+---
+
+al dar click en reset, deberia de resetear el seed
+
+---
+
+necesitamos rimplementar esta proyecto de /Rentas/index.html en el proyecto de sigma tps en el folder de tps, siguiendo el design sistem actual (tomando como referencia dashboard-01 y preview, preview-01,) y el skill de shadcn-svelte
+
+debe quedar colocalizado en una nueva carpeta que se llame rentas.
+
+el el sidebar el grupo seria Rentas y ahi poner el acceso a todas las pantallas.
+
+recuerda seguir el design sistem. hay muchos ejemplos golden nuggets en la carpeta /ds
+
+recuera poner la capa de datos en lib/tps/rentas
+
+todo debe ser funcional y es estricto usar solo componentes del design system.
+
+si tienes dudas. pregunta
