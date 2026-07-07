@@ -12,7 +12,20 @@
 	// En cada navegación aplica al <html> la clase del tipo de transición
 	// elegido + la dirección. transitions.css usa estas clases para decidir
 	// qué keyframes correr sobre el grupo `content`.
-	classes(() => [flowNav.transition, flowNav.direction]);
+	//
+	// La dirección se determina así:
+	//  - Botones internos (flowForward/flowBack → goto): navigation.type NO es
+	//    'popstate' y flowNav.direction ya trae el valor correcto.
+	//  - Botones back/forward del NAVEGADOR: navigation.type === 'popstate' y
+	//    flowNav no se actualiza, así que la deducimos de navigation.delta
+	//    (negativo = atrás, positivo = adelante).
+	classes(({ navigation }) => {
+		let direction = flowNav.direction;
+		if (navigation.type === 'popstate') {
+			direction = (navigation.delta ?? 0) < 0 ? 'backward' : 'forward';
+		}
+		return [flowNav.transition, direction];
+	});
 
 	// Mientras el layout de /flow2 esté montado, marcamos el <html> para
 	// dejar el `root` estático (sidebar + header no animan, ver transitions.css)
