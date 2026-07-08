@@ -34,15 +34,9 @@
 	<title>flow3 — transición por página</title>
 </svelte:head>
 
-<div class="flow3-content" use:transition={'content'}>
+<div class="flow3-content w-full" use:transition={'content'}>
 	<PageCard containerClass="bg-card">
 		{@render children?.()}
 	</PageCard>
 </div>
 
-<style>
-	.flow3-content {
-		width: 100%;
-		margin-top: 0.5rem;
-	}
-</style>

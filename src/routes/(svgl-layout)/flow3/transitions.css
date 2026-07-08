@@ -17,11 +17,11 @@
 	   Ajusta estos valores para hacer las transiciones más lentas/rápidas
 	   o cambiar la sensación (rebote, suave, etc.). */
 	--flow3-duration: 450ms;
-	--flow3-ease: cubic-bezier(.08,.19,0,.99); /* rebote-out suave */
+	/* --flow3-ease: cubic-bezier(.08,.19,0,.99); */ 
 
 	/* El vuelo de los iconos entre grid y título puede tener su propio timing. */
-	--flow3-icon-duration: 1200ms;
-	--flow3-icon-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+	--flow3-icon-duration: 450ms;
+	/* --flow3-icon-ease: cubic-bezier(0.34, 1.56, 0.64, 1); */
 }
 html.dark {
 	--flow3-void: oklch(0.145 0 0);
@@ -45,7 +45,9 @@ html.flow3-active::view-transition-new(root) {
 ::view-transition-group(flow3-icon-dive),
 ::view-transition-group(flow3-icon-parallax),
 ::view-transition-group(flow3-icon-flip),
-::view-transition-group(flow3-icon-circle) {
+::view-transition-group(flow3-icon-circle),
+::view-transition-group(flow3-icon-android-fade),
+::view-transition-group(flow3-icon-android-fade-rtl) {
 	z-index: 20;
 	/* El navegador inyecta estilos inline en los pseudo-elementos del View
 	   Transition, por eso hace falta !important para que el timing personalizado
@@ -447,6 +449,114 @@ html.flip.backward::view-transition-new(content) {
 	}
 }
 
+/* ===================== ANDROID FADE ===================== */
+html.android-fade.forward::view-transition-old(content) {
+	animation: f7-android-fade-current-to-prev 450ms both;
+}
+html.android-fade.forward::view-transition-new(content) {
+	animation: f7-android-fade-next-to-current 450ms both;
+}
+html.android-fade.backward::view-transition-old(content) {
+	animation: f7-android-fade-current-to-next 450ms both;
+}
+html.android-fade.backward::view-transition-new(content) {
+	animation: f7-android-fade-prev-to-current 450ms both;
+}
+@keyframes f7-android-fade-next-to-current {
+	from {
+		transform: translate3d(0, 8vh, 0);
+		opacity: 0;
+	}
+	to {
+		transform: translate3d(0, 0, 0);
+		opacity: 1;
+	}
+}
+@keyframes f7-android-fade-current-to-prev {
+	from {
+		transform: translate3d(0, 0, 0);
+		opacity: 1;
+	}
+	to {
+		transform: translate3d(0, -8vh, 0);
+		opacity: 1;
+	}
+}
+@keyframes f7-android-fade-current-to-next {
+	from {
+		transform: translate3d(0, 0, 0);
+		opacity: 1;
+	}
+	to {
+		transform: translate3d(0, 8vh, 0);
+		opacity: 0;
+	}
+}
+@keyframes f7-android-fade-prev-to-current {
+	from {
+		transform: translate3d(0, -8vh, 0);
+		opacity: 1;
+	}
+	to {
+		transform: translate3d(0, 0, 0);
+		opacity: 1;
+	}
+}
+
+/* ===================== ANDROID FADE RTL (derecha → izquierda) ===================== */
+html.android-fade-rtl.forward::view-transition-old(content) {
+	animation: f7-android-fade-rtl-current-to-prev 450ms both;
+}
+html.android-fade-rtl.forward::view-transition-new(content) {
+	animation: f7-android-fade-rtl-next-to-current 450ms both;
+}
+html.android-fade-rtl.backward::view-transition-old(content) {
+	animation: f7-android-fade-rtl-current-to-next 450ms both;
+}
+html.android-fade-rtl.backward::view-transition-new(content) {
+	animation: f7-android-fade-rtl-prev-to-current 450ms both;
+}
+@keyframes f7-android-fade-rtl-next-to-current {
+	from {
+		transform: translate3d(8vw, 0, 0);
+		opacity: 0;
+	}
+	to {
+		transform: translate3d(0, 0, 0);
+		opacity: 1;
+	}
+}
+@keyframes f7-android-fade-rtl-current-to-prev {
+	from {
+		transform: translate3d(0, 0, 0);
+		opacity: 1;
+	}
+	to {
+		transform: translate3d(-8vw, 0, 0);
+		opacity: 1;
+	}
+}
+@keyframes f7-android-fade-rtl-current-to-next {
+	from {
+		transform: translate3d(0, 0, 0);
+		opacity: 1;
+	}
+	to {
+		transform: translate3d(100%, 0, 0);
+		opacity: 0;
+	}
+}
+@keyframes f7-android-fade-rtl-prev-to-current {
+	from {
+		transform: translate3d(-8vw, 0, 0);
+		opacity: 1;
+	}
+	to {
+		transform: translate3d(0, 0, 0);
+		opacity: 1;
+	}
+}
+
 /* ===================== CIRCLE ===================== */
 html.circle.forward::view-transition-old(content) {
 	animation: none;
@@ -488,7 +598,7 @@ html.circle.backward::view-transition-new(content) {
 	}
 	to {
 		clip-path: circle(0% at 50% 50%);
-		transform: scale(0.9);
+		transform: scale(1);
 	}
 }
 

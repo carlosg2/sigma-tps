@@ -14,6 +14,7 @@
 	import Images from '@lucide/svelte/icons/images';
 	import FlipHorizontal2 from '@lucide/svelte/icons/flip-horizontal-2';
 	import Circle from '@lucide/svelte/icons/circle';
+	import Smartphone from '@lucide/svelte/icons/smartphone';
 	import Info from '@lucide/svelte/icons/info';
 
 	// El título de la animación de ESTA página se pasa por prop (lo declara la
@@ -44,7 +45,9 @@
 		{ href: '/flow3/dive', key: 'dive', label: 'Dive', desc: 'Inmersión 3D en Z', icon: Box, color: 'bg-cyan-500' },
 		{ href: '/flow3/parallax', key: 'parallax', label: 'Parallax', desc: 'Efecto paralaje (-20%)', icon: Images, color: 'bg-violet-500' },
 		{ href: '/flow3/flip', key: 'flip', label: 'Flip', desc: 'Rotación 3D en Y', icon: FlipHorizontal2, color: 'bg-fuchsia-500' },
-		{ href: '/flow3/circle', key: 'circle', label: 'Circle', desc: 'Revelado circular', icon: Circle, color: 'bg-rose-500' }
+		{ href: '/flow3/circle', key: 'circle', label: 'Circle', desc: 'Revelado circular', icon: Circle, color: 'bg-rose-500' },
+		{ href: '/flow3/android-fade', key: 'android-fade', label: 'Android Fade', desc: 'Fade desde abajo tipo Android', icon: Smartphone, color: 'bg-green-500' },
+		{ href: '/flow3/android-fade-rtl', key: 'android-fade-rtl', label: 'Android Fade RTL', desc: 'Fade de derecha a izquierda', icon: Smartphone, color: 'bg-lime-600' }
 	];
 
 	// Enlaces a las OTRAS páginas (se excluye la actual).
@@ -63,13 +66,15 @@
 	</div>
 </PageHeader>
 
+<div class="{current?.color} w-full h-20">	</div>	
+
 <div class="mx-auto flex w-full max-w-3xl flex-col gap-6 p-4 md:p-6">
 	<div class="flex flex-col gap-1">
 		<div class="flex items-center gap-3">
 			{#if current}
 				<span
 					class="{current.color} inline-flex size-12 items-center justify-center rounded-xl text-white"
-					style="view-transition-name: flow3-icon-{current.key}" /*  */
+					/* style="view-transition-name: flow3-icon-{current.key}"  */
 				>
 					<current.icon class="size-6" />
 				</span>
@@ -80,6 +85,8 @@
 			Esta página entra y sale con su propia transición. Elige otra pantalla:
 		</p>
 	</div>
+
+
 
 	<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
 		{#each others as p (p.href)}
@@ -93,7 +100,7 @@
 					<Card.Header class="items-center gap-2 px-4">
 						<span
 							class="{p.color} mx-auto inline-flex size-12 items-center justify-center rounded-xl text-white"
-							style="view-transition-name: flow3-icon-{p.key}" /*  */
+							/* style="view-transition-name: flow3-icon-{p.key}"  */
 						>
 							<p.icon class="size-6" />
 						</span>

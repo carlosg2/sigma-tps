@@ -24,7 +24,9 @@ export type FlowTransition =
 	| 'dive'
 	| 'parallax'
 	| 'flip'
-	| 'circle';
+	| 'circle'
+	| 'android-fade'
+	| 'android-fade-rtl';
 
 export type FlowDirection = 'forward' | 'backward';
 
