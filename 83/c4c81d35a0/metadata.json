@@ -3,10 +3,12 @@
   "checkpoint_id": "83c4c81d35a0",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 1,
+  "checkpoints_count": 23,
   "files_touched": [
     "src/routes/(svgl-layout)/flow3/+layout.svelte",
     "src/routes/(svgl-layout)/flow3/Flow3Page.svelte",
+    "src/routes/(svgl-layout)/flow3/android-fade-rtl/+page.svelte",
+    "src/routes/(svgl-layout)/flow3/android-fade/+page.svelte",
     "src/routes/(svgl-layout)/flow3/circle/+page.svelte",
     "src/routes/(svgl-layout)/flow3/cover/+page.svelte",
     "src/routes/(svgl-layout)/flow3/flow3-nav.ts",
@@ -18,6 +20,12 @@
       "transcript": "/83/c4c81d35a0/0/full.jsonl",
       "content_hash": "/83/c4c81d35a0/0/content_hash.txt",
       "prompt": "/83/c4c81d35a0/0/prompt.txt"
+    },
+    {
+      "metadata": "/83/c4c81d35a0/1/metadata.json",
+      "transcript": "/83/c4c81d35a0/1/full.jsonl",
+      "content_hash": "/83/c4c81d35a0/1/content_hash.txt",
+      "prompt": "/83/c4c81d35a0/1/prompt.txt"
     }
   ],
   "token_usage": {

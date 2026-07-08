@@ -1,0 +1,237 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "83c4c81d35a0",
+  "session_id": "6a385b93-5eba-4e22-b11a-b88095b4b2ec",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-08T18:32:34.639026Z",
+  "branch": "main",
+  "checkpoints_count": 22,
+  "save_step_count": 22,
+  "files_touched": [
+    "src/routes/(svgl-layout)/flow3/+layout.svelte",
+    "src/routes/(svgl-layout)/flow3/Flow3Page.svelte",
+    "src/routes/(svgl-layout)/flow3/android-fade-rtl/+page.svelte",
+    "src/routes/(svgl-layout)/flow3/android-fade/+page.svelte",
+    "src/routes/(svgl-layout)/flow3/circle/+page.svelte",
+    "src/routes/(svgl-layout)/flow3/cover/+page.svelte",
+    "src/routes/(svgl-layout)/flow3/flow3-nav.ts",
+    "src/routes/(svgl-layout)/flow3/transitions.css"
+  ],
+  "agent": "Copilot CLI",
+  "model": "",
+  "turn_id": "79af69544184",
+  "checkpoint_transcript_start": 607,
+  "transcript_lines_at_start": 607,
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "session_metrics": {
+    "turn_count": 38
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-08T18:32:34.623456Z",
+    "agent_lines": 79,
+    "agent_removed": 0,
+    "human_added": 4,
+    "human_modified": 34,
+    "human_removed": 0,
+    "total_committed": 117,
+    "total_lines_changed": 117,
+    "agent_percentage": 67.52136752136752,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 7,
+      "user_lines_removed": 5,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "src/routes/(svgl-layout)/flow3/Flow3Page.svelte": 2,
+        "src/routes/(svgl-layout)/flow3/circle/+page.svelte": 1,
+        "src/routes/(svgl-layout)/flow3/cover/+page.svelte": 1,
+        "src/routes/(svgl-layout)/flow3/transitions.css": 3
+      },
+      "user_removed_per_file": {
+        "src/routes/(svgl-layout)/flow3/circle/+page.svelte": 1,
+        "src/routes/(svgl-layout)/flow3/cover/+page.svelte": 1,
+        "src/routes/(svgl-layout)/flow3/transitions.css": 3
+      }
+    },
+    {
+      "checkpoint_number": 8,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 7,
+      "agent_lines_removed": 5
+    },
+    {
+      "checkpoint_number": 9,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 7,
+      "agent_lines_removed": 5
+    },
+    {
+      "checkpoint_number": 10,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 7,
+      "agent_lines_removed": 5
+    },
+    {
+      "checkpoint_number": 11,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 7,
+      "agent_lines_removed": 5
+    },
+    {
+      "checkpoint_number": 12,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 7,
+      "agent_lines_removed": 5
+    },
+    {
+      "checkpoint_number": 13,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 42,
+      "agent_lines_removed": 26
+    },
+    {
+      "checkpoint_number": 14,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 62,
+      "agent_lines_removed": 26
+    },
+    {
+      "checkpoint_number": 15,
+      "user_lines_added": 10,
+      "user_lines_removed": 7,
+      "agent_lines_added": 7,
+      "agent_lines_removed": 10,
+      "user_added_per_file": {
+        "src/routes/(svgl-layout)/flow3/Flow3Page.svelte": 3,
+        "src/routes/(svgl-layout)/flow3/cover/+page.svelte": 5,
+        "src/routes/(svgl-layout)/flow3/transitions.css": 2
+      },
+      "user_removed_per_file": {
+        "src/routes/(svgl-layout)/flow3/Flow3Page.svelte": 1,
+        "src/routes/(svgl-layout)/flow3/circle/+page.svelte": 2,
+        "src/routes/(svgl-layout)/flow3/cover/+page.svelte": 2,
+        "src/routes/(svgl-layout)/flow3/transitions.css": 2
+      }
+    },
+    {
+      "checkpoint_number": 16,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 7,
+      "agent_lines_removed": 7
+    },
+    {
+      "checkpoint_number": 17,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 78,
+      "agent_lines_removed": 10
+    },
+    {
+      "checkpoint_number": 18,
+      "user_lines_added": 21,
+      "user_lines_removed": 22,
+      "agent_lines_added": 154,
+      "agent_lines_removed": 22,
+      "user_added_per_file": {
+        "src/routes/(svgl-layout)/flow3/+layout.svelte": 13,
+        "src/routes/(svgl-layout)/flow3/Flow3Page.svelte": 3,
+        "src/routes/(svgl-layout)/flow3/circle/+page.svelte": 3,
+        "src/routes/(svgl-layout)/flow3/transitions.css": 2
+      },
+      "user_removed_per_file": {
+        "src/routes/(svgl-layout)/flow3/+layout.svelte": 16,
+        "src/routes/(svgl-layout)/flow3/Flow3Page.svelte": 3,
+        "src/routes/(svgl-layout)/flow3/circle/+page.svelte": 1,
+        "src/routes/(svgl-layout)/flow3/transitions.css": 2
+      }
+    },
+    {
+      "checkpoint_number": 19,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 151,
+      "agent_lines_removed": 20
+    },
+    {
+      "checkpoint_number": 20,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 151,
+      "agent_lines_removed": 20
+    },
+    {
+      "checkpoint_number": 21,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 151,
+      "agent_lines_removed": 20
+    },
+    {
+      "checkpoint_number": 22,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 151,
+      "agent_lines_removed": 20
+    }
+  ]
+}
