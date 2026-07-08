@@ -1,0 +1,15 @@
+Crea una nueva pagona dentro del la ruta /flow3 que no use el componente Floe3Page como base. debe de contener todo lo requerido para funcionar con tra transicion cover-v.
+
+el demo debe usar componentes del design system dentro de la carpeta /preview y /preview-02 simulando una aplicacion real
+
+---
+
+no se ve la transicion al dar click en un producto y navegar al preview-02
+
+---
+
+sigue sin verse la transicion
+
+---
+
+estoy viendo que ya funciona.
