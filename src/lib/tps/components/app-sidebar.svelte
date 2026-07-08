@@ -114,7 +114,7 @@
 		{
 			label: 'Rentas',
 			items: [
-				{ label: 'Executive Pulse', href: '/rentas', icon: KeyRound },
+				{ label: 'Dashboard', href: '/rentas', icon: KeyRound },
 				{ label: 'Cotizador', href: '/rentas/cotizador', icon: FileText },
 				{ label: 'Cotizaciones', href: '/rentas/cotizaciones', icon: ClipboardList },
 				{ label: 'Compliance', href: '/rentas/compliance', icon: ShieldCheck }
