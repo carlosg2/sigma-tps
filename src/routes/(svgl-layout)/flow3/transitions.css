@@ -1,0 +1,513 @@
+/* =============================================================
+   /flow3 — Mismo motor de transiciones que /flow2 (Framework7 con la
+   View Transitions API), pero cada PÁGINA declara su propia transición.
+   Copia independiente para no acoplar /flow3 a /flow2.
+   =============================================================
+
+   Mapeo a View Transitions (el panel lleva view-transition-name: content):
+     - ::view-transition-old(content) === página saliente
+     - ::view-transition-new(content) === página entrante
+   Cada transición usa keyframes distintos según la dirección forward/backward.
+   ============================================================= */
+
+:root {
+	--flow3-void: oklch(0.97 0 0);
+
+	/* Duración y easing globales para /flow3.
+	   Ajusta estos valores para hacer las transiciones más lentas/rápidas
+	   o cambiar la sensación (rebote, suave, etc.). */
+	--flow3-duration: 450ms;
+	--flow3-ease: cubic-bezier(.08,.19,0,.99); /* rebote-out suave */
+
+	/* El vuelo de los iconos entre grid y título puede tener su propio timing. */
+	--flow3-icon-duration: 1200ms;
+	--flow3-icon-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+html.dark {
+	--flow3-void: oklch(0.145 0 0);
+}
+
+/* Root ESTÁTICO en /flow3: sólo anima el panel `content`. */
+html.flow3-active::view-transition-old(root),
+html.flow3-active::view-transition-new(root) {
+	animation: none;
+}
+
+/* Elementos compartidos: cada transición tiene un icono con nombre único
+   (`flow3-icon-<key>`) que existe como tarjeta del grid Y como icono del
+   título. Al navegar, cada icono VUELA entre su posición de tarjeta y la del
+   título (y a la inversa al volver, de forma automática y simétrica). Van por
+   encima del panel `content`. */
+::view-transition-group(flow3-icon-fade),
+::view-transition-group(flow3-icon-push),
+::view-transition-group(flow3-icon-cover),
+::view-transition-group(flow3-icon-cover-v),
+::view-transition-group(flow3-icon-dive),
+::view-transition-group(flow3-icon-parallax),
+::view-transition-group(flow3-icon-flip),
+::view-transition-group(flow3-icon-circle) {
+	z-index: 20;
+	/* El navegador inyecta estilos inline en los pseudo-elementos del View
+	   Transition, por eso hace falta !important para que el timing personalizado
+	   tenga efecto. */
+	animation-duration: var(--flow3-icon-duration) !important;
+	animation-timing-function: var(--flow3-icon-ease) !important;
+}
+
+/* El panel se recorta a su caja y usa fondo sólido para rellenar zonas que se
+   revelan durante el movimiento. */
+::view-transition-group(content) {
+	overflow: clip;
+	background-color: var(--card);
+	border-radius: calc(var(--radius) - 2px);
+}
+
+html.cover::view-transition-group(content),
+html.cover-v::view-transition-group(content),
+html.flip::view-transition-group(content) {
+	background-color: var(--flow3-void);
+}
+
+::view-transition-old(content),
+::view-transition-new(content) {
+	animation-fill-mode: both;
+	height: 100%;
+	width: 100%;
+	transform-origin: center;
+}
+::view-transition-old(content) {
+	z-index: 1;
+}
+::view-transition-new(content) {
+	z-index: 2;
+}
+
+html.cover::view-transition-image-pair(content),
+html.cover-v::view-transition-image-pair(content),
+html.dive::view-transition-image-pair(content),
+html.flip::view-transition-image-pair(content) {
+	perspective: 1200px;
+}
+
+/* Backward de cover/cover-v/parallax/circle: la saliente va ENCIMA. */
+html.cover.backward::view-transition-old(content),
+html.cover-v.backward::view-transition-old(content),
+html.parallax.backward::view-transition-old(content),
+html.circle.backward::view-transition-old(content) {
+	z-index: 2;
+}
+html.cover.backward::view-transition-new(content),
+html.cover-v.backward::view-transition-new(content),
+html.parallax.backward::view-transition-new(content),
+html.circle.backward::view-transition-new(content) {
+	z-index: 1;
+}
+
+/* ===================== FADE ===================== */
+html.fade::view-transition-old(content) {
+	animation: f7-fade-out 500ms ease-in-out both;
+}
+html.fade::view-transition-new(content) {
+	animation: f7-fade-in 500ms ease-in-out both;
+}
+@keyframes f7-fade-out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+@keyframes f7-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/* ===================== PUSH ===================== */
+html.push.forward::view-transition-old(content) {
+	animation: f7-push-current-to-prev 400ms both;
+}
+html.push.forward::view-transition-new(content) {
+	animation: f7-push-next-to-current 400ms both;
+}
+html.push.backward::view-transition-old(content) {
+	animation: f7-push-current-to-next 400ms both;
+}
+html.push.backward::view-transition-new(content) {
+	animation: f7-push-prev-to-current 400ms both;
+}
+@keyframes f7-push-next-to-current {
+	from {
+		transform: translateX(100%);
+	}
+	to {
+		transform: translateX(0%);
+	}
+}
+@keyframes f7-push-current-to-next {
+	from {
+		transform: translateX(0%);
+	}
+	to {
+		transform: translateX(100%);
+	}
+}
+@keyframes f7-push-current-to-prev {
+	from {
+		transform: translateX(0%);
+	}
+	to {
+		transform: translateX(-100%);
+	}
+}
+@keyframes f7-push-prev-to-current {
+	from {
+		transform: translateX(-100%);
+	}
+	to {
+		transform: translateX(0%);
+	}
+}
+
+/* ===================== PARALLAX ===================== */
+html.parallax.forward::view-transition-old(content) {
+	animation: f7-parallax-current-to-prev 450ms both;
+}
+html.parallax.forward::view-transition-new(content) {
+	animation: f7-parallax-next-to-current 450ms both;
+}
+html.parallax.backward::view-transition-old(content) {
+	animation: f7-parallax-current-to-next 450ms both;
+}
+html.parallax.backward::view-transition-new(content) {
+	animation: f7-parallax-prev-to-current 450ms both;
+}
+@keyframes f7-parallax-next-to-current {
+	from {
+		transform: translateX(100%);
+	}
+	to {
+		transform: translateX(0%);
+	}
+}
+@keyframes f7-parallax-current-to-next {
+	from {
+		transform: translateX(0%);
+	}
+	to {
+		transform: translateX(100%);
+	}
+}
+@keyframes f7-parallax-current-to-prev {
+	from {
+		transform: translateX(0%);
+		opacity: 1;
+	}
+	to {
+		transform: translateX(-20%);
+		opacity: 0.3;
+	}
+}
+@keyframes f7-parallax-prev-to-current {
+	from {
+		transform: translateX(-20%);
+		opacity: 0.3;
+	}
+	to {
+		transform: translateX(0%);
+		opacity: 1;
+	}
+}
+
+/* ===================== COVER ===================== */
+html.cover.forward::view-transition-old(content) {
+	animation: f7-cover-current-to-prev 450ms both;
+}
+html.cover.forward::view-transition-new(content) {
+	animation: f7-cover-next-to-current 450ms both;
+}
+html.cover.backward::view-transition-old(content) {
+	animation: f7-cover-current-to-next 450ms both;
+}
+html.cover.backward::view-transition-new(content) {
+	animation: f7-cover-prev-to-current 450ms both;
+}
+@keyframes f7-cover-next-to-current {
+	from {
+		transform: translateX(100%);
+	}
+	to {
+		transform: translateX(0%);
+	}
+}
+@keyframes f7-cover-current-to-next {
+	from {
+		transform: translateX(0%);
+	}
+	to {
+		transform: translateX(100%);
+	}
+}
+@keyframes f7-cover-current-to-prev {
+	from {
+		transform: translateZ(0);
+		opacity: 1;
+	}
+	to {
+		transform: translateZ(-300px);
+		opacity: 0.3;
+	}
+}
+@keyframes f7-cover-prev-to-current {
+	from {
+		transform: translateZ(-300px);
+		opacity: 0.3;
+	}
+	to {
+		transform: translateZ(0);
+		opacity: 1;
+	}
+}
+
+/* ===================== COVER-V ===================== */
+html.cover-v.forward::view-transition-old(content) {
+	animation: f7-cover-v-current-to-prev 450ms both;
+}
+html.cover-v.forward::view-transition-new(content) {
+	animation: f7-cover-v-next-to-current 450ms both;
+}
+html.cover-v.backward::view-transition-old(content) {
+	animation: f7-cover-v-current-to-next 450ms both;
+}
+html.cover-v.backward::view-transition-new(content) {
+	animation: f7-cover-v-prev-to-current 450ms both;
+}
+@keyframes f7-cover-v-next-to-current {
+	from {
+		transform: translateY(100%);
+	}
+	to {
+		transform: translateY(0%);
+	}
+}
+@keyframes f7-cover-v-current-to-next {
+	from {
+		transform: translateY(0%);
+	}
+	to {
+		transform: translateY(100%);
+	}
+}
+@keyframes f7-cover-v-current-to-prev {
+	from {
+		transform: translateZ(0);
+		opacity: 1;
+	}
+	to {
+		transform: translateZ(-300px);
+		opacity: 0.3;
+	}
+}
+@keyframes f7-cover-v-prev-to-current {
+	from {
+		transform: translateZ(-300px);
+		opacity: 0.3;
+	}
+	to {
+		transform: translateZ(0);
+		opacity: 1;
+	}
+}
+
+/* ===================== DIVE ===================== */
+html.dive.forward::view-transition-old(content) {
+	animation: f7-dive-current-to-prev 500ms both;
+}
+html.dive.forward::view-transition-new(content) {
+	animation: f7-dive-next-to-current 500ms both;
+}
+html.dive.backward::view-transition-old(content) {
+	animation: f7-dive-current-to-next 500ms both;
+}
+html.dive.backward::view-transition-new(content) {
+	animation: f7-dive-prev-to-current 500ms both;
+}
+@keyframes f7-dive-next-to-current {
+	from {
+		opacity: 0;
+		transform: translateZ(-150px);
+	}
+	50% {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+		transform: translateZ(0px);
+	}
+}
+@keyframes f7-dive-current-to-next {
+	from {
+		opacity: 1;
+		transform: translateZ(0px);
+	}
+	50% {
+		opacity: 0;
+	}
+	to {
+		opacity: 0;
+		transform: translateZ(-150px);
+	}
+}
+@keyframes f7-dive-current-to-prev {
+	from {
+		transform: translateZ(0px);
+		opacity: 1;
+	}
+	50% {
+		opacity: 0;
+	}
+	to {
+		opacity: 0;
+		transform: translateZ(150px);
+	}
+}
+@keyframes f7-dive-prev-to-current {
+	from {
+		opacity: 0;
+		transform: translateZ(150px);
+	}
+	50% {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+		transform: translateZ(0px);
+	}
+}
+
+/* ===================== FLIP ===================== */
+html.flip::view-transition-old(content),
+html.flip::view-transition-new(content) {
+	backface-visibility: hidden;
+}
+html.flip.forward::view-transition-old(content) {
+	animation: f7-flip-current-to-prev 600ms both;
+}
+html.flip.forward::view-transition-new(content) {
+	animation: f7-flip-next-to-current 600ms both;
+}
+html.flip.backward::view-transition-old(content) {
+	animation: f7-flip-current-to-next 600ms both;
+}
+html.flip.backward::view-transition-new(content) {
+	animation: f7-flip-prev-to-current 600ms both;
+}
+@keyframes f7-flip-next-to-current {
+	from {
+		border-radius: 32px;
+		transform: translateZ(-100vmax) rotateY(180deg);
+	}
+	to {
+		border-radius: 0;
+		transform: translateZ(0px) rotateY(0deg);
+	}
+}
+@keyframes f7-flip-current-to-next {
+	from {
+		border-radius: 0px;
+		transform: translateZ(0px) rotateY(0deg);
+	}
+	to {
+		border-radius: 32px;
+		transform: translateZ(-100vmax) rotateY(180deg);
+	}
+}
+@keyframes f7-flip-current-to-prev {
+	from {
+		border-radius: 0px;
+		transform: translateZ(0px) rotateY(0deg);
+	}
+	to {
+		border-radius: 32px;
+		transform: translateZ(-100vmax) rotateY(-180deg);
+	}
+}
+@keyframes f7-flip-prev-to-current {
+	from {
+		border-radius: 32px;
+		transform: translateZ(-100vmax) rotateY(-180deg);
+	}
+	to {
+		border-radius: 0px;
+		transform: translateZ(0px) rotateY(0deg);
+	}
+}
+
+/* ===================== CIRCLE ===================== */
+html.circle.forward::view-transition-old(content) {
+	animation: none;
+}
+html.circle.forward::view-transition-new(content) {
+	animation: f7-circle-reveal-in 550ms both;
+}
+html.circle.backward::view-transition-old(content) {
+	animation: f7-circle-reveal-out 550ms both;
+}
+html.circle.backward::view-transition-new(content) {
+	animation: none;
+}
+@keyframes f7-circle-reveal-in {
+	from {
+		clip-path: circle(0% at 50% 50%);
+		transform: scale(0.9);
+	}
+	40% {
+		clip-path: circle(56% at 50% 50%);
+		transform: scale(1.035);
+	}
+	to {
+		clip-path: circle(150% at 50% 50%);
+		transform: scale(1);
+	}
+}
+@keyframes f7-circle-reveal-out {
+	from {
+		clip-path: circle(150% at 50% 50%);
+		transform: scale(1);
+	}
+	34% {
+		transform: scale(1.035);
+	}
+	57% {
+		clip-path: circle(56% at 50% 50%);
+		transform: scale(0.9);
+	}
+	to {
+		clip-path: circle(0% at 50% 50%);
+		transform: scale(0.9);
+	}
+}
+
+/* Override global de duración y easing para todas las transiciones de página.
+   Sin !important el navegador ignora el cambio porque sus animaciones inline
+   tienen mayor especificidad. */
+::view-transition-old(content),
+::view-transition-new(content) {
+	animation-duration: var(--flow3-duration) !important;
+	animation-timing-function: var(--flow3-ease) !important;
+}
+
+/* Respeta prefers-reduced-motion. */
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-old(content),
+	::view-transition-new(content) {
+		animation: f7-fade-out 150ms both !important;
+	}
+	::view-transition-new(content) {
+		animation-name: f7-fade-in !important;
+	}
+}
