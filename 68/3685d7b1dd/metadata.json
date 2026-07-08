@@ -3,7 +3,7 @@
   "checkpoint_id": "683685d7b1dd",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 4,
+  "checkpoints_count": 5,
   "files_touched": [
     "src/lib/tps/components/app-sidebar.svelte",
     "src/routes/(svgl-layout)/flow3/preview-02/+page.svelte",
@@ -21,6 +21,12 @@
       "transcript": "/68/3685d7b1dd/1/full.jsonl",
       "content_hash": "/68/3685d7b1dd/1/content_hash.txt",
       "prompt": "/68/3685d7b1dd/1/prompt.txt"
+    },
+    {
+      "metadata": "/68/3685d7b1dd/2/metadata.json",
+      "transcript": "/68/3685d7b1dd/2/full.jsonl",
+      "content_hash": "/68/3685d7b1dd/2/content_hash.txt",
+      "prompt": "/68/3685d7b1dd/2/prompt.txt"
     }
   ],
   "token_usage": {
