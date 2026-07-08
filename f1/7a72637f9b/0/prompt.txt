@@ -1,0 +1,61 @@
+crea una ruta /flow3 en ese flow 3 cada pagina define su transicion y con esa entra y con esa se va. 
+
+arriba aparece el titulo de la animacion y abajo un grid con link a otra pagian que tiene definido otra transicion, debe ser una pagina por transicion. pero lo que quiero nes que la configuracion de la transicion viva dentro de la pagina. y que se siga poder usando el goto y href normal de sveltekit. sin alterar nada
+
+---
+
+usa componentes del skill shadcn-svelte, debe seguir el desin system y nuestros componentes
+
+---
+
+al lado del title pon el icono de la trasicion de la pagina
+
+---
+
+podrias hacer que el icono del elemento que se acaba de dar click haga transicion a colocarse en el icono del titulo. la transicion de la pagianocurre y la transicion del icono tambien ocurre entre paginas.
+
+---
+
+deben ser del mismo color y estan encapsulados sobre fondo de disticolo color tailwind cada uno. 
+
+la transicion debe de respetarse al nevegar de regreso tambien
+
+---
+
+donde se edita la duracion y el timin function, al cambiar estos valores no veo ningun efecto
+
+---
+
+cambia la duracion de las animaciones las lento y ponle un animation function de rebote
+
+---
+
+cambia la duracion de las transiciones entre paginas mas lento y ponle un animation function de rebote
+
+---
+
+mueve todo esto a cada pagina
+
+---
+
+Try Again
+
+---
+
+simula que esta ruta tardo 1 segundo en cargar
+
+---
+
+simula que esta ruta tardo 1 segundo en cargar desde un +page.js
+
+---
+
+Try Again
+
+---
+
+simula que esta ruta tardo 1 segundo en cargar desde un +page.js
+
+---
+
+la ruta pa podemos sacar de page store?
