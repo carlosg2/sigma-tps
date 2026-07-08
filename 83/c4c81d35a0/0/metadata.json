@@ -1,0 +1,69 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "83c4c81d35a0",
+  "session_id": "285551fe-8136-497a-be73-49feddec3da6",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-08T18:32:34.411364Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/routes/(svgl-layout)/flow3/+layout.svelte",
+    "src/routes/(svgl-layout)/flow3/Flow3Page.svelte",
+    "src/routes/(svgl-layout)/flow3/circle/+page.svelte",
+    "src/routes/(svgl-layout)/flow3/cover/+page.svelte",
+    "src/routes/(svgl-layout)/flow3/flow3-nav.ts",
+    "src/routes/(svgl-layout)/flow3/transitions.css"
+  ],
+  "agent": "Copilot CLI",
+  "model": "",
+  "turn_id": "394e725bd701",
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-08T18:32:34.408103Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 20,
+    "total_committed": 0,
+    "total_lines_changed": 20,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 151,
+      "user_lines_removed": 20,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "src/routes/(svgl-layout)/flow3/+layout.svelte": 1,
+        "src/routes/(svgl-layout)/flow3/Flow3Page.svelte": 10,
+        "src/routes/(svgl-layout)/flow3/android-fade-rtl/+page.svelte": 10,
+        "src/routes/(svgl-layout)/flow3/android-fade/+page.svelte": 10,
+        "src/routes/(svgl-layout)/flow3/circle/+page.svelte": 2,
+        "src/routes/(svgl-layout)/flow3/flow3-nav.ts": 3,
+        "src/routes/(svgl-layout)/flow3/transitions.css": 115
+      },
+      "user_removed_per_file": {
+        "src/routes/(svgl-layout)/flow3/+layout.svelte": 7,
+        "src/routes/(svgl-layout)/flow3/Flow3Page.svelte": 3,
+        "src/routes/(svgl-layout)/flow3/circle/+page.svelte": 2,
+        "src/routes/(svgl-layout)/flow3/cover/+page.svelte": 2,
+        "src/routes/(svgl-layout)/flow3/flow3-nav.ts": 1,
+        "src/routes/(svgl-layout)/flow3/transitions.css": 5
+      }
+    }
+  ]
+}
