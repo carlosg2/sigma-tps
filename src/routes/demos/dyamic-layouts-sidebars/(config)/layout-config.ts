@@ -90,7 +90,7 @@ export const presets = [
 ] as const;
 
 export type Canonical = {
-	id: "list-detail" | "supporting" | "feed" | "dynamic-page";
+	id: "list-detail" | "supporting" | "feed" | "dynamic-page" | "object-page";
 	label: string;
 	href: string;
 	badge: string;
@@ -148,6 +148,19 @@ export const canonicals: Canonical[] = [
 			hugeicons: "SparklesIcon",
 			phosphor: "SparkleIcon",
 			remixicon: "RiSparklingLine",
+		},
+	},
+	{
+		id: "object-page",
+		label: "Object page",
+		href: `${BASE}/object-page`,
+		badge: "",
+		icon: {
+			lucide: "FileTextIcon",
+			tabler: "IconFileText",
+			hugeicons: "File02Icon",
+			phosphor: "FileTextIcon",
+			remixicon: "RiFileTextLine",
 		},
 	},
 ];

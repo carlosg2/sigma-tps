@@ -116,13 +116,13 @@
 <svelte:window onscroll={onScroll} />
 
 <div
-	class="dyn p-4 md:p-6"
+	class="dyn "
 	class:manual-expanded={manualExpanded}
 	class:no-sda={!sda}
 	bind:this={root}
 >
 	<header
-		class="header-card bg-card sticky top-16 z-10 mb-4 overflow-hidden rounded-2xl border shadow-lg"
+		class="header-card backdrop-blur-xl sticky top-16 z-10 mb-4 overflow-hidden border-b"
 		bind:this={headerEl}
 	>
 		<div class="grid h-full grid-rows-[auto_1fr_auto] gap-2 p-4">
@@ -170,7 +170,7 @@
 		</div>
 	</header>
 
-	<main>
+	<main class=" p-4 md:p-6">
 		<div class="text-muted-foreground mx-1 mb-2.5 text-sm font-semibold">Detalle</div>
 		<div class="grid gap-2.5">
 			{#each items as i (i)}
@@ -192,7 +192,7 @@
 	.dyn {
 		--expanded: 280px;
 		--collapsed: 64px;
-		--collapse-range: 140px;
+		--collapse-range: 200px;
 	}
 
 	/* Altura base (estado expandido). El padding es FIJO (no salta). */
@@ -259,6 +259,7 @@
 		transition:
 			opacity 120ms linear,
 			transform 120ms linear;
+			
 	}
 
 	@media (prefers-reduced-motion: reduce) {

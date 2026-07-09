@@ -38,6 +38,18 @@
 	import KeyRound from '@lucide/svelte/icons/key-round';
 	import FileText from '@lucide/svelte/icons/file-text';
 	import ShieldCheck from '@lucide/svelte/icons/shield-check';
+	import TrendingUp from '@lucide/svelte/icons/trending-up';
+	import FileSearch from '@lucide/svelte/icons/file-search';
+	import ShieldAlert from '@lucide/svelte/icons/shield-alert';
+	import CalendarDays from '@lucide/svelte/icons/calendar-days';
+	import AlertTriangle from '@lucide/svelte/icons/triangle-alert';
+	import BarChart2 from '@lucide/svelte/icons/bar-chart-2';
+	import Globe from '@lucide/svelte/icons/globe';
+	import Tablet from '@lucide/svelte/icons/tablet';
+	import Scissors from '@lucide/svelte/icons/scissors';
+	import MapPin from '@lucide/svelte/icons/map-pin';
+	import Trophy from '@lucide/svelte/icons/trophy';
+	import Wrench from '@lucide/svelte/icons/wrench';
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 
@@ -118,6 +130,64 @@
 				{ label: 'Cotizador', href: '/rentas/cotizador', icon: FileText },
 				{ label: 'Cotizaciones', href: '/rentas/cotizaciones', icon: ClipboardList },
 				{ label: 'Compliance', href: '/rentas/compliance', icon: ShieldCheck }
+			]
+		},
+		{
+			label: 'Ventas',
+			items: [
+				{ label: 'Dashboard', href: '/ventas', icon: FileText },
+				{ label: 'Cotizador', href: '/ventas/cotizador', icon: FileText },
+				{ label: 'Factibilidad Técnica', href: '/ventas/factibilidad', icon: ShieldCheck },
+				{ label: 'Confirmación Entrega', href: '/ventas/entrega', icon: MapPin }
+			]
+		},
+		{
+			label: 'Producción',
+			items: [
+				{ label: 'Dashboard', href: '/produccion', icon: LayoutDashboard },
+				{ label: 'Kiosco 3 Toques', href: '/produccion/kiosco', icon: Tablet },
+				{ label: 'Control Nesting', href: '/produccion/nesting', icon: Scissors }
+			]
+		},
+		{
+			label: 'Planeación',
+			items: [
+				{ label: 'Dashboard', href: '/planeacion', icon: BarChart2 },
+				{ label: 'Portal MRP', href: '/planeacion/mrp', icon: BarChart2 },
+				{ label: 'Multi-Planta', href: '/planeacion/multi-planta', icon: Globe },
+				{ label: 'Cargas de Trabajo', href: '/planeacion/cargas', icon: Users }
+			]
+		},
+		{
+			label: 'Taller',
+			items: [
+				{ label: 'Dashboard', href: '/taller', icon: Wrench },
+				{ label: 'Agenda de Servicio', href: '/taller/agenda', icon: CalendarDays },
+				{ label: 'Recepción Vehículo', href: '/taller/recepcion', icon: ClipboardCheck },
+				{ label: 'Bifurcación Siniestros', href: '/taller/siniestros', icon: AlertTriangle }
+			]
+		},
+		{
+			label: 'Calidad',
+			items: [
+				{ label: 'Dashboard', href: '/calidad', icon: ClipboardCheck },
+				{ label: 'Inspección Producción', href: '/calidad/inspeccion', icon: ClipboardCheck },
+				{ label: 'Check-out/Check-in', href: '/calidad/checkout-rentas', icon: Car },
+				{ label: 'KPIs Calidad Rentas', href: '/calidad/kpis', icon: TrendingUp }
+			]
+		},
+		{
+			label: 'Contabilidad',
+			items: [
+				{ label: 'Dashboard', href: '/contabilidad', icon: TrendingUp },
+				{ label: 'Estados de Resultados', href: '/contabilidad/estados-resultados', icon: TrendingUp },
+				{ label: 'Compulsa SAT', href: '/contabilidad/compulsa-sat', icon: FileSearch }
+			]
+		},
+		{
+			label: 'Garantías',
+			items: [
+				{ label: 'Scorecard', href: '/garantias', icon: Trophy }
 			]
 		},
 		{
