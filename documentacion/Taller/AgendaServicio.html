@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal Agenda de Servicio | Blindados Premium</title>
+<style>
+:root {
+  --bg:        #070b14;
+  --srf:       #0f1623;
+  --srf2:      #161e2e;
+  --srf3:      #1e293b;
+  --brd:       #2d3a50;
+  --brd2:      #374151;
+  --gold:      #c9a84c;
+  --goldL:     #e8c76a;
+  --goldD:     rgba(201,168,76,.15);
+  --txt:       #f1f5f9;
+  --txt2:      #94a3b8;
+  --txt3:      #64748b;
+  --ok:        #10b981;
+  --warn:      #f59e0b;
+  --err:       #ef4444;
+  --info:      #6366f1;
+  --blue:      #3b82f6;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;font-size:13px;overflow:hidden}
+
+/* ── HEADER ─────────────────────────────────────────── */
+.hdr{background:var(--srf);border-bottom:1px solid var(--brd);padding:0 20px;height:58px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:14px;color:var(--gold);letter-spacing:.4px;white-space:nowrap}
+.logo-ico{width:30px;height:30px;background:var(--goldD);border:1px solid var(--gold);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.hdiv{width:1px;height:28px;background:var(--brd)}
+.branch-sel{display:flex;align-items:center;gap:8px;background:var(--srf2);border:1px solid var(--brd);border-radius:8px;padding:6px 10px;cursor:pointer;transition:border-color .2s}
+.branch-sel:hover{border-color:var(--gold)}
+.branch-sel label{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;cursor:pointer}
+.branch-sel select{background:transparent;border:none;color:var(--txt);font-size:13px;cursor:pointer;outline:none;font-weight:700}
+.branch-sel select option{background:var(--srf2)}
+.date-nav{display:flex;align-items:center;gap:6px}
+.dn-btn{background:var(--srf2);border:1px solid var(--brd);color:var(--txt);width:28px;height:28px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:13px;flex-shrink:0}
+.dn-btn:hover{border-color:var(--gold);background:var(--goldD)}
+.dn-label{font-size:13px;font-weight:700;color:var(--txt);min-width:170px;text-align:center}
+.dn-today{background:var(--srf2);border:1px solid var(--brd);color:var(--txt2);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all .2s;white-space:nowrap}
+.dn-today:hover{border-color:var(--gold);color:var(--gold)}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.btn-prime{background:var(--gold);color:#070b14;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:800;font-size:12px;display:flex;align-items:center;gap:6px;transition:all .2s;white-space:nowrap}
+.btn-prime:hover{background:var(--goldL);transform:translateY(-1px)}
+.notif-btn{position:relative;background:var(--srf2);border:1px solid var(--brd);color:var(--txt2);width:34px;height:34px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;flex-shrink:0}
+.notif-btn:hover{border-color:var(--gold);color:var(--gold)}
+.nbadge{position:absolute;top:3px;right:3px;background:var(--err);color:#fff;font-size:9px;font-weight:800;width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+/* ── MAIN LAYOUT ─────────────────────────────────────── */
+.layout{display:flex;height:calc(100vh - 58px);overflow:hidden}
+.sidebar{width:200px;background:var(--srf);border-right:1px solid var(--brd);padding:14px 10px;flex-shrink:0;overflow-y:auto}
+.sb-lbl{font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;padding:0 6px;margin-bottom:6px;margin-top:14px}
+.sb-lbl:first-child{margin-top:0}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--txt2);transition:all .2s;font-size:12.5px;font-weight:500;margin-bottom:1px;border:1px solid transparent}
+.sb-item:hover{background:var(--srf2);color:var(--txt)}
+.sb-item.active{background:var(--goldD);color:var(--gold);border-color:rgba(201,168,76,.3);font-weight:700}
+.sb-icon{font-size:15px;width:18px;text-align:center}
+.sb-badge{margin-left:auto;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px}
+.sb-badge.err{background:var(--err);color:#fff}
+.sb-badge.warn{background:var(--warn);color:#070b14}
+.sb-badge.ok{background:var(--ok);color:#fff}
+
+/* ── CONTENT ─────────────────────────────────────────── */
+.content{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── STATS STRIP ─────────────────────────────────────── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);background:var(--brd);gap:1px;border-bottom:1px solid var(--brd);flex-shrink:0}
+.stat{background:var(--srf);padding:12px 18px}
+.stat-val{font-size:22px;font-weight:900}
+.stat-lbl{font-size:11px;color:var(--txt3);margin-top:1px}
+.stat-note{font-size:11px;margin-top:3px}
+.up{color:var(--ok)}.dn{color:var(--err)}.wn{color:var(--warn)}
+
+/* ── VIEW TABS ───────────────────────────────────────── */
+.vtabs{display:flex;align-items:center;gap:2px;padding:10px 18px;border-bottom:1px solid var(--brd);background:var(--srf);flex-shrink:0}
+.vtab{padding:6px 14px;border-radius:6px;cursor:pointer;color:var(--txt3);font-size:12.5px;font-weight:500;border:1px solid transparent;transition:all .2s}
+.vtab:hover{color:var(--txt);background:var(--srf2)}
+.vtab.active{color:var(--gold);background:var(--goldD);border-color:rgba(201,168,76,.3);font-weight:700}
+
+/* ── PANEL VIEWS ─────────────────────────────────────── */
+.panel{flex:1;overflow-y:auto;overflow-x:hidden}
+.panel.hidden{display:none!important}
+
+/* ── CALENDAR ────────────────────────────────────────── */
+.cal-wrap{padding:0}
+
+/* Day view */
+.day-grid{display:grid;grid-template-columns:54px 1fr}
+.tc{}.ts{height:62px;display:flex;align-items:flex-start;padding-top:3px;font-size:10px;color:var(--txt3);padding-right:8px;text-align:right}
+.ac{border-left:1px solid var(--brd);position:relative;min-height:calc(13*62px)}
+.as{height:62px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .15s}
+.as:hover{background:rgba(255,255,255,.025)}
+.appt{position:absolute;left:6px;right:6px;border-radius:7px;padding:5px 9px;cursor:pointer;z-index:2;transition:all .2s;border-left:3px solid}
+.appt:hover{filter:brightness(1.12);transform:translateX(2px)}
+.a-time{font-size:9px;font-weight:700;opacity:.75}
+.a-title{font-size:11.5px;font-weight:700;margin-top:1px}
+.a-sub{font-size:10px;opacity:.7;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.a-lvl{font-size:8.5px;font-weight:800;margin-top:3px;padding:1px 5px;border-radius:3px;display:inline-block;background:rgba(0,0,0,.35)}
+.c-vr9{background:rgba(99,102,241,.22);border-color:#6366f1}
+.c-vr7{background:rgba(201,168,76,.2);border-color:var(--gold)}
+.c-vr6{background:rgba(59,130,246,.2);border-color:var(--blue)}
+.c-b6{background:rgba(16,185,129,.2);border-color:var(--ok)}
+.c-mnt{background:rgba(245,158,11,.2);border-color:var(--warn)}
+
+/* Week view */
+.wk-wrap{padding:0}
+.wk-hdr{display:grid;grid-template-columns:54px repeat(7,1fr);border-bottom:1px solid var(--brd);padding-bottom:8px;padding-top:10px;background:var(--srf);position:sticky;top:0;z-index:5}
+.wkdh{text-align:center;padding:4px}
+.wkdn{font-size:10px;color:var(--txt3);font-weight:700;text-transform:uppercase}
+.wknum{font-size:20px;font-weight:900;color:var(--txt);line-height:1.1}
+.wknum.today{color:var(--gold)}
+.wk-body{display:grid;grid-template-columns:54px repeat(7,1fr)}
+.wkts{height:48px;display:flex;align-items:flex-start;padding-top:2px;font-size:10px;color:var(--txt3);padding-right:8px;text-align:right}
+.wkc{height:48px;border-left:1px solid var(--brd);border-bottom:1px solid rgba(255,255,255,.04);position:relative;padding:2px 3px;cursor:pointer;transition:background .15s}
+.wkc:hover{background:rgba(255,255,255,.025)}
+.wka{border-radius:3px;padding:2px 5px;font-size:9.5px;font-weight:700;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px}
+.wka:hover{filter:brightness(1.15)}
+
+/* Month view */
+.mo-hdr{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--brd)}
+.mo-dn{text-align:center;font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;padding:10px 4px}
+.mo-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--brd)}
+.mo-cell{background:var(--srf);min-height:96px;padding:8px;cursor:pointer;transition:background .15s}
+.mo-cell:hover{background:var(--srf2)}
+.mo-cell.other{opacity:.28}
+.mo-cell.today{background:rgba(201,168,76,.07)}
+.mo-cell .mdn{font-size:11px;font-weight:800;color:var(--txt2);margin-bottom:4px}
+.mo-cell.today .mdn{color:var(--gold)}
+.mo-dot{width:100%;padding:2px 5px;border-radius:3px;font-size:9.5px;font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mo-more{font-size:9px;color:var(--txt3);cursor:pointer}
+.mo-more:hover{color:var(--gold)}
+
+/* ── BAY VIEW ────────────────────────────────────────── */
+.bays-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;padding:18px}
+.bay-card{background:var(--srf);border:1px solid var(--brd);border-radius:12px;padding:16px;transition:border-color .2s}
+.bay-card:hover{border-color:var(--gold)}
+.bay-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.bay-name{font-size:14px;font-weight:800}
+.bay-num{font-size:10px;color:var(--txt3);margin-top:1px}
+.bay-st{font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:10px}
+.st-ok{background:rgba(16,185,129,.12);color:var(--ok);border:1px solid rgba(16,185,129,.3)}
+.st-err{background:rgba(239,68,68,.12);color:var(--err);border:1px solid rgba(239,68,68,.3)}
+.st-warn{background:rgba(245,158,11,.12);color:var(--warn);border:1px solid rgba(245,158,11,.3)}
+.bay-tech{font-size:11.5px;color:var(--txt2);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.t-av{width:24px;height:24px;background:var(--srf3);border:1px solid var(--brd);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:var(--gold);flex-shrink:0}
+.cap-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);margin-bottom:4px}
+.cap-bar{height:5px;background:var(--srf3);border-radius:3px;overflow:hidden;margin-bottom:10px}
+.cap-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.fill-g{background:linear-gradient(90deg,var(--ok),#34d399)}
+.fill-y{background:linear-gradient(90deg,var(--warn),#fcd34d)}
+.fill-r{background:linear-gradient(90deg,var(--err),#f87171)}
+.bay-apts{border-top:1px solid var(--brd);padding-top:10px;margin-top:2px}
+.bay-apt{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;margin-bottom:3px;background:var(--srf2);cursor:pointer;transition:background .2s}
+.bay-apt:hover{background:var(--srf3)}
+.ba-time{font-size:9px;font-weight:800;color:var(--txt3);width:38px;flex-shrink:0}
+.ba-info{flex:1;min-width:0}
+.ba-mod{font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ba-svc{font-size:9.5px;color:var(--txt3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ba-lvl{font-size:8.5px;font-weight:800;padding:1px 5px;border-radius:3px;flex-shrink:0;background:var(--goldD);color:var(--gold)}
+
+/* ── MULTI-BRANCH VIEW ───────────────────────────────── */
+.multi-wrap{padding:18px}
+.multi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.br-card{background:var(--srf);border:1px solid var(--brd);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s}
+.br-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.br-hdr{padding:16px;border-bottom:1px solid var(--brd);display:flex;align-items:flex-start;justify-content:space-between}
+.br-name{font-size:15px;font-weight:800}
+.br-city{font-size:10px;color:var(--txt3);margin-top:2px}
+.br-load{font-size:26px;font-weight:900}
+.br-load.hi{color:var(--err)}.br-load.md{color:var(--warn)}.br-load.lo{color:var(--ok)}
+.br-body{padding:14px}
+.br-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--brd)}
+.br-row:last-child{border-bottom:none}
+.br-rlbl{font-size:11.5px;color:var(--txt2)}
+.br-rval{font-size:13px;font-weight:800}
+.br-action{display:block;text-align:center;padding:10px;border-top:1px solid var(--brd);font-size:11px;font-weight:700;color:var(--gold);cursor:pointer;transition:background .2s}
+.br-action:hover{background:var(--goldD)}
+
+/* ── ALERTS VIEW ─────────────────────────────────────── */
+.alerts-wrap{padding:18px}
+.alert-filters{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
+.af-btn{padding:5px 14px;border-radius:20px;border:1px solid var(--brd);background:var(--srf);color:var(--txt2);cursor:pointer;font-size:11.5px;font-weight:500;transition:all .2s}
+.af-btn:hover{border-color:var(--gold);color:var(--gold)}
+.af-btn.active{background:var(--goldD);border-color:rgba(201,168,76,.5);color:var(--gold);font-weight:700}
+.al-tbl{background:var(--srf);border:1px solid var(--brd);border-radius:12px;overflow:hidden}
+.al-head{display:grid;grid-template-columns:2fr 2fr 1.6fr 1fr 90px 110px;padding:9px 14px;background:var(--srf2);border-bottom:1px solid var(--brd)}
+.th{font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px}
+.al-row{display:grid;grid-template-columns:2fr 2fr 1.6fr 1fr 90px 110px;padding:11px 14px;border-bottom:1px solid var(--brd);align-items:center;cursor:pointer;transition:background .15s}
+.al-row:last-child{border-bottom:none}
+.al-row:hover{background:var(--srf2)}
+.av-brand{font-size:13px;font-weight:800}
+.av-vin{font-size:9.5px;color:var(--txt3);font-family:monospace;margin-top:1px}
+.al-cli{font-size:11.5px;color:var(--txt2)}
+.al-svc{font-size:11.5px}
+.km-cur{font-size:13px;font-weight:800}
+.km-thr{font-size:9px;color:var(--txt3)}
+.km-bar{height:4px;background:var(--srf3);border-radius:2px;margin-top:4px;width:70px;overflow:hidden}
+.km-f{height:100%;border-radius:2px}
+.urg-badge{font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:10px;display:inline-block}
+.u-crit{background:rgba(239,68,68,.12);color:var(--err);border:1px solid rgba(239,68,68,.3)}
+.u-high{background:rgba(245,158,11,.12);color:var(--warn);border:1px solid rgba(245,158,11,.3)}
+.u-norm{background:rgba(16,185,129,.12);color:var(--ok);border:1px solid rgba(16,185,129,.3)}
+.ag-btn{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700;transition:all .2s;white-space:nowrap}
+.ag-btn:hover{background:var(--goldD)}
+
+/* ── MODAL ───────────────────────────────────────────── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(4px)}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--srf);border:1px solid var(--brd);border-radius:16px;width:620px;max-height:90vh;overflow-y:auto;transform:translateY(20px);transition:transform .2s}
+.overlay.open .modal{transform:translateY(0)}
+.modal.sm{width:540px}
+.modal.lg{width:680px}
+.m-hdr{padding:18px 22px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--srf);z-index:1}
+.m-title{font-size:15px;font-weight:800}
+.m-close{background:var(--srf2);border:1px solid var(--brd);color:var(--txt2);width:30px;height:30px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s}
+.m-close:hover{border-color:var(--err);color:var(--err)}
+.m-body{padding:22px}
+.m-ftr{padding:14px 22px;border-top:1px solid var(--brd);display:flex;gap:8px;justify-content:flex-end;background:var(--srf);position:sticky;bottom:0}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.fg{margin-bottom:14px}
+.flbl{font-size:10.5px;font-weight:700;color:var(--txt2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.4px}
+.fc{width:100%;background:var(--srf2);border:1px solid var(--brd);color:var(--txt);padding:8px 11px;border-radius:8px;font-size:12.5px;outline:none;transition:border-color .2s}
+.fc:focus{border-color:var(--gold)}
+.fc::placeholder{color:var(--txt3)}
+select.fc{cursor:pointer}
+.vin-wrap{position:relative}
+.vin-go{position:absolute;right:4px;top:4px;background:var(--gold);border:none;color:#070b14;padding:5px 10px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:800;transition:background .2s}
+.vin-go:hover{background:var(--goldL)}
+.veh-card{background:var(--srf2);border:1px solid var(--gold);border-radius:10px;padding:13px;margin-bottom:14px;display:none;animation:fi .25s ease}
+.veh-card.show{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.vc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.vc-model{font-size:14px;font-weight:800}
+.vc-lvl{font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:var(--goldD);color:var(--gold);border:1px solid rgba(201,168,76,.4)}
+.vc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.vc-i label{font-size:9.5px;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;display:block}
+.vc-i span{font-size:12px;font-weight:700;color:var(--txt)}
+.slots-section{margin-bottom:14px}
+.slots-hdr{font-size:10.5px;font-weight:700;color:var(--txt2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:6px}
+.slots-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.slot-btn{background:var(--srf2);border:1px solid var(--brd);color:var(--txt);padding:8px 4px;border-radius:7px;cursor:pointer;text-align:center;font-size:11px;font-weight:700;transition:all .2s}
+.slot-btn:hover{border-color:var(--gold);background:var(--goldD);color:var(--gold)}
+.slot-btn.sel{border-color:var(--gold);background:var(--goldD);color:var(--gold)}
+.slot-btn.na{opacity:.3;cursor:not-allowed;text-decoration:line-through}
+.slot-sub{font-size:9px;color:var(--txt3);margin-top:1px}
+.slot-btn.sel .slot-sub{color:var(--gold)}
+
+/* Detail modal */
+.dm-badges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.dm-b{font-size:10px;font-weight:800;padding:3px 9px;border-radius:6px}
+.dm-sec{margin-bottom:14px}
+.dm-sec-title{font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--brd)}
+.dm-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dm-f label{font-size:9.5px;color:var(--txt3);text-transform:uppercase;display:block;margin-bottom:2px}
+.dm-f span{font-size:12.5px;font-weight:700}
+.dm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dm-act{padding:9px;border-radius:8px;cursor:pointer;font-size:11.5px;font-weight:700;border:1px solid var(--brd);background:var(--srf2);color:var(--txt2);transition:all .2s;text-align:center}
+.dm-act:hover{border-color:var(--gold);color:var(--gold);background:var(--goldD)}
+.dm-act.danger:hover{border-color:var(--err);color:var(--err);background:rgba(239,68,68,.08)}
+.dm-act.primary{background:var(--goldD);border-color:rgba(201,168,76,.4);color:var(--gold)}
+.dm-act.primary:hover{background:var(--gold);color:#070b14}
+
+/* ── NOTIF PANEL ─────────────────────────────────────── */
+.np{position:fixed;top:58px;right:0;width:340px;background:var(--srf);border-left:1px solid var(--brd);border-bottom:1px solid var(--brd);border-bottom-left-radius:12px;max-height:calc(100vh - 58px);overflow-y:auto;z-index:200;transform:translateX(100%);transition:transform .25s ease}
+.np.open{transform:translateX(0)}
+.np-hdr{padding:14px 16px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between}
+.np-title{font-size:13px;font-weight:800}
+.np-mark{font-size:11px;color:var(--gold);cursor:pointer;background:none;border:none}
+.np-mark:hover{text-decoration:underline}
+.ni{padding:12px 16px;border-bottom:1px solid var(--brd);cursor:pointer;transition:background .15s;display:flex;gap:10px;align-items:flex-start}
+.ni:hover{background:var(--srf2)}
+.ni.unread{background:rgba(201,168,76,.04)}
+.ni-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:4px}
+.ni-dot.rd{background:transparent;border:1px solid var(--brd)}
+.ni-txt .nt{font-size:11.5px;font-weight:600}
+.ni-txt .ns{font-size:10.5px;color:var(--txt3);margin-top:2px}
+.ni-time{font-size:9.5px;color:var(--txt3);white-space:nowrap;margin-left:auto;flex-shrink:0}
+
+/* ── BTN SECONDARY ───────────────────────────────────── */
+.btn-sec{background:var(--srf2);border:1px solid var(--brd);color:var(--txt2);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:700;transition:all .2s}
+.btn-sec:hover{border-color:var(--txt2);color:var(--txt)}
+
+/* ── TOAST ───────────────────────────────────────────── */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--srf);border:1px solid var(--gold);border-radius:10px;padding:12px 16px;font-size:12.5px;font-weight:700;z-index:2000;transform:translateY(100px);opacity:0;transition:all .3s ease;display:flex;align-items:center;gap:8px;max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok-t{border-color:var(--ok)}
+.toast.err-t{border-color:var(--err)}
+.toast.warn-t{border-color:var(--warn)}
+
+/* Config day toggle */
+.cfg-day{display:inline-flex;align-items:center;justify-content:center;width:38px;height:32px;border-radius:7px;border:1px solid var(--brd);background:var(--srf2);color:var(--txt2);cursor:pointer;font-size:12px;font-weight:700;transition:all .2s;user-select:none}
+.cfg-day.active{background:var(--goldD);border-color:rgba(201,168,76,.5);color:var(--gold)}
+/* Toggle switch */
+.toggle{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.tslide{position:absolute;cursor:pointer;inset:0;background:var(--srf3);border-radius:22px;transition:.3s;border:1px solid var(--brd)}
+.tslide:before{content:'';position:absolute;width:16px;height:16px;left:2px;bottom:2px;background:var(--txt3);border-radius:50%;transition:.3s}
+.toggle input:checked+.tslide{background:var(--goldD);border-color:var(--gold)}
+.toggle input:checked+.tslide:before{transform:translateX(18px);background:var(--gold)}
+.cfg-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--srf2);border-radius:8px;border:1px solid var(--brd);font-size:12.5px;color:var(--txt2)}
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--brd);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--txt3)}
+
+/* Section label */
+.sec-label{font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;padding:12px 18px 4px;border-bottom:1px solid var(--brd)}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="logo">
+    <div class="logo-ico">🛡</div>
+    <span>Blindados&nbsp;Premium&nbsp;<span style="color:var(--txt3);font-weight:400">|</span>&nbsp;Taller</span>
+  </div>
+  <div class="hdiv"></div>
+  <div class="branch-sel">
+    <label for="branchSel">Sucursal</label>
+    <select id="branchSel" onchange="setBranch(this.value)">
+      <option value="MTY">MTY — Monterrey</option>
+      <option value="CDMX">CDMX — Ciudad de México</option>
+      <option value="GDL">GDL — Guadalajara</option>
+      <option value="CUN">CUN — Cancún</option>
+      <option value="HMO">HMO — Hermosillo</option>
+    </select>
+  </div>
+  <div class="hdiv"></div>
+  <div class="date-nav">
+    <button class="dn-btn" onclick="navDate(-1)" title="Anterior">&#8249;</button>
+    <button class="dn-today" onclick="goToday()">Hoy</button>
+    <span class="dn-label" id="dnLabel"></span>
+    <button class="dn-btn" onclick="navDate(1)" title="Siguiente">&#8250;</button>
+  </div>
+  <div class="hdr-right">
+    <button class="btn-prime" onclick="openNewAppt()">&#43;&nbsp;Nueva Cita</button>
+    <button class="notif-btn" onclick="toggleNotif()" id="notifBtn" title="Notificaciones">
+      🔔<span class="nbadge" id="nbadge">3</span>
+    </button>
+  </div>
+</header>
+
+<!-- MAIN LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sb-lbl">Principal</div>
+    <div class="sb-item active" id="sb-tablero" onclick="setView('tablero')">
+      <span class="sb-icon">📅</span>Tablero de Citas
+    </div>
+    <div class="sb-item" id="sb-bays" onclick="setView('bays')">
+      <span class="sb-icon">🏗</span>Capacidad Bahías
+    </div>
+    <div class="sb-item" id="sb-multi" onclick="setView('multi')">
+      <span class="sb-icon">🗺</span>Multi-Sucursal
+    </div>
+    <div class="sb-item" id="sb-alerts" onclick="setView('alerts')">
+      <span class="sb-icon">⚠</span>Alertas Preventivas
+      <span class="sb-badge err" id="alertBadge">3</span>
+    </div>
+    <div class="sb-lbl">Ajustes</div>
+    <div class="sb-item" onclick="openConfig()">
+      <span class="sb-icon">⚙</span>Configuración
+    </div>
+    <div class="sb-item" onclick="openBayConfig()">
+      <span class="sb-icon">🔧</span>Gestión de Bahías
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- STATS STRIP -->
+    <div class="stats" id="statsStrip"></div>
+
+    <!-- TABLERO VIEW -->
+    <div class="panel" id="panel-tablero">
+      <div class="vtabs">
+        <button class="vtab active" id="vt-dia"    onclick="setCalView('dia')">Día</button>
+        <button class="vtab"        id="vt-semana" onclick="setCalView('semana')">Semana</button>
+        <button class="vtab"        id="vt-mes"    onclick="setCalView('mes')">Mes</button>
+      </div>
+      <div class="panel" id="cal-dia"></div>
+      <div class="panel hidden" id="cal-semana"></div>
+      <div class="panel hidden" id="cal-mes"></div>
+    </div>
+
+    <!-- BAY VIEW -->
+    <div class="panel hidden" id="panel-bays">
+      <div class="sec-label" id="bays-title"></div>
+      <div class="bays-grid" id="bays-grid"></div>
+    </div>
+
+    <!-- MULTI-BRANCH VIEW -->
+    <div class="panel hidden" id="panel-multi">
+      <div class="sec-label">Vista Multi-Sucursal — Carga del día</div>
+      <div class="multi-wrap"><div class="multi-grid" id="multi-grid"></div></div>
+    </div>
+
+    <!-- ALERTS VIEW -->
+    <div class="panel hidden" id="panel-alerts">
+      <div class="sec-label">Alertas de Mantenimiento Preventivo — Basadas en kilometraje registrado</div>
+      <div class="alerts-wrap">
+        <div class="alert-filters" id="alertFilters">
+          <button class="af-btn active" onclick="setAlertFilter('todos',this)">Todos</button>
+          <button class="af-btn" onclick="setAlertFilter('critico',this)">🔴 Crítico</button>
+          <button class="af-btn" onclick="setAlertFilter('alto',this)">🟡 Alto</button>
+          <button class="af-btn" onclick="setAlertFilter('normal',this)">🟢 Normal</button>
+        </div>
+        <div class="al-tbl">
+          <div class="al-head">
+            <span class="th">Vehículo</span>
+            <span class="th">Cliente / Propietario</span>
+            <span class="th">Servicio Requerido</span>
+            <span class="th">Kilometraje</span>
+            <span class="th">Urgencia</span>
+            <span class="th">Acción</span>
+          </div>
+          <div id="alerts-body"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /layout -->
+
+<!-- NOTIFICATION PANEL -->
+<div class="np" id="notifPanel">
+  <div class="np-hdr">
+    <span class="np-title">Notificaciones</span>
+    <button class="np-mark" onclick="markAllRead()">Marcar todo como leído</button>
+  </div>
+  <div id="notifList"></div>
+</div>
+
+<!-- MODAL: NUEVA CITA -->
+<div class="overlay" id="newApptOverlay">
+  <div class="modal lg">
+    <div class="m-hdr">
+      <span class="m-title">🗓 Nueva Cita de Servicio</span>
+      <button class="m-close" onclick="closeModal('newApptOverlay')">✕</button>
+    </div>
+    <div class="m-body">
+      <!-- VIN Search -->
+      <div class="fg">
+        <label class="flbl">VIN del Vehículo</label>
+        <div class="vin-wrap">
+          <input class="fc" id="vinInput" placeholder="Ej. 1GNGK46K89R103837" maxlength="17" autocomplete="off">
+          <button class="vin-go" onclick="searchVIN()">Buscar VIN</button>
+        </div>
+        <div style="margin-top:5px;text-align:right">
+          <button type="button" onclick="openCatalog()" style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:11px;font-weight:700;padding:0">📋 Seleccionar del Catálogo de Unidades →</button>
+        </div>
+      </div>
+      <!-- Vehicle info card (hidden until VIN found) -->
+      <div class="veh-card" id="vehicleCard">
+        <div class="vc-top">
+          <div>
+            <div class="vc-model" id="vc-model"></div>
+            <div style="font-size:10px;color:var(--txt2);margin-top:2px" id="vc-client"></div>
+          </div>
+          <span class="vc-lvl" id="vc-lvl"></span>
+        </div>
+        <div class="vc-grid">
+          <div class="vc-i"><label>Año</label><span id="vc-year"></span></div>
+          <div class="vc-i"><label>Color</label><span id="vc-color"></span></div>
+          <div class="vc-i"><label>Placa</label><span id="vc-plate"></span></div>
+          <div class="vc-i"><label>Km Actuales</label><span id="vc-km"></span></div>
+          <div class="vc-i"><label>Último Servicio</label><span id="vc-last"></span></div>
+          <div class="vc-i"><label>Estatus</label><span id="vc-status" style="color:var(--ok)">Activo</span></div>
+        </div>
+      </div>
+      <!-- Form -->
+      <div class="frow">
+        <div class="fg" style="margin:0">
+          <label class="flbl">Sucursal</label>
+          <select class="fc" id="appt-branch">
+            <option value="MTY">MTY — Monterrey</option>
+            <option value="CDMX">CDMX — Ciudad de México</option>
+            <option value="GDL">GDL — Guadalajara</option>
+            <option value="CUN">CUN — Cancún</option>
+            <option value="HMO">HMO — Hermosillo</option>
+          </select>
+        </div>
+        <div class="fg" style="margin:0">
+          <label class="flbl">Tipo de Servicio</label>
+          <select class="fc" id="appt-service" onchange="renderSlots()">
+            <option value="">— Seleccionar —</option>
+            <option value="Servicio Mayor — Paquete Blindado">Servicio Mayor — Paquete Blindado</option>
+            <option value="Revisión Sistema de Blindaje VR7+">Revisión Sistema de Blindaje VR7+</option>
+            <option value="Mantenimiento Cristales Balísticos">Mantenimiento Cristales Balísticos</option>
+            <option value="Diagnóstico Electrónico Integral">Diagnóstico Electrónico Integral</option>
+            <option value="Revisión de Placas Balísticas">Revisión de Placas Balísticas</option>
+            <option value="Cambio de Aceite Sintético + Filtros Blindado">Cambio de Aceite Sintético + Filtros Blindado</option>
+            <option value="Neumáticos Run-Flat — Alineación y Balanceo">Neumáticos Run-Flat — Alineación y Balanceo</option>
+            <option value="Inspección General Nivel B6/B7">Inspección General Nivel B6/B7</option>
+            <option value="Revisión Sistema de Comunicaciones Seguras">Revisión Sistema de Comunicaciones Seguras</option>
+          </select>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg" style="margin:0">
+          <label class="flbl">Fecha Solicitada</label>
+          <input type="date" class="fc" id="appt-date" onchange="renderSlots()">
+        </div>
+        <div class="fg" style="margin:0">
+          <label class="flbl">Notas adicionales</label>
+          <input class="fc" id="appt-notes" placeholder="Observaciones del cliente...">
+        </div>
+      </div>
+      <!-- Available slots -->
+      <div class="slots-section" id="slotsSection" style="display:none">
+        <div class="slots-hdr">🕐 Horarios disponibles <span style="font-size:9px;color:var(--txt3);font-weight:400;margin-left:4px">(carga real de bahías y técnicos)</span></div>
+        <div class="slots-grid" id="slotsGrid"></div>
+      </div>
+      <!-- Assigned bay (auto) -->
+      <div id="assignedBayInfo" style="display:none;padding:10px 12px;background:var(--srf2);border:1px solid var(--brd);border-radius:8px;margin-top:6px">
+        <div style="font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Bahía / Técnico Asignado Automáticamente</div>
+        <div id="assignedBayText" style="font-size:13px;font-weight:700"></div>
+      </div>
+    </div>
+    <div class="m-ftr">
+      <button class="btn-sec" onclick="closeModal('newApptOverlay')">Cancelar</button>
+      <button class="btn-prime" onclick="confirmAppt()">✔ Confirmar Cita</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: DETALLE DE CITA -->
+<div class="overlay" id="detailOverlay">
+  <div class="modal sm">
+    <div class="m-hdr">
+      <span class="m-title" id="det-title">Detalle de Cita</span>
+      <button class="m-close" onclick="closeModal('detailOverlay')">✕</button>
+    </div>
+    <div class="m-body">
+      <div class="dm-badges" id="det-badges"></div>
+      <div class="dm-sec">
+        <div class="dm-sec-title">Vehículo</div>
+        <div class="dm-2col" id="det-vehicle"></div>
+      </div>
+      <div class="dm-sec">
+        <div class="dm-sec-title">Cita</div>
+        <div class="dm-2col" id="det-appt"></div>
+      </div>
+      <div class="dm-sec">
+        <div class="dm-sec-title">Acciones</div>
+        <div class="dm-actions" id="det-actions"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONFIGURACIÓN -->
+<div class="overlay" id="configOverlay">
+  <div class="modal lg">
+    <div class="m-hdr">
+      <span class="m-title">⚙ Configuración del Taller</span>
+      <button class="m-close" onclick="closeModal('configOverlay')">✕</button>
+    </div>
+    <div class="m-body">
+      <!-- Tabs de configuración -->
+      <div style="display:flex;gap:4px;margin-bottom:18px;border-bottom:1px solid var(--brd);padding-bottom:12px">
+        <button class="vtab active" id="cfg-tab-op"   onclick="setCfgTab('op')">Operación</button>
+        <button class="vtab"        id="cfg-tab-km"   onclick="setCfgTab('km')">Alertas km</button>
+        <button class="vtab"        id="cfg-tab-notif" onclick="setCfgTab('notif')">Notificaciones</button>
+        <button class="vtab"        id="cfg-tab-suc"  onclick="setCfgTab('suc')">Sucursal</button>
+      </div>
+
+      <!-- Tab Operación -->
+      <div id="cfg-op">
+        <div class="frow">
+          <div class="fg" style="margin:0"><label class="flbl">Hora de apertura</label><input type="time" class="fc" id="cfg-open" value="07:00"></div>
+          <div class="fg" style="margin:0"><label class="flbl">Hora de cierre</label><input type="time" class="fc" id="cfg-close" value="20:00"></div>
+        </div>
+        <div class="frow">
+          <div class="fg" style="margin:0"><label class="flbl">Duración mínima de cita (min)</label><input type="number" class="fc" id="cfg-minslot" value="60" min="30" max="240" step="30"></div>
+          <div class="fg" style="margin:0"><label class="flbl">Duración máxima de cita (h)</label><input type="number" class="fc" id="cfg-maxslot" value="6" min="1" max="12"></div>
+        </div>
+        <div class="fg">
+          <label class="flbl">Días laborales</label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <label id="cfg-lun" class="cfg-day active" onclick="toggleDay('lun')">Lun</label>
+            <label id="cfg-mar" class="cfg-day active" onclick="toggleDay('mar')">Mar</label>
+            <label id="cfg-mie" class="cfg-day active" onclick="toggleDay('mie')">Mié</label>
+            <label id="cfg-jue" class="cfg-day active" onclick="toggleDay('jue')">Jue</label>
+            <label id="cfg-vie" class="cfg-day active" onclick="toggleDay('vie')">Vie</label>
+            <label id="cfg-sab" class="cfg-day"        onclick="toggleDay('sab')">Sáb</label>
+            <label id="cfg-dom" class="cfg-day"        onclick="toggleDay('dom')">Dom</label>
+          </div>
+        </div>
+        <div class="fg" style="margin:0">
+          <label class="flbl">Tiempo de buffer entre citas (min)</label>
+          <input type="number" class="fc" id="cfg-buffer" value="15" min="0" max="60" step="5">
+        </div>
+      </div>
+
+      <!-- Tab Alertas km -->
+      <div id="cfg-km" style="display:none">
+        <div style="font-size:11px;color:var(--txt2);margin-bottom:14px">Umbral de kilómetros a partir del cual el sistema genera alertas proactivas al cliente.</div>
+        <div class="frow">
+          <div class="fg" style="margin:0"><label class="flbl">Servicio Mayor (km)</label><input type="number" class="fc" value="40000" step="5000"></div>
+          <div class="fg" style="margin:0"><label class="flbl">Cambio de Aceite (km)</label><input type="number" class="fc" value="10000" step="1000"></div>
+        </div>
+        <div class="frow">
+          <div class="fg" style="margin:0"><label class="flbl">Revisión Blindaje (km)</label><input type="number" class="fc" value="20000" step="5000"></div>
+          <div class="fg" style="margin:0"><label class="flbl">Placas Balísticas (km)</label><input type="number" class="fc" value="50000" step="5000"></div>
+        </div>
+        <div class="frow">
+          <div class="fg" style="margin:0"><label class="flbl">Neumáticos Run-Flat (km)</label><input type="number" class="fc" value="25000" step="5000"></div>
+          <div class="fg" style="margin:0"><label class="flbl">Cristales Balísticos (km)</label><input type="number" class="fc" value="60000" step="5000"></div>
+        </div>
+        <div class="fg" style="margin:0">
+          <label class="flbl">Margen de alerta anticipada (km antes del umbral)</label>
+          <input type="number" class="fc" value="2000" step="500">
+        </div>
+      </div>
+
+      <!-- Tab Notificaciones -->
+      <div id="cfg-notif" style="display:none">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="cfg-toggle-row"><span>Recordatorio al cliente 48 h antes de la cita</span><label class="toggle"><input type="checkbox" checked id="nt1" onchange="saveToggle('nt1')"><span class="tslide"></span></label></div>
+          <div class="cfg-toggle-row"><span>Recordatorio al cliente 24 h antes de la cita</span><label class="toggle"><input type="checkbox" checked id="nt2" onchange="saveToggle('nt2')"><span class="tslide"></span></label></div>
+          <div class="cfg-toggle-row"><span>Alerta interna cuando bahía supera 80% de carga</span><label class="toggle"><input type="checkbox" checked id="nt3" onchange="saveToggle('nt3')"><span class="tslide"></span></label></div>
+          <div class="cfg-toggle-row"><span>Alerta proactiva por kilometraje (invitación al cliente)</span><label class="toggle"><input type="checkbox" checked id="nt4" onchange="saveToggle('nt4')"><span class="tslide"></span></label></div>
+          <div class="cfg-toggle-row"><span>Notificación al técnico líder al asignar cita</span><label class="toggle"><input type="checkbox" id="nt5" onchange="saveToggle('nt5')"><span class="tslide"></span></label></div>
+          <div class="cfg-toggle-row"><span>Reporte semanal de ocupación por sucursal</span><label class="toggle"><input type="checkbox" checked id="nt6" onchange="saveToggle('nt6')"><span class="tslide"></span></label></div>
+        </div>
+      </div>
+
+      <!-- Tab Sucursal -->
+      <div id="cfg-suc" style="display:none">
+        <div class="frow">
+          <div class="fg" style="margin:0"><label class="flbl">Nombre de la sucursal</label><input class="fc" id="suc-name" value="Monterrey"></div>
+          <div class="fg" style="margin:0"><label class="flbl">Clave</label><input class="fc" id="suc-key" value="MTY" maxlength="4"></div>
+        </div>
+        <div class="frow">
+          <div class="fg" style="margin:0"><label class="flbl">Ciudad</label><input class="fc" id="suc-city" value="Monterrey, Nuevo León"></div>
+          <div class="fg" style="margin:0"><label class="flbl">Zona horaria</label><select class="fc" id="suc-tz"><option selected>America/Monterrey (CST)</option><option>America/Mexico_City (CST)</option><option>America/Cancun (EST)</option><option>America/Hermosillo (MST)</option></select></div>
+        </div>
+        <div class="fg">
+          <label class="flbl">Dirección</label>
+          <input class="fc" id="suc-addr" value="Av. Lázaro Cárdenas 2400, Del Valle, Monterrey, N.L.">
+        </div>
+        <div class="frow">
+          <div class="fg" style="margin:0"><label class="flbl">Teléfono</label><input class="fc" value="+52 81 8000-4400"></div>
+          <div class="fg" style="margin:0"><label class="flbl">Correo de servicio</label><input class="fc" value="taller.mty@blindadospremium.mx"></div>
+        </div>
+      </div>
+    </div>
+    <div class="m-ftr">
+      <button class="btn-sec" onclick="closeModal('configOverlay')">Cancelar</button>
+      <button class="btn-prime" onclick="saveConfig()">💾 Guardar Configuración</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: GESTIÓN DE BAHÍAS -->
+<div class="overlay" id="bayConfigOverlay">
+  <div class="modal lg">
+    <div class="m-hdr">
+      <span class="m-title" id="bayConfigTitle">🔧 Gestión de Bahías</span>
+      <button class="m-close" onclick="closeModal('bayConfigOverlay')">✕</button>
+    </div>
+    <div class="m-body" id="bayConfigBody"></div>
+    <div class="m-ftr">
+      <button class="btn-sec" onclick="addBay()">➕ Agregar Bahía</button>
+      <button class="btn-sec" onclick="closeModal('bayConfigOverlay')">Cerrar</button>
+      <button class="btn-prime" onclick="saveBayConfig()">💾 Guardar Cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CATÁLOGO DE VEHÍCULOS -->
+<div class="overlay" id="catalogOverlay">
+  <div class="modal" style="width:860px;max-width:96vw">
+    <div class="m-hdr">
+      <span class="m-title">📋 Catálogo de Unidades Blindadas</span>
+      <button class="m-close" onclick="closeModal('catalogOverlay')">✕</button>
+    </div>
+    <div class="m-body" style="padding:16px">
+      <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+        <input class="fc" id="cat-search" placeholder="Buscar por VIN, Folio, Matrícula, Modelo, Color..." oninput="renderCatalog()" style="flex:1;min-width:200px">
+        <select class="fc" id="cat-marca" onchange="renderCatalog()" style="width:150px">
+          <option value="">Todas las marcas</option>
+          <option value="JEEP">JEEP</option>
+          <option value="DODGE">DODGE</option>
+          <option value="FORD">FORD</option>
+          <option value="CHEVROLET">CHEVROLET</option>
+        </select>
+        <select class="fc" id="cat-ver" onchange="renderCatalog()" style="width:190px">
+          <option value="">Todas las versiones</option>
+          <option value="SUMMIT RESERVE">Summit Reserve</option>
+          <option value="SUMMIT">Summit</option>
+          <option value="LIMITED">Limited</option>
+          <option value="ADVANCED">Advanced</option>
+          <option value="SUPER DUTY">Super Duty</option>
+          <option value="LONGHORN">Longhorn</option>
+          <option value="4X4">4X4</option>
+        </select>
+      </div>
+      <div style="font-size:10.5px;color:var(--txt3);margin-bottom:8px" id="cat-count"></div>
+      <div style="overflow-y:auto;max-height:380px;border:1px solid var(--brd);border-radius:8px">
+        <table style="width:100%;border-collapse:collapse">
+          <thead style="position:sticky;top:0;z-index:2;background:var(--srf2)">
+            <tr>
+              <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--brd)">Folio</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--brd)">Marca</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--brd)">Modelo</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--brd)">Versión</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--brd)">Año</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--brd)">Color</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--brd)">VIN</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--brd)">Matrícula</th>
+            </tr>
+          </thead>
+          <tbody id="cat-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="m-ftr">
+      <span style="font-size:11px;color:var(--txt3);margin-right:auto">Haz clic en una unidad para seleccionarla y pre-llenar el formulario</span>
+      <button class="btn-sec" onclick="closeModal('catalogOverlay')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ENVIAR RECORDATORIO -->
+<div class="overlay" id="recordatorioOverlay">
+  <div class="modal sm">
+    <div class="m-hdr">
+      <span class="m-title">📨 Enviar Recordatorio al Cliente</span>
+      <button class="m-close" onclick="closeModal('recordatorioOverlay')">✕</button>
+    </div>
+    <div class="m-body">
+      <div class="fg">
+        <label class="flbl">Destinatario</label>
+        <input class="fc" id="rec-to" readonly style="color:var(--txt2)">
+      </div>
+      <div class="fg">
+        <label class="flbl">Asunto</label>
+        <input class="fc" id="rec-subject">
+      </div>
+      <div class="fg">
+        <label class="flbl">Canal de envío</label>
+        <select class="fc" id="rec-channel">
+          <option value="email">✉ Correo electrónico</option>
+          <option value="whatsapp">💬 WhatsApp</option>
+          <option value="sms">📱 SMS</option>
+        </select>
+      </div>
+      <div class="fg" style="margin:0">
+        <label class="flbl">Mensaje</label>
+        <textarea class="fc" id="rec-body" rows="6" style="resize:vertical;line-height:1.5"></textarea>
+      </div>
+    </div>
+    <div class="m-ftr">
+      <button class="btn-sec" onclick="closeModal('recordatorioOverlay')">Cancelar</button>
+      <button class="btn-prime" onclick="enviarRecordatorioConfirm()">📨 Enviar Ahora</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: DETALLE DE VEHÍCULO / ALERTA -->
+<div class="overlay" id="vehicleAlertOverlay">
+  <div class="modal sm">
+    <div class="m-hdr">
+      <span class="m-title" id="va-title">Ficha de Vehículo</span>
+      <button class="m-close" onclick="closeModal('vehicleAlertOverlay')">✕</button>
+    </div>
+    <div class="m-body" id="va-body"></div>
+    <div class="m-ftr">
+      <button class="btn-sec" onclick="closeModal('vehicleAlertOverlay')">Cerrar</button>
+      <button class="btn-prime" id="va-schedule-btn">🗓 Agendar Mantenimiento</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span id="toastIcon"></span>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════
+
+const VEHICLES = [
+  { vin:'WDD2221561A123401', brand:'Mercedes-Benz', model:'S600 Pullman Guard', year:2024, level:'VR7', color:'Negro Obsidiana', km:28450, client:'Grupo Alfa — Dir. General', plate:'AEX-1204', lastSvc:'2026-03-12' },
+  { vin:'WBAGV8100PCB12302', brand:'BMW',           model:'760Li Individual Protection', year:2025, level:'VR6+', color:'Azul Midnight', km:12780, client:'Constructora Coppel SA', plate:'BLD-9901', lastSvc:'2026-05-02' },
+  { vin:'JTJHY7AX5N4190203', brand:'Lexus',         model:'LX 600 Blindado B6', year:2024, level:'B6', color:'Blanco Lunar', km:41200, client:'Familia Zambrano Treviño', plate:'CCC-2345', lastSvc:'2025-11-20' },
+  { vin:'1GYS4HKJ5NR412304', brand:'Cadillac',      model:'Escalade ESV Protection', year:2023, level:'B6', color:'Plata Sidereal', km:55300, client:'Gob. del Estado — Seg. Pública', plate:'DEG-0012', lastSvc:'2025-10-08' },
+  { vin:'SALGA2BU5PA445305', brand:'Range Rover',   model:'Autobiography Black LWB', year:2025, level:'VR7', color:'Verde Aintree', km:8900, client:'Fibra Danhos — CEO', plate:'EFT-7823', lastSvc:'2026-04-18' },
+  { vin:'WAUZZZ4H5MN013306', brand:'Audi',          model:'A8L Security VR9', year:2024, level:'VR9', color:'Gris Quantum', km:19600, client:'Banco Bajío — Presidencia', plate:'FGH-4510', lastSvc:'2026-02-28' },
+  { vin:'WDD2220561A234407', brand:'Mercedes-Benz', model:'G63 AMG Blindado B6+', year:2025, level:'B6+', color:'Negro Magno', km:6300, client:'Rancho Santa Fe Group', plate:'GHI-9234', lastSvc:'2026-06-01' },
+  { vin:'WBAGV8100PCB89308', brand:'BMW',           model:'X7 M60i Protection', year:2024, level:'VR6', color:'Café Tartufo', km:33100, client:'Holding Industrial Regiomontano', plate:'HIJ-1102', lastSvc:'2026-01-15' },
+  { vin:'JTJHY7AX5N4111209', brand:'Lexus',         model:'LM 500h Executive Blindado', year:2025, level:'B6', color:'Gris Titanio', km:4200, client:'Tecnológico de Monterrey — Rectoría', plate:'JKL-0071', lastSvc:'2026-05-30' },
+  { vin:'SALGA2BU5PA445310', brand:'Range Rover',   model:'Defender 130 Blindado', year:2024, level:'VR6', color:'Azul Tributite', km:22700, client:'Cemex — Dirección Corporativa', plate:'LMN-5541', lastSvc:'2026-03-07' },
+];
+
+const VIN_MAP = {};
+VEHICLES.forEach(v => VIN_MAP[v.vin] = v);
+
+// ── CATÁLOGO DE UNIDADES (datos reales) ────────────────
+// [folio, marca, modelo, version, año, color, vin, matricula]
+const _CR=[
+['UN-010003','DODGE','RAM DBL CAB','1500 LONGHORN',2023,'BLANCO','1C4RJFBT7FC642799','Z78AYU'],
+['UN-010004','DODGE','RAM DBL CAB','1500 LONGHORN',2023,'BLANCO','1FT8W2BT9NEC80788','Z78AYU'],
+['6219','DODGE','RAM DBL CAB','1500 LONGHORN',2023,'BLANCO','1GNSK8KL2PR330941','Z63BCP'],
+['UN-009709','JEEP','GRAND CHEROKEE','4X4',2015,'GRIS','1C4RJEBT3DC652521','WGD108B'],
+['UN-010863','JEEP','GRAND CHEROKEE','4X4',2023,'GRIS','1C4RJEBT4DC514432','WEX5729'],
+['6814','FORD','RANGE RAPTOR DBL CAB','4X4',2024,'','1C4RJEBT4FC707747','WEX1412'],
+['5631','JEEP','GRAND CHEROKEE','ADVANCED',2021,'GRANITO','1C4RJEBT5CC264844','WBZ058A'],
+['5632','JEEP','GRAND CHEROKEE','ADVANCED',2021,'PLATA','1C4RJEBT5DC508235','WBS898A'],
+['5635','JEEP','GRAND CHEROKEE','ADVANCED',2021,'NEGRO','1C4RJEBT5DC514407','W99BCN'],
+['5633','JEEP','GRAND CHEROKEE','ADVANCED',2021,'GRANITO','1C4RJEBT5DC514410','W85ACU'],
+['5634','JEEP','GRAND CHEROKEE','ADVANCED',2021,'PLATA','1C4RJEBT5DC652819','W84BGK'],
+['UN-011607','CHEVROLET','SUBURBAN','COMUN',2024,'PLATA','1C4RJFBT0HC619500','UWX442B'],
+['4679','CHEVROLET','SUBURBAN','COMUN',2024,'PLATA','1C4RJFBT0HC721332','UWL807W'],
+['4660','CHEVROLET','SUBURBAN','COMUN',2024,'PLATA','1C4RJFBT0HC759868','UWL265C'],
+['4387','CHEVROLET','TAHOE','COMUN',2017,'PLATA','1C4RJFBT0HC759871','UWH330A'],
+['4388','CHEVROLET','TAHOE','COMUN',2017,'PLATA','1C4RJFBT0HC762382','UWH-283-L'],
+['4319','CHEVROLET','TAHOE','COMUN',2017,'PLATA','1C4RJFBT0HC787265','UWF029Y'],
+['4359','CHEVROLET','TAHOE','COMUN',2017,'PLATA','1C4RJFBT0HC822080','UVZ579K'],
+['6467','JEEP','GRAND CHEROKEE','LIMITED',2023,'GRIS','1FT8W2BTXPED76352','H39BJZ'],
+['500236','JEEP','GRAND CHEROKEE','LIMITED',2023,'BLANCO','1FT8W2BTXREC21898','H33AUT'],
+['6203','JEEP','GRAND CHEROKEE','LIMITED',2023,'BLANCO','1FT8W2BTXRED24996','H28ANR'],
+['6201','JEEP','GRAND CHEROKEE','LIMITED',2023,'BLANCO','1FT8W2BTXRED26571','H27BDA'],
+['6515','JEEP','GRAND CHEROKEE','LIMITED',2024,'GRIS BALT','1FTFW1E5XPFB80047','GSV766E'],
+['6551','JEEP','GRAND CHEROKEE','LIMITED',2024,'BLANCO','1FTFW1E87NFB47191','GSC166D'],
+['6550','JEEP','GRAND CHEROKEE','LIMITED',2024,'BLANCO','1FTFW1ED2PFA26066','GSC165D'],
+['6552','JEEP','GRAND CHEROKEE','LIMITED',2024,'GRIS BALT','1FTFW1ED3MFA75336','GSC003D'],
+['6584','JEEP','GRAND CHEROKEE','LIMITED',2024,'PLATA MET','1FTFW1ED6PFA25955','GS326191'],
+['6512','FORD','F-250 DBL CAB','LIMITED',2023,'GRIS','1FTFW1EFXCKD28143','GN339320'],
+['500265','JEEP','GRAND CHEROKEE','LIMITED',2024,'GRIS BALT','1FTFW1R63EFC92768','GN339315'],
+['6466','JEEP','GRAND CHEROKEE','LIMITED',2024,'GRIS BALT','1FTFW1RG1LFC36964','GN312302'],
+['6647','JEEP','GRAND CHEROKEE','LIMITED',2024,'PLATA MET','1FTFW1RG1LFC37080','GN312301'],
+['UN-012474','JEEP','GRAND CHEROKEE','LIMITED',2024,'BLANCO','1FTFW1RG2HFA61860','GN311304'],
+['UN-012487','JEEP','GRAND CHEROKEE','LIMITED',2024,'BLANCO','1FTFW1RG3LFC37095','GN309336'],
+['9199','JEEP','GRAND CHEROKEE','LIMITED',2024,'BLANCO','1FTFW1RG3LFC37100','GN309330'],
+['6660','JEEP','GRAND CHEROKEE','LIMITED',2024,'BLANCO','1FTFW1RG3LFG37100','GN309321'],
+['6666','JEEP','GRAND CHEROKEE','LIMITED V6 4X2',2025,'PLATA MET','1FTFW1RG9LFC37070','GL74600'],
+['UN-013324','JEEP','GRAND CHEROKEE','LIMITED V6 4X2',2024,'BLANCO','1FTFW1RG9LFC37084','GKH030E'],
+['7124','JEEP','GRAND CHEROKEE','LIMITED V6 4X2',2025,'NEGRO','1FTFW1RGXJFA11844','GJZ357D'],
+['6968','JEEP','GRAND CHEROKEE','LIMITED V6 4X2',2025,'PLATA','1FTFW1RJ5RFA71330','GJP484C'],
+['7125','JEEP','GRAND CHEROKEE','LIMITED V6 4X2',2025,'NEGRO','1FTFW1RJ8SFA64653','GHS036D'],
+['7126','JEEP','GRAND CHEROKEE','LIMITED V6 4X2',2025,'NEGRO','1FTFW1RJ9SFA86290','GHH628E'],
+['7127','JEEP','GRAND CHEROKEE','LIMITED V6 4X2',2025,'NEGRO','1FTFW4L85RFA92198','GGR618C'],
+['7128','JEEP','GRAND CHEROKEE','LIMITED V6 4X2',2025,'NEGRO','1FTMF1CB4KKC94223','GF7962B'],
+['7129','JEEP','GRAND CHEROKEE','LIMITED V6 4X2',2025,'NEGRO','1FTMF1CB8JKC06398','GDC444B'],
+['7140','JEEP','GRAND CHEROKEE','LIMITED V6 4X2',2025,'NEGRO','1FTMF1EF2BKD02075','GCV058A'],
+['7133','JEEP','GRAND CHEROKEE','LIMITED V6 4X2',2025,'BLANCO','1FTMF1EF4HKD37399','GCR211A'],
+['7236','JEEP','GRAND CHEROKEE','LIMITED V6 4X2',2025,'NEGRO','1FTMF1L55SKD73166','GCR062B'],
+['7237','JEEP','GRAND CHEROKEE','LIMITED V6 4X2',2025,'BLANCO','1FTSW21P15EA30391','GCP347C'],
+['500226','JEEP','GRAND CHEROKEE','SUMMIT',2023,'GRIS BALT','1GN8K8KGXKR370898','508YMJ'],
+['6108','JEEP','GRAND CHEROKEE','SUMMIT',2023,'BLANCO','1GN8NK8KG5GR299827','504XLX'],
+['500225','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'BLANCO','1GNCK8KC8FR600107','500-JV'],
+['6149','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'BLANCO','1GNCN9ECXGZ105302','4LG13'],
+['6327','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PLATA MET','1GNEC13J19R227354','49AM1H'],
+['UN-008614','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'BLANCO','1GNER8KW4PJ150670','48F152'],
+['6197','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'GRIS','1GNFC13J67J362535','484TNS'],
+['UN-008740','JEEP','GRAND CHEROKEE','SUMMIT',2023,'PLATA','1GNFC13J77J358302','47AN1T'],
+['6199','JEEP','GRAND CHEROKEE','SUMMIT',2023,'PLATA MET','1GNFC13J87J338608','479UAR'],
+['6202','JEEP','GRAND CHEROKEE','SUMMIT',2023,'PLATA MET','1GNFC13J87J345008','46N502'],
+['5693','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PLATA MET','1GNFC13J87J360883','469ZJH'],
+['5692','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'NEGRO','1GNFC13JX7J335242','462YSF'],
+['UN-008964','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'AMARILLO','1GNFC16J59R244847','454ZVG'],
+['UN-009067','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'GRIS','1GNFC16J69R138097','452YSF'],
+['UN-009074','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'GRIS','1GNFCJ3J47J346246','452WHM'],
+['UN-009103','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'GRIS','1GNFK13059R240716','445WHH'],
+['6196','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PLATA','1GNFK13079R247067','443YTF'],
+['6211','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'GRIS','1GNFK13099R240721','442ZXT'],
+['6200','JEEP','GRAND CHEROKEE','SUMMIT',2023,'GRIS','1GNFK13099R243991','442ZNH'],
+['6334','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'GRIS','1GNFK130X9R240713','435WTG'],
+['UN-009205','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNFK16349R106205','435WTG'],
+['UN-009206','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNFK16397J327441','430YSF'],
+['UN-009306','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'GRIS','1GNFR1521N554O12','430YAJ'],
+['5690','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'BLANCO','1GNFR1521N554O13','42J497'],
+['5691','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PLATA','1GNFR1521N554O14','42F807'],
+['6319','JEEP','GRAND CHEROKEE','SUMMIT',2023,'BLANCO','1GNFR1521N554O15','429XVA'],
+['5689','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'NEGRO','1GNFR1521N554O16','427ZRA'],
+['6328','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'GRIS','1GNFR1521N554O17','427YSF'],
+['6198','JEEP','GRAND CHEROKEE','SUMMIT',2023,'NEGRO','1GNFR1521N554O18','425YSF'],
+['UN-010068','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'NEGRO','1GNFR1521N554O19','41JSE'],
+['UN-010142','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNFR1521N554O20','412BJP'],
+['UN-010143','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNFR1521N554O21','410WFK'],
+['UN-010144','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNFR1521N554O22','40AC4U'],
+['UN-010145','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNFR1521N554O23','408ET6'],
+['UN-010146','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNFR1521N554O24','39F802'],
+['UN-010147','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNFR1521N554O25','39F676'],
+['UN-010148','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNFR1521N554O26','399VCF'],
+['UN-010149','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K09R104688','399VCF'],
+['UN-010150','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K09R133169','396DP6'],
+['UN-010151','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K09R133219','394YRZ'],
+['UN-010152','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K09R135990','392YUS'],
+['UN-010153','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K09R142275','386ZRG'],
+['UN-010154','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K09R148061','375ZBP'],
+['UN-010155','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K09R148125','370XRC'],
+['UN-010156','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K09R231120','36JUC'],
+['UN-010168','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K19R103971','35S515'],
+['UN-010169','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K19R124125','35JB37'],
+['UN-010170','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K19R137991','35GRB'],
+['UN-010171','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K19R148103','35F342'],
+['UN-010172','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K19R197026','356ZPM'],
+['UN-010173','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K19R239873','352ZBW'],
+['UN-010174','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K19R261856','352WGF'],
+['UN-010175','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K29R104532','34AE8V'],
+['UN-010176','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K29R144531','346ZRA'],
+['UN-010177','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K39R104488','341ZJR'],
+['UN-010178','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K39R104569','33F-684'],
+['UN-010179','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K39R104670','33F138'],
+['UN-010180','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K39R105379','33F042'],
+['UN-010181','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K39R141752','33AU8N'],
+['UN-010182','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'PDTE','1GNGK46K39R144599','333ZMH'],
+['UN-010244','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'BLANCO','1GNGK46K49R103821','325WJA'],
+['6454','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'NEGRO','1GNGK46K49R104483','31F046'],
+['UN-010423','JEEP','GRAND CHEROKEE','SUMMIT',2023,'GRIS','1GNGK46K49R104497','31AF6Y'],
+['6405','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'BLANCO','1GNGK46K49R104760','315EV6'],
+['6504','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'BLANCO','1GNGK46K49R105584','313YAP'],
+['6609','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'BLANCO','1GNGK46K49R143753','30F263'],
+['UN-010600','JEEP','GRAND CHEROKEE L','SUMMIT',2023,'BLANCO','1GNGK46K49R143882','30AJ1M'],
+['UN-010829','JEEP','GRAND CHEROKEE L','SUMMIT',2024,'GRIS BAL','1GNGK46K49R207824','302YUT'],
+['6646','JEEP','GRAND CHEROKEE L','SUMMIT',2024,'BLANCO','1GNGK46K49R234005','2PA38Y'],
+['UN-011009','JEEP','GRAND CHEROKEE L','SUMMIT',2024,'BLANCO','1GNGK46K49R259597','29F400'],
+['6520','JEEP','GRAND CHEROKEE','SUMMIT',2022,'BLANCO','1GNGK46K59R103374','29F400B'],
+['6619','JEEP','GRAND CHEROKEE L','SUMMIT',2024,'NEGRO','1GNGK46K59R103715','29F318'],
+['6649','JEEP','GRAND CHEROKEE L','SUMMIT',2021,'PLATA','1GNGK46K59R103956','297WUT'],
+['6679','JEEP','GRAND CHEROKEE L','SUMMIT',2024,'AZUL','1GNGK46K59R104072','28S294'],
+['UN-013237','JEEP','GRAND CHEROKEE L','SUMMIT',2024,'PLATA','1GNGK46K59R104573','28F072'],
+['UN-013238','JEEP','GRAND CHEROKEE L','SUMMIT',2024,'AZUL','1GNGK46K59R104637','286YUZ'],
+['UN-013240','JEEP','GRAND CHEROKEE L','SUMMIT',2024,'BLANCO','1GNGK46K59R104931','284AXT'],
+['UN-013241','JEEP','GRAND CHEROKEE L','SUMMIT',2024,'BLANCO','1GNGK46K59R132955','283ZND'],
+['6549','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'BLANCO','1GNGK46K59R137525','279ZZR'],
+['6321','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'AZUL','1GNGK46K59R259978','277ZEL'],
+['6322','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'GRIS BALT','1GNGK46K69R103707','277ZBD'],
+['6678','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'NEGRO','1GNGK46K69R103805','273EV6'],
+['6680','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'NEGRO','1GNGK46K69R104016','273ET6'],
+['6681','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'BLANCO','1GNGK46K69R104825','272EV6'],
+['6752','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'BLANCO','1GNGK46K69R136772','270EV6'],
+['6753','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'BLANCO','1GNGK46K79R103392','26S781'],
+['UN-012606','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'BLANCO','1GNGK46K79R103649','261YPR'],
+['UN-012614','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'BLANCO','1GNGK46K79R105191','259YUR'],
+['6751','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'BLANCO','1GNGK46K79R105708','258DP6'],
+['UN-012642','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'BLANCO','1GNGK46K79R136473','257CZW'],
+['UN-012643','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'BLANCO','1GNGK46K79R256354','253XVP'],
+['6750','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'BLANCO','1GNGK46K89R103837','250ZFB'],
+['6773','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'BLANCO','1GNGK46K89R103949','249ZFJ'],
+['6774','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'BLANCO','1GNGK46K89R103952','240ZNF'],
+['UN-012860','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'PDTE','1GNGK46K89R104647','234ZVJ'],
+['6756','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'BLANCO','1GNGK46K89R104650','233EX4'],
+['6820','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'GRIS BALT','1GNGK46K89R139429','233EX4B'],
+['6764','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'AZUL','1GNGK46K89R141813','22LBA51'],
+['6795','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'BLANCO','1GNGK46K89R143691','22BG2B'],
+['UN-013320','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'BLANCO','1GNGK46K89R146297','227YNP'],
+['6798','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'GRIS BALT','1GNGK46K89R223461','2222DT'],
+['6835','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'BLANCO','1GNGK46K89R256749','21F390'],
+['6896','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'NEGRO','1GNGK46K99R103944','21F352'],
+['6400','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'NEGRO','1GNGK46K99R104091','21AT6K'],
+['6796','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'BLANCO','1GNGK46K99R121974','219EX4'],
+['6836','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2024,'BLANCO','1GNGK46K99R145160','211XNK'],
+['6961','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'BLANCO','1GNGK46KS9R103956','20J872'],
+['UN-013927','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'BLANCO','1GNGK46KX9R103919','20AB9T'],
+['6898','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'BLANCO','1GNGK46KX9R104987','208ZRG'],
+['6891','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'BLANCO','1GNGK46KX9R132904','203WSV'],
+['6677','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'BLANCO','1GNGK46KX9R136306','201XSD'],
+['6991','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'BLANCO','1GNGK46KX9R148035','2009B6'],
+['6992','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'BLANCO','1GNGK46KX9R224577','—'],
+['6990','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'GRIS BAL','1GNGK4GK79R137378','—'],
+['6989','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'GRIS BAL','1GNGK56K09R184581','—'],
+['7123','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'NEGRO','1GNGK56K59R181686','—'],
+['7130','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'NEGRO','1GNGK56K59R181689','—'],
+['7131','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'NEGRO','1GNGK56K79R185727','—'],
+['7132','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'NEGRO','1GNGK56KX9R180926','—'],
+['6833','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'NEGRO','1GNGK8KC1KR124955','19J433'],
+['500279','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'NEGRO','1GNJS69RL55R248739','19F797'],
+['UN-042398','JEEP','GRAND CHEROKEE','SUMMIT RESERVE V6 4X4',2025,'GRIS BAL','1GNK7KC6HR231924','19F684'],
+['UN-012867','JEEP','GRAND CHEROKEE L','SUMMIT RESERVE V8 4X4',2024,'PDTE','1GNKG46K69R103805','19F670'],
+['5520','FORD','F-250 CREW CAB','SUPER DUTY',2021,'BLANCO','1GNKR8KD6HJ153296','19F651'],
+['9185','FORD','F-450 DBL CAB','SUPER DUTY',2008,'NEGRO','1GNKS27KJ7FR605109','199ZPD'],
+['4891','FORD','F-250 DOBLE CABINA','SUPER DUTY',2023,'BLANCO','1GNKS8KC7HR120255','195WNM'],
+];
+const CATALOG=_CR.map(r=>({folio:r[0],marca:r[1],modelo:r[2],version:r[3],año:r[4],color:r[5],vin:r[6].trim(),matricula:r[7]}));
+const CAT_VIN_MAP=Object.fromEntries(CATALOG.map(c=>[c.vin,c]));
+
+const BRANCH_DATA = {
+  MTY:  { name:'Monterrey',         city:'Monterrey, NL',    bays:4, techs:4, citasHoy:7,  citasSem:34, bahiasDisp:1 },
+  CDMX: { name:'Ciudad de México',  city:'CDMX, CDMX',       bays:5, techs:5, citasHoy:9,  citasSem:47, bahiasDisp:2 },
+  GDL:  { name:'Guadalajara',       city:'Guadalajara, JAL', bays:3, techs:3, citasHoy:5,  citasSem:22, bahiasDisp:1 },
+  CUN:  { name:'Cancún',            city:'Cancún, Q.R.',      bays:2, techs:2, citasHoy:3,  citasSem:14, bahiasDisp:0 },
+  HMO:  { name:'Hermosillo',        city:'Hermosillo, SON',  bays:2, techs:2, citasHoy:2,  citasSem:10, bahiasDisp:1 },
+};
+
+const TECHS_MTY = [
+  { id:'T1', name:'Ing. Rodrigo Cienfuegos',   spec:'Especialista VR7+',         bay:1 },
+  { id:'T2', name:'Téc. Mauricio Ontiveros',   spec:'Diagnóstico Electrónico',   bay:2 },
+  { id:'T3', name:'Ing. Armando Salazar',      spec:'Mecánica de Precisión',     bay:3 },
+  { id:'T4', name:'Ing. Fernanda Ruiz',        spec:'Blindaje y Paneles',        bay:4 },
+];
+
+// Appointments for MTY, week of 2026-06-29 to 2026-07-05
+const APPTS = [
+  { id:'APT-001', date:'2026-07-02', sh:8,  sm:0,  dur:2.5, vid:0, svc:'Servicio Mayor — Paquete Blindado',         bay:1, tech:'Ing. Rodrigo Cienfuegos',  branch:'MTY', status:'en-proceso', color:'c-vr7' },
+  { id:'APT-002', date:'2026-07-02', sh:9,  sm:0,  dur:1.5, vid:5, svc:'Diagnóstico Electrónico Integral',          bay:2, tech:'Téc. Mauricio Ontiveros',  branch:'MTY', status:'programada', color:'c-vr9' },
+  { id:'APT-003', date:'2026-07-02', sh:11, sm:0,  dur:3,   vid:2, svc:'Revisión de Placas Balísticas',             bay:3, tech:'Ing. Armando Salazar',     branch:'MTY', status:'programada', color:'c-b6'  },
+  { id:'APT-004', date:'2026-07-02', sh:13, sm:30, dur:2,   vid:4, svc:'Neumáticos Run-Flat — Alineación y Balanceo',bay:4,tech:'Ing. Fernanda Ruiz',       branch:'MTY', status:'programada', color:'c-vr7' },
+  { id:'APT-005', date:'2026-07-02', sh:16, sm:0,  dur:1.5, vid:6, svc:'Cambio de Aceite Sintético + Filtros',      bay:2, tech:'Téc. Mauricio Ontiveros',  branch:'MTY', status:'programada', color:'c-mnt' },
+  { id:'APT-006', date:'2026-07-01', sh:8,  sm:30, dur:3,   vid:1, svc:'Revisión Sistema de Blindaje VR7+',         bay:1, tech:'Ing. Rodrigo Cienfuegos',  branch:'MTY', status:'completada', color:'c-vr7' },
+  { id:'APT-007', date:'2026-07-01', sh:10, sm:0,  dur:2,   vid:7, svc:'Mantenimiento Cristales Balísticos',        bay:3, tech:'Ing. Armando Salazar',     branch:'MTY', status:'completada', color:'c-b6'  },
+  { id:'APT-008', date:'2026-07-03', sh:9,  sm:0,  dur:4,   vid:3, svc:'Inspección General Nivel B6/B7',            bay:1, tech:'Ing. Rodrigo Cienfuegos',  branch:'MTY', status:'programada', color:'c-b6'  },
+  { id:'APT-009', date:'2026-07-03', sh:14, sm:0,  dur:2,   vid:8, svc:'Revisión Sistema de Comunicaciones Seguras',bay:2, tech:'Téc. Mauricio Ontiveros',  branch:'MTY', status:'programada', color:'c-vr6' },
+  { id:'APT-010', date:'2026-07-04', sh:8,  sm:0,  dur:2.5, vid:9, svc:'Servicio Mayor — Paquete Blindado',         bay:4, tech:'Ing. Fernanda Ruiz',       branch:'MTY', status:'programada', color:'c-vr6' },
+  { id:'APT-011', date:'2026-07-04', sh:10, sm:30, dur:1.5, vid:0, svc:'Cambio de Aceite Sintético + Filtros',      bay:2, tech:'Téc. Mauricio Ontiveros',  branch:'MTY', status:'programada', color:'c-mnt' },
+  { id:'APT-012', date:'2026-07-07', sh:9,  sm:0,  dur:3,   vid:5, svc:'Revisión de Placas Balísticas',             bay:1, tech:'Ing. Rodrigo Cienfuegos',  branch:'MTY', status:'programada', color:'c-vr9' },
+  { id:'APT-013', date:'2026-06-30', sh:8,  sm:0,  dur:2,   vid:2, svc:'Diagnóstico Electrónico Integral',          bay:3, tech:'Ing. Armando Salazar',     branch:'MTY', status:'completada', color:'c-b6'  },
+  { id:'APT-014', date:'2026-06-30', sh:11, sm:0,  dur:1.5, vid:4, svc:'Neumáticos Run-Flat — Alineación y Balanceo',bay:4,tech:'Ing. Fernanda Ruiz',       branch:'MTY', status:'completada', color:'c-vr7' },
+];
+
+const ALERTS_DATA = [
+  { vid:3, svc:'Revisión de Placas Balísticas + Inspección B6',     urgency:'critico', kmCur:55300, kmThr:55000, branch:'MTY' },
+  { vid:2, svc:'Servicio Mayor — Paquete Blindado (60,000 km)',      urgency:'critico', kmCur:41200, kmThr:40000, branch:'CDMX' },
+  { vid:7, svc:'Cambio de Aceite Sintético + Filtros',               urgency:'alto',    kmCur:33100, kmThr:35000, branch:'GDL' },
+  { vid:5, svc:'Diagnóstico Electrónico Integral',                   urgency:'alto',    kmCur:19600, kmThr:20000, branch:'MTY' },
+  { vid:0, svc:'Inspección General Nivel VR7 (30,000 km)',           urgency:'normal',  kmCur:28450, kmThr:30000, branch:'MTY' },
+  { vid:9, svc:'Neumáticos Run-Flat — Revisión de Desgaste',         urgency:'normal',  kmCur:22700, kmThr:25000, branch:'CDMX' },
+];
+
+const NOTIFS = [
+  { id:1, title:'Cita APT-003 confirmada — Familia Zambrano', sub:'Lexus LX 600 · Bahía 3 · Hoy 11:00', time:'hace 20 min', read:false },
+  { id:2, title:'Alerta km crítico — Escalade ESV (Seg. Pública)', sub:'55,300 km · supera umbral de 55,000 km', time:'hace 1 h', read:false },
+  { id:3, title:'Reagendamiento solicitado — BMW 760Li', sub:'Cliente Constructora Coppel solicita cambio al 05-Jul', time:'hace 3 h', read:false },
+  { id:4, title:'Servicio completado — APT-007', sub:'Mantenimiento Cristales Balísticos · BMW X7 M60i', time:'Ayer 17:30', read:true },
+  { id:5, title:'Nuevo vehículo registrado en flota', sub:'Range Rover Defender 130 · VIN SALGA2BU5PA445310', time:'Ayer 09:15', read:true },
+];
+
+const SLOTS_BASE = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
+const SLOT_NA    = ['09:00','11:00','14:00']; // simulated as occupied
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+
+const S = {
+  branch:       'MTY',
+  view:         'tablero',
+  calView:      'dia',
+  currentDate:  new Date(2026,6,2), // 2026-07-02
+  alertFilter:  'todos',
+  notifOpen:    false,
+  selectedSlot: null,
+  activeApptId: null,
+};
+
+// ═══════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════
+
+function fmt(d){ return d.toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); }
+function fmtShort(d){ return d.toLocaleDateString('es-MX',{year:'numeric',month:'long',day:'numeric'}); }
+function fmtISO(d){ return d.toISOString().slice(0,10); }
+function pad(n){ return n<10?'0'+n:String(n); }
+function hhmm(h,m){ return pad(h)+':'+pad(m); }
+function apptEnd(a){ const e=a.sh*60+a.sm+Math.round(a.dur*60); return hhmm(Math.floor(e/60),e%60); }
+function levelColor(lv){
+  if(lv==='VR9') return '#6366f1';
+  if(lv==='VR7'||lv==='VR6+') return 'var(--gold)';
+  if(lv==='VR6') return 'var(--blue)';
+  return 'var(--ok)';
+}
+function statusLabel(s){
+  if(s==='en-proceso') return {txt:'En proceso',   col:'var(--warn)'};
+  if(s==='completada') return {txt:'Completada',   col:'var(--ok)'};
+  return                       {txt:'Programada',  col:'var(--blue)'};
+}
+function getWeekDates(d){
+  const day = d.getDay(); // 0=Sun
+  const mon = new Date(d); mon.setDate(d.getDate() - (day===0?6:day-1));
+  return Array.from({length:7},(_,i)=>{ const x=new Date(mon); x.setDate(mon.getDate()+i); return x; });
+}
+function getMonthDates(d){
+  const y=d.getFullYear(), m=d.getMonth();
+  const first=new Date(y,m,1), last=new Date(y,m+1,0);
+  const days=[];
+  const start=first.getDay()===0?6:first.getDay()-1; // Mon=0
+  for(let i=0;i<start;i++){ const x=new Date(y,m,1-start+i); days.push({d:x,other:true}); }
+  for(let i=1;i<=last.getDate();i++) days.push({d:new Date(y,m,i),other:false});
+  while(days.length%7!==0){ const l=days[days.length-1].d; const x=new Date(l); x.setDate(l.getDate()+1); days.push({d:x,other:true}); }
+  return days;
+}
+function todayISO(){ return fmtISO(new Date(2026,6,2)); }
+
+// ═══════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════
+
+function renderApp(){
+  updateDateLabel();
+  renderStats();
+  renderCalDia();
+  renderCalSemana();
+  renderCalMes();
+  renderBays();
+  renderMulti();
+  renderAlerts();
+  renderNotifs();
+}
+
+function updateDateLabel(){
+  const lbl=document.getElementById('dnLabel');
+  if(S.calView==='dia')    lbl.textContent=fmt(S.currentDate);
+  else if(S.calView==='semana'){
+    const wk=getWeekDates(S.currentDate);
+    lbl.textContent=fmtShort(wk[0])+' — '+fmtShort(wk[6]);
+  } else {
+    lbl.textContent=S.currentDate.toLocaleDateString('es-MX',{year:'numeric',month:'long'});
+  }
+}
+
+function renderStats(){
+  const b=BRANCH_DATA[S.branch];
+  const loadPct=Math.round(((b.bays-b.bahiasDisp)/b.bays)*100);
+  const loadCol=loadPct>=90?'dn':loadPct>=70?'wn':'up';
+  document.getElementById('statsStrip').innerHTML=`
+    <div class="stat"><div class="stat-val">${b.citasHoy}</div><div class="stat-lbl">Citas Hoy</div><div class="stat-note up">▲ 2 vs ayer</div></div>
+    <div class="stat"><div class="stat-val">${b.techs}</div><div class="stat-lbl">Técnicos Activos</div><div class="stat-note up">● ${b.techs} en turno</div></div>
+    <div class="stat"><div class="stat-val ${b.bahiasDisp===0?'dn':'up'}">${b.bahiasDisp}</div><div class="stat-lbl">Bahías Libres</div><div class="stat-note ${loadCol}">Carga: ${loadPct}%</div></div>
+    <div class="stat"><div class="stat-val">${b.citasSem}</div><div class="stat-lbl">Citas Esta Semana</div><div class="stat-note wn">▲ 5 vs sem. anterior</div></div>
+  `;
+}
+
+// ── DAY VIEW ────────────────────────────────────────────
+
+function renderCalDia(){
+  const iso=fmtISO(S.currentDate);
+  const appts=APPTS.filter(a=>a.date===iso&&a.branch===S.branch);
+  const HOUR_H=62, START_H=7, HOURS=13; // 7:00 to 20:00
+  let timeCols='', apptSlots='';
+  for(let h=START_H;h<START_H+HOURS;h++){
+    timeCols+=`<div class="ts">${pad(h)}:00</div>`;
+    apptSlots+=`<div class="as" data-h="${h}" onclick="clickEmptySlot(${h})"></div>`;
+  }
+  let apptHtml='';
+  appts.forEach(a=>{
+    const top=(a.sh-START_H)*HOUR_H+(a.sm/60)*HOUR_H;
+    const height=a.dur*HOUR_H-3;
+    const v=VEHICLES[a.vid];
+    const st=statusLabel(a.status);
+    apptHtml+=`<div class="appt ${a.color}" style="top:${top}px;height:${height}px" onclick="openDetail('${a.id}')">
+      <div class="a-time">${hhmm(a.sh,a.sm)} – ${apptEnd(a)} &nbsp;·&nbsp; Bahía ${a.bay}</div>
+      <div class="a-title">${v.brand} ${v.model}</div>
+      <div class="a-sub">${a.svc}</div>
+      <div class="a-lvl" style="color:${levelColor(v.level)}">${v.level} · ${v.client}</div>
+    </div>`;
+  });
+  if(appts.length===0) apptHtml=`<div style="padding:40px;text-align:center;color:var(--txt3);font-size:12px">Sin citas programadas para esta fecha.<br><br><button class="btn-prime" onclick="openNewAppt()" style="font-size:11px;padding:7px 14px">+ Nueva Cita</button></div>`;
+  document.getElementById('cal-dia').innerHTML=`
+    <div style="padding:12px 16px 0;font-size:11px;color:var(--txt3);border-bottom:1px solid var(--brd);padding-bottom:8px">
+      ${appts.length} cita${appts.length!==1?'s':''} programada${appts.length!==1?'s':''} · ${S.branch} — ${BRANCH_DATA[S.branch].name}
+    </div>
+    <div class="cal-wrap" style="overflow-y:auto;max-height:calc(100vh - 220px)">
+      <div class="day-grid">
+        <div class="tc">${timeCols}</div>
+        <div class="ac">${apptSlots}${apptHtml}</div>
+      </div>
+    </div>`;
+}
+
+// ── WEEK VIEW ───────────────────────────────────────────
+
+function renderCalSemana(){
+  const today=todayISO();
+  const wk=getWeekDates(S.currentDate);
+  const DAYS=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  const START_H=7, HOURS=13, HOUR_H=48;
+  let hdrCols='<div></div>';
+  wk.forEach((d,i)=>{
+    const iso=fmtISO(d);
+    const isToday=iso===today;
+    hdrCols+=`<div class="wkdh"><div class="wkdn">${DAYS[i]}</div><div class="wknum${isToday?' today':''}">${d.getDate()}</div></div>`;
+  });
+  let rows='';
+  for(let h=START_H;h<START_H+HOURS;h++){
+    let cells=`<div class="wkts">${pad(h)}:00</div>`;
+    wk.forEach(d=>{
+      const iso=fmtISO(d);
+      const ha=APPTS.filter(a=>a.date===iso&&a.sh===h&&a.branch===S.branch);
+      let inner='';
+      ha.forEach(a=>{
+        const v=VEHICLES[a.vid];
+        inner+=`<div class="wka ${a.color}" onclick="openDetail('${a.id}')" title="${v.brand} ${v.model} — ${a.svc}">${v.brand.split(' ')[0]} ${hhmm(a.sh,a.sm)}</div>`;
+      });
+      cells+=`<div class="wkc" onclick="clickWeekCell('${iso}',${h})">${inner}</div>`;
+    });
+    rows+=`${cells}`;
+  }
+  document.getElementById('cal-semana').innerHTML=`
+    <div class="wk-wrap" style="overflow-y:auto;max-height:calc(100vh - 220px)">
+      <div class="wk-hdr">${hdrCols}</div>
+      <div class="wk-body">${rows}</div>
+    </div>`;
+}
+
+// ── MONTH VIEW ──────────────────────────────────────────
+
+function renderCalMes(){
+  const today=todayISO();
+  const days=getMonthDates(S.currentDate);
+  const DAYS=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  let hdr=DAYS.map(d=>`<div class="mo-dn">${d}</div>`).join('');
+  let cells='';
+  days.forEach(({d,other})=>{
+    const iso=fmtISO(d);
+    const isToday=iso===today;
+    const da=APPTS.filter(a=>a.date===iso&&a.branch===S.branch);
+    const show=da.slice(0,2);
+    const more=da.length-show.length;
+    let dots=show.map(a=>{
+      const v=VEHICLES[a.vid];
+      return `<div class="mo-dot ${a.color}" onclick="openDetail('${a.id}');event.stopPropagation()">${hhmm(a.sh,a.sm)} ${v.brand.split(' ')[0]}</div>`;
+    }).join('');
+    if(more>0) dots+=`<div class="mo-more">+${more} más</div>`;
+    cells+=`<div class="mo-cell${other?' other':''}${isToday?' today':''}" onclick="goToDateView('${iso}')">
+      <div class="mdn">${d.getDate()}</div>${dots}
+    </div>`;
+  });
+  document.getElementById('cal-mes').innerHTML=`
+    <div style="overflow-y:auto;max-height:calc(100vh - 220px)">
+      <div class="mo-hdr">${hdr}</div>
+      <div class="mo-grid">${cells}</div>
+    </div>`;
+}
+
+// ── BAY VIEW ────────────────────────────────────────────
+
+function renderBays(){
+  const b=BRANCH_DATA[S.branch];
+  document.getElementById('bays-title').textContent=`Capacidad de Bahías — ${S.branch} · ${b.name} · ${b.bays} bahías · ${b.techs} técnicos en turno`;
+  const iso=fmtISO(S.currentDate);
+  const todayAppts=APPTS.filter(a=>a.date===iso&&a.branch===S.branch);
+  const bays=S.branch==='MTY'?TECHS_MTY:generateBays(b.bays);
+  let html='';
+  bays.forEach(t=>{
+    const ba=todayAppts.filter(a=>a.bay===t.bay);
+    const load=Math.min(100,Math.round((ba.length/4)*100));
+    const fillClass=load>=90?'fill-r':load>=60?'fill-y':'fill-g';
+    const stClass=load>=90?'st-err':load>=60?'st-warn':'st-ok';
+    const stTxt=load>=90?'Saturado':load>=60?'Parcial':'Disponible';
+    let apts=ba.map(a=>{
+      const v=VEHICLES[a.vid];
+      return `<div class="bay-apt" onclick="openDetail('${a.id}')">
+        <span class="ba-time">${hhmm(a.sh,a.sm)}</span>
+        <div class="ba-info">
+          <div class="ba-mod">${v.brand} ${v.model}</div>
+          <div class="ba-svc">${a.svc}</div>
+        </div>
+        <span class="ba-lvl">${v.level}</span>
+      </div>`;
+    }).join('');
+    if(ba.length===0) apts=`<div style="font-size:11px;color:var(--txt3);text-align:center;padding:8px">Sin citas asignadas hoy</div>`;
+    const ini=t.name.split(' ').filter(x=>x.length>1).map(x=>x[0]).join('').slice(0,2);
+    html+=`<div class="bay-card">
+      <div class="bay-top">
+        <div><div class="bay-name">Bahía ${t.bay}</div><div class="bay-num">${t.spec||'Servicio General'}</div></div>
+        <span class="bay-st ${stClass}">${stTxt}</span>
+      </div>
+      <div class="bay-tech">
+        <div class="t-av">${ini}</div>${t.name}
+      </div>
+      <div class="cap-lbl"><span>Ocupación diaria</span><span>${load}%</span></div>
+      <div class="cap-bar"><div class="cap-fill ${fillClass}" style="width:${load}%"></div></div>
+      <div class="bay-apts">${apts}</div>
+    </div>`;
+  });
+  document.getElementById('bays-grid').innerHTML=html;
+}
+
+function generateBays(n){
+  const names=['Ing. Carlos Mendoza','Téc. Ana Guerrero','Ing. Luis Pérez','Téc. Diana Torres','Ing. Jorge Ramos'];
+  const specs=['Especialista Blindaje','Diagnóstico y Electrónica','Mecánica de Precisión','Neumáticos y Suspensión','Acabados y Paneles'];
+  return Array.from({length:n},(_,i)=>({id:'T'+(i+1),name:names[i]||'Técnico '+(i+1),spec:specs[i]||'Servicio General',bay:i+1}));
+}
+
+// ── MULTI-BRANCH VIEW ───────────────────────────────────
+
+function renderMulti(){
+  const KEYS=['MTY','CDMX','GDL','CUN','HMO'];
+  let html='';
+  KEYS.forEach(k=>{
+    const b=BRANCH_DATA[k];
+    const loadPct=Math.round(((b.bays-b.bahiasDisp)/b.bays)*100);
+    const lClass=loadPct>=90?'hi':loadPct>=60?'md':'lo';
+    html+=`<div class="br-card" onclick="switchBranch('${k}')">
+      <div class="br-hdr">
+        <div><div class="br-name">${k} — ${b.name}</div><div class="br-city">${b.city}</div></div>
+        <div><div class="br-load ${lClass}">${loadPct}%</div><div style="font-size:9.5px;color:var(--txt3);text-align:right">carga</div></div>
+      </div>
+      <div class="br-body">
+        <div class="br-row"><span class="br-rlbl">Citas hoy</span><span class="br-rval">${b.citasHoy}</span></div>
+        <div class="br-row"><span class="br-rlbl">Citas esta semana</span><span class="br-rval">${b.citasSem}</span></div>
+        <div class="br-row"><span class="br-rlbl">Bahías activas</span><span class="br-rval">${b.bays}</span></div>
+        <div class="br-row"><span class="br-rlbl">Técnicos en turno</span><span class="br-rval">${b.techs}</span></div>
+        <div class="br-row"><span class="br-rlbl">Bahías disponibles</span>
+          <span class="br-rval" style="color:${b.bahiasDisp===0?'var(--err)':b.bahiasDisp===1?'var(--warn)':'var(--ok)'}">${b.bahiasDisp}</span>
+        </div>
+      </div>
+      <div class="br-action">Ver tablero de ${k} →</div>
+    </div>`;
+  });
+  document.getElementById('multi-grid').innerHTML=html;
+}
+
+// ── ALERTS VIEW ─────────────────────────────────────────
+
+function renderAlerts(){
+  const f=S.alertFilter;
+  const data=ALERTS_DATA.filter(a=>f==='todos'||a.urgency===f);
+  const urgLabel={critico:'Crítico',alto:'Alto',normal:'Normal'};
+  const urgClass={critico:'u-crit',alto:'u-high',normal:'u-norm'};
+  let html='';
+  if(data.length===0){ html=`<div style="padding:30px;text-align:center;color:var(--txt3);font-size:12px">Sin alertas para el filtro seleccionado.</div>`; }
+  data.forEach(a=>{
+    const v=VEHICLES[a.vid];
+    const pct=Math.min(100,Math.round((a.kmCur/a.kmThr)*100));
+    const fillColor=pct>=100?'var(--err)':pct>=90?'var(--warn)':'var(--ok)';
+    html+=`<div class="al-row" onclick="openAlertDetail(${a.vid})">
+      <div><div class="av-brand">${v.brand} ${v.model}</div><div class="av-vin">${v.vin}</div></div>
+      <div class="al-cli">${v.client}</div>
+      <div class="al-svc">${a.svc}</div>
+      <div><div class="km-cur">${a.kmCur.toLocaleString('es-MX')} km</div><div class="km-thr">umbral: ${a.kmThr.toLocaleString('es-MX')} km</div>
+        <div class="km-bar"><div class="km-f" style="width:${Math.min(100,pct)}%;background:${fillColor}"></div></div></div>
+      <span class="urg-badge ${urgClass[a.urgency]}">${urgLabel[a.urgency]}</span>
+      <button class="ag-btn" onclick="event.stopPropagation();openNewApptFromAlert(${a.vid},'${a.svc}')">Agendar →</button>
+    </div>`;
+  });
+  document.getElementById('alerts-body').innerHTML=html;
+  const cnt=ALERTS_DATA.filter(a=>a.urgency==='critico'||a.urgency==='alto').length;
+  document.getElementById('alertBadge').textContent=cnt;
+}
+
+// ── NOTIFICATIONS ───────────────────────────────────────
+
+function renderNotifs(){
+  let html='';
+  NOTIFS.forEach(n=>{
+    html+=`<div class="ni${n.read?'':' unread'}" onclick="readNotif(${n.id})">
+      <div class="ni-dot${n.read?' rd':''}"></div>
+      <div class="ni-txt"><div class="nt">${n.title}</div><div class="ns">${n.sub}</div></div>
+      <div class="ni-time">${n.time}</div>
+    </div>`;
+  });
+  document.getElementById('notifList').innerHTML=html;
+  const unread=NOTIFS.filter(n=>!n.read).length;
+  const badge=document.getElementById('nbadge');
+  badge.textContent=unread;
+  badge.style.display=unread>0?'flex':'none';
+}
+
+// ═══════════════════════════════════════════════════════
+//  ACTIONS — Navigation & Views
+// ═══════════════════════════════════════════════════════
+
+function setBranch(v){
+  S.branch=v;
+  renderStats();
+  renderCalDia(); renderCalSemana(); renderCalMes();
+  renderBays(); renderMulti(); renderAlerts();
+}
+
+function navDate(delta){
+  const d=new Date(S.currentDate);
+  if(S.calView==='dia') d.setDate(d.getDate()+delta);
+  else if(S.calView==='semana') d.setDate(d.getDate()+delta*7);
+  else { d.setMonth(d.getMonth()+delta); }
+  S.currentDate=d;
+  updateDateLabel();
+  renderCalDia(); renderCalSemana(); renderCalMes();
+}
+
+function goToday(){ S.currentDate=new Date(2026,6,2); updateDateLabel(); renderCalDia(); renderCalSemana(); renderCalMes(); }
+
+function setView(v){
+  S.view=v;
+  ['tablero','bays','multi','alerts'].forEach(x=>{
+    document.getElementById('panel-'+x).classList.toggle('hidden', x!==v);
+    document.getElementById('sb-'+x).classList.toggle('active', x===v);
+  });
+}
+
+function setCalView(v){
+  S.calView=v;
+  ['dia','semana','mes'].forEach(x=>{
+    document.getElementById('cal-'+x).classList.toggle('hidden', x!==v);
+    document.getElementById('vt-'+x).classList.toggle('active', x===v);
+  });
+  updateDateLabel();
+}
+
+function setAlertFilter(f,btn){
+  S.alertFilter=f;
+  document.querySelectorAll('.af-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAlerts();
+}
+
+function switchBranch(k){
+  S.branch=k;
+  document.getElementById('branchSel').value=k;
+  setView('tablero');
+  renderStats(); renderCalDia(); renderCalSemana(); renderCalMes();
+  showToast('info','🗺 Sucursal cambiada a '+BRANCH_DATA[k].name);
+}
+
+function goToDateView(iso){
+  S.currentDate=new Date(iso+'T12:00:00');
+  setCalView('dia');
+  updateDateLabel();
+  renderCalDia();
+}
+
+function clickEmptySlot(h){
+  openNewAppt();
+  setTimeout(()=>{ document.getElementById('appt-date').value=fmtISO(S.currentDate); renderSlots(); },100);
+}
+
+function clickWeekCell(iso,h){
+  S.currentDate=new Date(iso+'T12:00:00');
+  setCalView('dia');
+  updateDateLabel(); renderCalDia();
+}
+
+// ═══════════════════════════════════════════════════════
+//  NOTIFICATIONS
+// ═══════════════════════════════════════════════════════
+
+function toggleNotif(){
+  S.notifOpen=!S.notifOpen;
+  document.getElementById('notifPanel').classList.toggle('open', S.notifOpen);
+  document.getElementById('notifBtn').style.borderColor=S.notifOpen?'var(--gold)':'var(--brd)';
+}
+
+function readNotif(id){
+  const n=NOTIFS.find(x=>x.id===id);
+  if(n) n.read=true;
+  renderNotifs();
+}
+
+function markAllRead(){
+  NOTIFS.forEach(n=>n.read=true);
+  renderNotifs();
+  showToast('ok','✔ Todas las notificaciones marcadas como leídas');
+}
+
+// ═══════════════════════════════════════════════════════
+//  MODAL: NUEVA CITA
+// ═══════════════════════════════════════════════════════
+
+function openNewAppt(preVin, preSvc){
+  document.getElementById('vinInput').value=preVin||'';
+  document.getElementById('appt-service').value=preSvc||'';
+  document.getElementById('appt-date').value=fmtISO(S.currentDate);
+  document.getElementById('appt-branch').value=S.branch;
+  document.getElementById('vehicleCard').classList.remove('show');
+  document.getElementById('slotsSection').style.display='none';
+  document.getElementById('assignedBayInfo').style.display='none';
+  S.selectedSlot=null;
+  if(preVin) setTimeout(()=>searchVIN(),120);
+  else if(preSvc) setTimeout(()=>renderSlots(),120);
+  document.getElementById('newApptOverlay').classList.add('open');
+}
+
+function openNewApptFromAlert(vid, svc){
+  const v=VEHICLES[vid];
+  openNewAppt(v.vin, svc);
+}
+
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+function searchVIN(){
+  const val=document.getElementById('vinInput').value.trim().toUpperCase();
+  if(!val){ showToast('err','⚠ Ingresa un VIN válido'); return; }
+  // Buscar en vehículos del sistema
+  const v=VIN_MAP[val];
+  if(v){
+    document.getElementById('vc-model').textContent=v.brand+' '+v.model;
+    document.getElementById('vc-client').textContent=v.client;
+    document.getElementById('vc-lvl').textContent=v.level;
+    document.getElementById('vc-year').textContent=v.year;
+    document.getElementById('vc-color').textContent=v.color;
+    document.getElementById('vc-plate').textContent=v.plate;
+    document.getElementById('vc-km').textContent=v.km.toLocaleString('es-MX')+' km';
+    document.getElementById('vc-last').textContent=v.lastSvc;
+    document.getElementById('vc-status').textContent='Activo';
+    document.getElementById('vc-status').style.color='var(--ok)';
+    document.getElementById('vehicleCard').classList.add('show');
+    renderSlots();
+    showToast('ok','✔ Vehículo identificado — '+v.brand+' '+v.model);
+    return;
+  }
+  // Buscar en catálogo de unidades
+  const c=CAT_VIN_MAP[val];
+  if(c){
+    document.getElementById('vc-model').textContent=c.marca+' '+c.modelo+' '+c.version;
+    document.getElementById('vc-client').textContent='Sin propietario asignado — Folio: '+c.folio;
+    document.getElementById('vc-lvl').textContent='Ver expediente';
+    document.getElementById('vc-year').textContent=c.año||'—';
+    document.getElementById('vc-color').textContent=c.color||'—';
+    document.getElementById('vc-plate').textContent=c.matricula||'—';
+    document.getElementById('vc-km').textContent='Sin registro';
+    document.getElementById('vc-last').textContent='Sin registro';
+    document.getElementById('vc-status').textContent='En Catálogo';
+    document.getElementById('vc-status').style.color='var(--blue)';
+    document.getElementById('vehicleCard').classList.add('show');
+    renderSlots();
+    showToast('ok','✔ Unidad del catálogo — Folio '+c.folio+' · '+c.marca+' '+c.modelo);
+    return;
+  }
+  showToast('err','VIN no encontrado en el sistema ni en el catálogo de unidades');
+}
+
+// ── CATÁLOGO ────────────────────────────────────────────
+function openCatalog(){
+  document.getElementById('cat-search').value='';
+  document.getElementById('cat-marca').value='';
+  document.getElementById('cat-ver').value='';
+  renderCatalog();
+  document.getElementById('catalogOverlay').classList.add('open');
+}
+
+function renderCatalog(){
+  const q=document.getElementById('cat-search').value.toLowerCase().trim();
+  const marca=document.getElementById('cat-marca').value;
+  const ver=document.getElementById('cat-ver').value;
+  let f=CATALOG;
+  if(marca) f=f.filter(c=>c.marca===marca);
+  if(ver)   f=f.filter(c=>c.version.includes(ver));
+  if(q)     f=f.filter(c=>c.vin.toLowerCase().includes(q)||c.folio.toLowerCase().includes(q)||c.matricula.toLowerCase().includes(q)||c.modelo.toLowerCase().includes(q)||c.version.toLowerCase().includes(q)||c.color.toLowerCase().includes(q)||c.marca.toLowerCase().includes(q));
+  document.getElementById('cat-count').textContent=f.length+' unidades encontradas de '+CATALOG.length+' en catálogo';
+  const td='padding:7px 10px;font-size:11.5px;border-bottom:1px solid var(--brd)';
+  const tbody=document.getElementById('cat-body');
+  if(!f.length){ tbody.innerHTML='<tr><td colspan="8" style="padding:30px;text-align:center;color:var(--txt3);font-size:12px">Sin resultados.</td></tr>'; return; }
+  tbody.innerHTML=f.map(c=>`<tr onclick="selectFromCatalog('${c.vin}')" style="cursor:pointer;transition:background .15s" onmouseover="this.style.background='var(--srf2)'" onmouseout="this.style.background=''">
+    <td style="${td};font-weight:700;color:var(--gold)">${c.folio}</td>
+    <td style="${td}">${c.marca}</td>
+    <td style="${td}">${c.modelo}</td>
+    <td style="${td};color:var(--txt2)">${c.version}</td>
+    <td style="${td};font-weight:700">${c.año||'—'}</td>
+    <td style="${td}">${c.color||'—'}</td>
+    <td style="${td};font-family:monospace;font-size:10px;color:var(--txt3)">${c.vin}</td>
+    <td style="${td};font-weight:600">${c.matricula}</td>
+  </tr>`).join('');
+}
+
+function selectFromCatalog(vin){
+  document.getElementById('vinInput').value=vin;
+  closeModal('catalogOverlay');
+  searchVIN();
+}
+
+function renderSlots(){
+  const dateVal=document.getElementById('appt-date').value;
+  const svcVal=document.getElementById('appt-service').value;
+  if(!dateVal||!svcVal){ document.getElementById('slotsSection').style.display='none'; return; }
+  document.getElementById('slotsSection').style.display='block';
+  const grid=document.getElementById('slotsGrid');
+  const branch=document.getElementById('appt-branch').value;
+  // Occupied slots for that date+branch
+  const occ=APPTS.filter(a=>a.date===dateVal&&a.branch===branch).map(a=>hhmm(a.sh,a.sm));
+  const extra=SLOT_NA;
+  grid.innerHTML=SLOTS_BASE.map(t=>{
+    const busy=occ.includes(t)||extra.includes(t);
+    const tech=busy?'Ocupado':'Bahía libre';
+    const sel=S.selectedSlot===t&&!busy;
+    return `<div class="slot-btn${busy?' na':sel?' sel':''}" onclick="${busy?'':'"selectSlot(\''+t+'\')"'}">
+      <div>${t}</div><div class="slot-sub">${tech}</div>
+    </div>`.replace('"selectSlot', 'selectSlot').replace('\')"','\')');
+  }).join('');
+  // fix onclick
+  grid.querySelectorAll('.slot-btn:not(.na)').forEach((el,i)=>{
+    const t=SLOTS_BASE[i];
+    if(!el.classList.contains('na')) el.onclick=()=>selectSlot(t);
+  });
+}
+
+function selectSlot(t){
+  S.selectedSlot=t;
+  document.querySelectorAll('.slot-btn').forEach(b=>b.classList.remove('sel'));
+  const branch=document.getElementById('appt-branch').value;
+  const bays=S.branch==='MTY'?TECHS_MTY:generateBays(BRANCH_DATA[branch].bays);
+  const assignedBay=bays[Math.floor(Math.random()*bays.length)];
+  document.getElementById('assignedBayInfo').style.display='block';
+  document.getElementById('assignedBayText').textContent=`Bahía ${assignedBay.bay} — ${assignedBay.name} (${assignedBay.spec||'Servicio General'})`;
+  renderSlots();
+  // re-mark selected
+  const grid=document.getElementById('slotsGrid');
+  grid.querySelectorAll('.slot-btn:not(.na)').forEach(el=>{
+    if(el.querySelector('div').textContent===t) el.classList.add('sel');
+  });
+  showToast('info','🕐 Horario '+t+' seleccionado');
+}
+
+function confirmAppt(){
+  const vinVal=document.getElementById('vinInput').value.trim().toUpperCase();
+  const svcVal=document.getElementById('appt-service').value;
+  const dateVal=document.getElementById('appt-date').value;
+  const branchVal=document.getElementById('appt-branch').value;
+  if(!vinVal){ showToast('err','⚠ Ingresa y busca el VIN del vehículo'); return; }
+  if(!VIN_MAP[vinVal]){ showToast('err','⚠ VIN no válido'); return; }
+  if(!svcVal){ showToast('err','⚠ Selecciona el tipo de servicio'); return; }
+  if(!dateVal){ showToast('err','⚠ Selecciona una fecha'); return; }
+  if(!S.selectedSlot){ showToast('err','⚠ Selecciona un horario disponible'); return; }
+  const [hh,mm]=S.selectedSlot.split(':').map(Number);
+  const vid=VEHICLES.findIndex(v=>v.vin===vinVal);
+  const newId='APT-'+String(APPTS.length+1).padStart(3,'0');
+  APPTS.push({ id:newId, date:dateVal, sh:hh, sm:mm, dur:2, vid, svc:svcVal, bay:1, tech:'Ing. Rodrigo Cienfuegos', branch:branchVal, status:'programada', color:'c-vr7' });
+  closeModal('newApptOverlay');
+  S.currentDate=new Date(dateVal+'T12:00:00');
+  renderStats(); renderCalDia(); renderCalSemana(); renderCalMes(); renderBays();
+  updateDateLabel();
+  BRANCH_DATA[branchVal].citasHoy++;
+  BRANCH_DATA[branchVal].citasSem++;
+  renderStats();
+  NOTIFS.unshift({ id:Date.now(), title:'Cita '+newId+' creada — '+VEHICLES[vid].brand+' '+VEHICLES[vid].model, sub:svcVal+' · '+S.selectedSlot+' · '+dateVal, time:'ahora mismo', read:false });
+  renderNotifs();
+  showToast('ok','✔ Cita '+newId+' confirmada para el '+dateVal+' a las '+S.selectedSlot);
+}
+
+// ═══════════════════════════════════════════════════════
+//  MODAL: DETALLE DE CITA
+// ═══════════════════════════════════════════════════════
+
+function openDetail(id){
+  const a=APPTS.find(x=>x.id===id);
+  if(!a) return;
+  S.activeApptId=id;
+  const v=VEHICLES[a.vid];
+  const st=statusLabel(a.status);
+  document.getElementById('det-title').textContent='Cita '+a.id;
+  document.getElementById('det-badges').innerHTML=`
+    <span class="dm-b" style="background:var(--goldD);color:var(--gold);border:1px solid rgba(201,168,76,.3)">${v.level}</span>
+    <span class="dm-b" style="background:rgba(255,255,255,.05);color:${st.col};border:1px solid ${st.col}40">${st.txt}</span>
+    <span class="dm-b" style="background:var(--srf2);color:var(--txt2);border:1px solid var(--brd)">${a.branch} — ${BRANCH_DATA[a.branch].name}</span>
+  `;
+  document.getElementById('det-vehicle').innerHTML=`
+    <div class="dm-f"><label>Vehículo</label><span>${v.brand} ${v.model} ${v.year}</span></div>
+    <div class="dm-f"><label>VIN</label><span style="font-family:monospace;font-size:11px">${v.vin}</span></div>
+    <div class="dm-f"><label>Cliente</label><span>${v.client}</span></div>
+    <div class="dm-f"><label>Placa / Color</label><span>${v.plate} — ${v.color}</span></div>
+    <div class="dm-f"><label>Kilometraje</label><span>${v.km.toLocaleString('es-MX')} km</span></div>
+    <div class="dm-f"><label>Último Servicio</label><span>${v.lastSvc}</span></div>
+  `;
+  document.getElementById('det-appt').innerHTML=`
+    <div class="dm-f"><label>Servicio</label><span>${a.svc}</span></div>
+    <div class="dm-f"><label>Fecha</label><span>${a.date}</span></div>
+    <div class="dm-f"><label>Horario</label><span>${hhmm(a.sh,a.sm)} – ${apptEnd(a)}</span></div>
+    <div class="dm-f"><label>Bahía / Técnico</label><span>Bahía ${a.bay} — ${a.tech}</span></div>
+  `;
+  document.getElementById('det-actions').innerHTML=`
+    <div class="dm-act primary" onclick="iniciarServicio()">▶ Iniciar Servicio</div>
+    <div class="dm-act" onclick="reagendarCita()">🗓 Reagendar</div>
+    <div class="dm-act" onclick="enviarRecordatorio()">📨 Enviar Recordatorio</div>
+    <div class="dm-act danger" onclick="cancelarCita()">✕ Cancelar Cita</div>
+  `;
+  document.getElementById('detailOverlay').classList.add('open');
+}
+
+function iniciarServicio(){
+  const a=APPTS.find(x=>x.id===S.activeApptId);
+  if(a){ a.status='en-proceso'; }
+  closeModal('detailOverlay');
+  renderCalDia(); renderCalSemana(); renderBays();
+  showToast('ok','▶ Servicio iniciado — '+S.activeApptId);
+}
+
+function reagendarCita(){
+  closeModal('detailOverlay');
+  const a=APPTS.find(x=>x.id===S.activeApptId);
+  if(a){ openNewAppt(VEHICLES[a.vid].vin, a.svc); showToast('warn','🗓 Selecciona nueva fecha y horario para reagendar'); }
+}
+
+function enviarRecordatorio(){
+  const a=APPTS.find(x=>x.id===S.activeApptId);
+  if(!a) return;
+  const v=VEHICLES[a.vid];
+  const clientName=v.client.split(' — ')[0];
+  const domain=clientName.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,12);
+  document.getElementById('rec-to').value=`contacto@${domain}.mx (${v.client})`;
+  document.getElementById('rec-subject').value=`Recordatorio de Cita de Servicio — ${v.brand} ${v.model} · ${a.date}`;
+  document.getElementById('rec-body').value=
+`Estimado cliente de ${v.client},
+
+Le recordamos que tiene agendada una cita de servicio para su vehículo blindado:
+
+  Unidad:   ${v.brand} ${v.model} ${v.year} (${v.level})
+  Placa:    ${v.plate}
+  Servicio: ${a.svc}
+  Fecha:    ${a.date}
+  Horario:  ${hhmm(a.sh,a.sm)} – ${apptEnd(a)} hrs
+  Sucursal: ${BRANCH_DATA[a.branch].name} · Bahía ${a.bay}
+  Técnico:  ${a.tech}
+
+Por favor confírmenos su asistencia o contáctenos para reagendar.
+
+Blindados Premium — Taller de Servicio Especializado
+Tel: +52 81 8000-4400  |  taller.${a.branch.toLowerCase()}@blindadospremium.mx`;
+  closeModal('detailOverlay');
+  document.getElementById('recordatorioOverlay').classList.add('open');
+}
+
+function enviarRecordatorioConfirm(){
+  const channel=document.getElementById('rec-channel').value;
+  const channelLabel={email:'correo electrónico',whatsapp:'WhatsApp',sms:'SMS'};
+  const a=APPTS.find(x=>x.id===S.activeApptId);
+  const v=a?VEHICLES[a.vid]:null;
+  closeModal('recordatorioOverlay');
+  NOTIFS.unshift({ id:Date.now(), title:'Recordatorio enviado vía '+channelLabel[channel], sub:(v?v.brand+' '+v.model+' — ':'')+document.getElementById('rec-subject').value.slice(0,50), time:'ahora mismo', read:false });
+  renderNotifs();
+  showToast('ok','📨 Recordatorio enviado vía '+channelLabel[channel]);
+}
+
+function cancelarCita(){
+  if(!confirm('¿Confirmas la cancelación de la cita '+S.activeApptId+'?')) return;
+  const idx=APPTS.findIndex(x=>x.id===S.activeApptId);
+  if(idx>-1){ APPTS.splice(idx,1); BRANCH_DATA[S.branch].citasHoy=Math.max(0,BRANCH_DATA[S.branch].citasHoy-1); }
+  closeModal('detailOverlay');
+  renderStats(); renderCalDia(); renderCalSemana(); renderCalMes(); renderBays();
+  showToast('warn','✕ Cita '+S.activeApptId+' cancelada');
+}
+
+function openAlertDetail(vid){
+  const v=VEHICLES[vid];
+  const alert=ALERTS_DATA.find(a=>a.vid===vid);
+  const urgLabel={critico:'Crítico',alto:'Alto',normal:'Normal'};
+  const urgColor={critico:'var(--err)',alto:'var(--warn)',normal:'var(--ok)'};
+  document.getElementById('va-title').textContent='🛡 '+v.brand+' '+v.model+' — Ficha Vehículo';
+  const histSvc=[
+    { fecha:'2025-09-15', svc:'Revisión Sistema de Blindaje', km:v.km-15000, tech:'Ing. Rodrigo Cienfuegos' },
+    { fecha:'2025-03-22', svc:'Cambio de Aceite Sintético + Filtros', km:v.km-25000, tech:'Téc. Mauricio Ontiveros' },
+    { fecha:'2024-10-08', svc:'Servicio Mayor — Paquete Blindado', km:v.km-40000, tech:'Ing. Armando Salazar' },
+  ];
+  const histHtml=histSvc.map(h=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--brd);font-size:11.5px">
+      <div><div style="font-weight:600">${h.svc}</div><div style="color:var(--txt3);font-size:10px">${h.fecha} · ${h.km.toLocaleString('es-MX')} km · ${h.tech}</div></div>
+    </div>`).join('');
+  document.getElementById('va-body').innerHTML=`
+    <div class="dm-badges" style="margin-bottom:12px">
+      <span class="dm-b" style="background:var(--goldD);color:var(--gold);border:1px solid rgba(201,168,76,.3)">${v.level}</span>
+      ${alert?`<span class="dm-b" style="background:rgba(0,0,0,.2);color:${urgColor[alert.urgency]};border:1px solid ${urgColor[alert.urgency]}40">Urgencia: ${urgLabel[alert.urgency]}</span>`:''}  
+    </div>
+    <div class="dm-sec">
+      <div class="dm-sec-title">Datos del Vehículo</div>
+      <div class="dm-2col">
+        <div class="dm-f"><label>Modelo</label><span>${v.brand} ${v.model} ${v.year}</span></div>
+        <div class="dm-f"><label>VIN</label><span style="font-family:monospace;font-size:10.5px">${v.vin}</span></div>
+        <div class="dm-f"><label>Cliente</label><span>${v.client}</span></div>
+        <div class="dm-f"><label>Placa / Color</label><span>${v.plate} — ${v.color}</span></div>
+        <div class="dm-f"><label>Kilometraje actual</label><span style="font-weight:800;color:${alert&&alert.kmCur>=alert.kmThr?'var(--err)':'var(--ok)'}">${v.km.toLocaleString('es-MX')} km</span></div>
+        <div class="dm-f"><label>Último servicio</label><span>${v.lastSvc}</span></div>
+      </div>
+    </div>
+    ${alert?`<div class="dm-sec">
+      <div class="dm-sec-title">Alerta de Mantenimiento</div>
+      <div style="background:var(--srf2);border:1px solid var(--brd);border-radius:8px;padding:12px">
+        <div style="font-size:12.5px;font-weight:700;margin-bottom:6px">${alert.svc}</div>
+        <div style="font-size:11px;color:var(--txt2)">Km actuales: <strong>${alert.kmCur.toLocaleString('es-MX')}</strong> · Umbral: <strong>${alert.kmThr.toLocaleString('es-MX')}</strong></div>
+        <div style="height:5px;background:var(--srf3);border-radius:3px;margin-top:8px;overflow:hidden"><div style="height:100%;border-radius:3px;width:${Math.min(100,Math.round(alert.kmCur/alert.kmThr*100))}%;background:${alert.urgency==='critico'?'var(--err)':alert.urgency==='alto'?'var(--warn)':'var(--ok)'}"></div></div>
+      </div>
+    </div>`:''}  
+    <div class="dm-sec">
+      <div class="dm-sec-title">Historial de Servicios</div>
+      ${histHtml}
+    </div>`;
+  const schedBtn=document.getElementById('va-schedule-btn');
+  schedBtn.onclick=()=>{ closeModal('vehicleAlertOverlay'); openNewApptFromAlert(vid, alert?alert.svc:'Revisión General'); };
+  document.getElementById('vehicleAlertOverlay').classList.add('open');
+}
+
+// ═══════════════════════════════════════════════════════
+//  CONFIGURACIÓN
+// ═══════════════════════════════════════════════════════
+
+function openConfig(){
+  setCfgTab('op');
+  document.getElementById('suc-name').value=BRANCH_DATA[S.branch].name;
+  document.getElementById('suc-key').value=S.branch;
+  document.getElementById('suc-city').value=BRANCH_DATA[S.branch].city;
+  document.getElementById('configOverlay').classList.add('open');
+}
+
+function setCfgTab(t){
+  ['op','km','notif','suc'].forEach(x=>{
+    document.getElementById('cfg-'+x).style.display=x===t?'block':'none';
+    const btn=document.getElementById('cfg-tab-'+x);
+    if(btn) btn.classList.toggle('active',x===t);
+  });
+}
+
+function toggleDay(d){
+  document.getElementById('cfg-'+d).classList.toggle('active');
+}
+
+function saveToggle(id){
+  const on=document.getElementById(id).checked;
+  showToast('ok','✔ Notificación '+(on?'activada':'desactivada'));
+}
+
+function saveConfig(){
+  const newName=document.getElementById('suc-name').value.trim();
+  const newCity=document.getElementById('suc-city').value.trim();
+  if(newName) BRANCH_DATA[S.branch].name=newName;
+  if(newCity) BRANCH_DATA[S.branch].city=newCity;
+  closeModal('configOverlay');
+  renderStats(); renderMulti();
+  showToast('ok','✔ Configuración guardada para '+S.branch);
+}
+
+// ═══════════════════════════════════════════════════════
+//  GESTIÓN DE BAHÍAS
+// ═══════════════════════════════════════════════════════
+
+// Copia editable de las bahías por sucursal
+const BAYS_EDITABLE = {
+  MTY:  [
+    { bay:1, tech:'Ing. Rodrigo Cienfuegos',  spec:'Especialista VR7+',       active:true },
+    { bay:2, tech:'Téc. Mauricio Ontiveros',  spec:'Diagnóstico Electrónico', active:true },
+    { bay:3, tech:'Ing. Armando Salazar',     spec:'Mecánica de Precisión',   active:true },
+    { bay:4, tech:'Ing. Fernanda Ruiz',       spec:'Blindaje y Paneles',      active:true },
+  ],
+  CDMX: [
+    { bay:1, tech:'Ing. Rafael Montaño',      spec:'Especialista VR9',        active:true },
+    { bay:2, tech:'Téc. Sofía Leal',          spec:'Diagnóstico Electrónico', active:true },
+    { bay:3, tech:'Ing. Ernesto Villanueva',  spec:'Mecánica de Precisión',   active:true },
+    { bay:4, tech:'Téc. Andrea Campos',       spec:'Blindaje y Paneles',      active:true },
+    { bay:5, tech:'Ing. Jorge Espinoza',      spec:'Cristales y Sellado',     active:true },
+  ],
+  GDL: [
+    { bay:1, tech:'Ing. Héctor Navarro',      spec:'Especialista Blindaje',   active:true },
+    { bay:2, tech:'Téc. Lorena Guzmán',       spec:'Diagnóstico Electrónico', active:true },
+    { bay:3, tech:'Ing. Marco Ríos',          spec:'Neumáticos Run-Flat',     active:true },
+  ],
+  CUN: [
+    { bay:1, tech:'Ing. Pablo Suárez',        spec:'Servicio General Blindado', active:true },
+    { bay:2, tech:'Téc. Karla Moreno',        spec:'Diagnóstico y Electrónica', active:false },
+  ],
+  HMO: [
+    { bay:1, tech:'Ing. Daniel Félix',        spec:'Servicio General Blindado', active:true },
+    { bay:2, tech:'Téc. Valeria Ochoa',       spec:'Diagnóstico Electrónico',   active:true },
+  ],
+};
+
+function openBayConfig(){
+  document.getElementById('bayConfigTitle').textContent='🔧 Gestión de Bahías — '+S.branch+' · '+BRANCH_DATA[S.branch].name;
+  renderBayConfigBody();
+  document.getElementById('bayConfigOverlay').classList.add('open');
+}
+
+function renderBayConfigBody(){
+  const list=BAYS_EDITABLE[S.branch]||[];
+  let html='';
+  html+=`<div style="font-size:11px;color:var(--txt2);margin-bottom:14px">Configura las bahías disponibles, técnicos asignados y especialidades para la sucursal <strong>${S.branch}</strong>.</div>`;
+  list.forEach((b,i)=>{
+    const specOptions=['Especialista VR7+','Especialista VR9','Diagnóstico Electrónico','Mecánica de Precisión','Blindaje y Paneles','Cristales y Sellado','Neumáticos Run-Flat','Servicio General Blindado'];
+    const opts=specOptions.map(s=>`<option${s===b.spec?' selected':''}>${s}</option>`).join('');
+    html+=`<div style="background:var(--srf2);border:1px solid ${b.active?'var(--brd)':'var(--err)'};border-radius:10px;padding:14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:13px;font-weight:800">Bahía ${b.bay}</span>
+        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:11.5px;color:var(--txt2)">
+          <input type="checkbox" id="bay-active-${i}" ${b.active?'checked':''} onchange="toggleBayActive(${i})" style="accent-color:var(--gold);width:14px;height:14px">
+          ${b.active?'<span style="color:var(--ok)">Activa</span>':'<span style="color:var(--err)">Inactiva</span>'}
+        </label>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><label class="flbl">Técnico Asignado</label>
+          <input class="fc" id="bay-tech-${i}" value="${b.tech}" placeholder="Nombre del técnico">
+        </div>
+        <div><label class="flbl">Especialidad</label>
+          <select class="fc" id="bay-spec-${i}">${opts}</select>
+        </div>
+      </div>
+    </div>`;
+  });
+  if(list.length===0) html='<div style="text-align:center;padding:30px;color:var(--txt3)">Sin bahías configuradas.</div>';
+  document.getElementById('bayConfigBody').innerHTML=html;
+}
+
+function toggleBayActive(i){
+  const b=BAYS_EDITABLE[S.branch][i];
+  b.active=!b.active;
+  BRANCH_DATA[S.branch].bahiasDisp=BAYS_EDITABLE[S.branch].filter(x=>x.active).length;
+  renderBayConfigBody();
+}
+
+function addBay(){
+  const list=BAYS_EDITABLE[S.branch];
+  list.push({ bay:list.length+1, tech:'Nuevo Técnico', spec:'Servicio General Blindado', active:true });
+  BRANCH_DATA[S.branch].bays=list.length;
+  BRANCH_DATA[S.branch].techs=list.filter(x=>x.active).length;
+  renderBayConfigBody();
+  showToast('ok','✔ Bahía '+(list.length)+' agregada');
+}
+
+function saveBayConfig(){
+  const list=BAYS_EDITABLE[S.branch];
+  list.forEach((b,i)=>{
+    const t=document.getElementById('bay-tech-'+i);
+    const s=document.getElementById('bay-spec-'+i);
+    if(t) b.tech=t.value.trim()||b.tech;
+    if(s) b.spec=s.value;
+  });
+  BRANCH_DATA[S.branch].bays=list.length;
+  BRANCH_DATA[S.branch].techs=list.filter(x=>x.active).length;
+  BRANCH_DATA[S.branch].bahiasDisp=list.filter(x=>x.active).length;
+  closeModal('bayConfigOverlay');
+  renderStats(); renderBays(); renderMulti();
+  showToast('ok','✔ Bahías actualizadas para '+S.branch+' ('+list.filter(x=>x.active).length+' activas)');
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+
+let toastTimer=null;
+function showToast(type, msg){
+  const t=document.getElementById('toast');
+  const icons={ok:'✅',err:'❌',warn:'⚠️',info:'ℹ️'};
+  t.className='toast '+(type==='ok'?'ok-t':type==='err'?'err-t':type==='warn'?'warn-t':'');
+  document.getElementById('toastIcon').textContent=icons[type]||'ℹ️';
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// ═══════════════════════════════════════════════════════
+//  CLOSE MODALS ON OVERLAY CLICK
+// ═══════════════════════════════════════════════════════
+
+document.querySelectorAll('.overlay').forEach(o=>{
+  o.addEventListener('click', e=>{ if(e.target===o) o.classList.remove('open'); });
+});
+document.addEventListener('click', e=>{
+  if(S.notifOpen && !document.getElementById('notifPanel').contains(e.target) && !document.getElementById('notifBtn').contains(e.target)){
+    S.notifOpen=false;
+    document.getElementById('notifPanel').classList.remove('open');
+    document.getElementById('notifBtn').style.borderColor='var(--brd)';
+  }
+});
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+
+renderApp();
+</script>
+</body>
+</html>

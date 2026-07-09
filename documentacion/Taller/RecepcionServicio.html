@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Recepción de Vehículo & OS | Blindados Premium</title>
+<style>
+:root {
+  --bg:    #070b14;
+  --srf:   #0f1623;
+  --srf2:  #161e2e;
+  --srf3:  #1e293b;
+  --brd:   #2d3a50;
+  --brd2:  #374151;
+  --gold:  #c9a84c;
+  --goldL: #e8c76a;
+  --goldD: rgba(201,168,76,.15);
+  --txt:   #f1f5f9;
+  --txt2:  #94a3b8;
+  --txt3:  #64748b;
+  --ok:    #10b981;
+  --warn:  #f59e0b;
+  --err:   #ef4444;
+  --info:  #6366f1;
+  --blue:  #3b82f6;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);font-size:14px}
+
+/* ── HEADER ── */
+.hdr{height:64px;background:var(--srf);border-bottom:1px solid var(--brd);padding:0 20px;display:flex;align-items:center;gap:14px;flex-shrink:0}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px;color:var(--gold);white-space:nowrap}
+.logo-ico{width:34px;height:34px;background:var(--goldD);border:1px solid var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.hdiv{width:1px;height:30px;background:var(--brd)}
+.tech-info{display:flex;align-items:center;gap:8px}
+.tech-av{width:34px;height:34px;background:var(--srf3);border:2px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:var(--gold);flex-shrink:0}
+.tech-name{font-size:13px;font-weight:700;line-height:1.2}
+.tech-role{font-size:10px;color:var(--txt3)}
+.branch-pill{background:var(--srf2);border:1px solid var(--brd);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--txt2);display:flex;align-items:center;gap:6px}
+.branch-dot{width:7px;height:7px;border-radius:50%;background:var(--ok);flex-shrink:0}
+.hdr-clock{margin-left:auto;text-align:right}
+.hdr-time{font-size:19px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--gold);line-height:1}
+.hdr-date{font-size:10px;color:var(--txt3);margin-top:2px}
+
+/* ── WIZARD BAR ── */
+.wizard-bar{background:var(--srf);border-bottom:1px solid var(--brd);padding:11px 24px;flex-shrink:0}
+.wiz-steps{display:flex;align-items:center}
+.wiz-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;position:relative}
+.wiz-step:not(:last-child)::after{content:'';position:absolute;top:13px;left:calc(50% + 16px);right:calc(-50% + 16px);height:2px;background:var(--brd);transition:background .3s}
+.wiz-step.done:not(:last-child)::after{background:var(--ok)}
+.wiz-num{width:26px;height:26px;border-radius:50%;border:2px solid var(--brd);background:var(--srf2);color:var(--txt3);font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;transition:all .25s;z-index:1;flex-shrink:0}
+.wiz-step.active .wiz-num{border-color:var(--gold);background:var(--goldD);color:var(--gold)}
+.wiz-step.done .wiz-num{border-color:var(--ok);background:rgba(16,185,129,.15);color:var(--ok)}
+.wiz-lbl{font-size:9.5px;font-weight:700;color:var(--txt3);text-align:center;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
+.wiz-step.active .wiz-lbl{color:var(--gold)}
+.wiz-step.done .wiz-lbl{color:var(--ok)}
+
+/* ── APP SHELL ── */
+.app{display:flex;flex-direction:column;height:100vh}
+/* .content-area redefinida en sección sidebar */
+
+/* ── STEP PANELS ── */
+.step-panel{display:none;animation:slin .2s ease}
+.step-panel.active{display:block}
+@keyframes slin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARD ── */
+.card{background:var(--srf);border:1px solid var(--brd);border-radius:12px;padding:16px;margin-bottom:14px}
+.card-title{font-size:10.5px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.card-title .ct-icon{font-size:15px}
+
+/* ── FORM ── */
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
+.fg{margin-bottom:12px}
+.fg:last-child{margin-bottom:0}
+.flbl{font-size:10.5px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px}
+.fc{width:100%;background:var(--srf2);border:1px solid var(--brd);color:var(--txt);padding:10px 12px;border-radius:10px;font-size:14px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.fc:focus{border-color:var(--gold)}
+.fc::placeholder{color:var(--txt3)}
+select.fc{cursor:pointer}
+select.fc option{background:var(--srf2)}
+textarea.fc{resize:vertical;line-height:1.6;font-family:inherit;min-height:80px}
+
+/* ── VIN SEARCH ── */
+.vin-wrap{position:relative}
+.vin-input{font-size:16px!important;font-family:monospace!important;letter-spacing:3px!important;text-transform:uppercase!important;padding-right:100px!important}
+.vin-go{position:absolute;right:5px;top:5px;background:var(--gold);border:none;color:#070b14;padding:8px 16px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:800;transition:background .2s;height:calc(100% - 10px)}
+.vin-go:hover{background:var(--goldL)}
+
+/* ── VEHICLE CARD ── */
+.veh-found{background:var(--srf2);border:2px solid var(--gold);border-radius:12px;padding:16px;margin-bottom:14px;display:none}
+.veh-found.show{display:block;animation:slin .25s ease}
+.vf-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.vf-model{font-size:18px;font-weight:900;line-height:1.1}
+.vf-sub{font-size:11px;color:var(--txt2);margin-top:3px}
+.vf-level{font-size:11px;font-weight:800;padding:5px 12px;border-radius:8px;border:1px solid;flex-shrink:0}
+.vf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.vf-item label{font-size:9.5px;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;display:block;margin-bottom:2px}
+.vf-item span{font-size:13px;font-weight:700}
+.vf-footer{margin-top:12px;padding-top:10px;border-top:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between}
+.hist-link{font-size:12px;color:var(--gold);cursor:pointer;font-weight:700;background:none;border:none;padding:0}
+.hist-link:hover{text-decoration:underline}
+
+/* ── RECENTS ── */
+.recent-item{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--srf2);border:1px solid var(--brd);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:background .15s}
+.recent-item:hover{background:var(--srf3);border-color:var(--brd2)}
+.recent-item:last-child{margin-bottom:0}
+
+/* ── KM SPECIAL ── */
+.km-wrap{position:relative;max-width:280px;margin:0 auto}
+.km-input{font-size:22px!important;font-weight:900!important;text-align:center!important;letter-spacing:3px!important;padding-right:48px!important}
+.km-unit{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--txt3);font-weight:700;pointer-events:none}
+.km-note{font-size:11px;text-align:center;margin-top:8px;min-height:18px}
+
+/* ── ACCESSORIES ── */
+.acc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.acc-item{background:var(--srf2);border:1px solid var(--brd);border-radius:10px;padding:10px 12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:9px;user-select:none}
+.acc-item:hover{border-color:var(--brd2)}
+.acc-item.chk{background:var(--goldD);border-color:rgba(201,168,76,.5)}
+.acc-chk{width:19px;height:19px;border-radius:5px;border:2px solid var(--brd2);background:var(--srf3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:10px;font-weight:900;color:transparent}
+.acc-item.chk .acc-chk{border-color:var(--gold);background:var(--gold);color:#070b14}
+.acc-lbl{font-size:12.5px;font-weight:500;color:var(--txt2);line-height:1.2}
+.acc-item.chk .acc-lbl{color:var(--txt);font-weight:700}
+
+/* ── INSPECTION ── */
+.insp-prog-wrap{background:var(--srf);border:1px solid var(--brd);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.insp-prog-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.insp-pct{font-size:22px;font-weight:900;color:var(--gold)}
+.insp-bar{height:7px;background:var(--srf3);border-radius:4px;overflow:hidden;margin-bottom:8px}
+.insp-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--goldL));border-radius:4px;transition:width .4s ease;width:0%}
+.insp-counts{display:flex;gap:14px;font-size:11.5px}
+.ic-ok{color:var(--ok)}.ic-flag{color:var(--warn)}.ic-fail{color:var(--err)}.ic-pend{color:var(--txt3)}
+
+.cat-section{margin-bottom:8px}
+.cat-hdr{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--srf);border:1px solid var(--brd);border-radius:10px;cursor:pointer;transition:background .15s;user-select:none}
+.cat-hdr:hover{background:var(--srf2)}
+.cat-hdr.open{border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom-color:var(--srf2)}
+.cat-icon{font-size:17px;width:22px;text-align:center;flex-shrink:0}
+.cat-name{font-size:13px;font-weight:800;flex:1}
+.cat-count{font-size:10.5px;color:var(--txt3)}
+.cat-badge{font-size:10px;font-weight:800;padding:3px 9px;border-radius:10px;flex-shrink:0}
+.cb-pend{background:var(--srf3);color:var(--txt3);border:1px solid var(--brd)}
+.cb-ok{background:rgba(16,185,129,.12);color:var(--ok);border:1px solid rgba(16,185,129,.3)}
+.cb-warn{background:rgba(245,158,11,.12);color:var(--warn);border:1px solid rgba(245,158,11,.3)}
+.cb-err{background:rgba(239,68,68,.12);color:var(--err);border:1px solid rgba(239,68,68,.3)}
+.cat-chev{font-size:11px;color:var(--txt3);transition:transform .25s;flex-shrink:0}
+.cat-hdr.open .cat-chev{transform:rotate(180deg)}
+.cat-body{background:var(--srf2);border:1px solid var(--brd);border-top:none;border-radius:0 0 10px 10px;display:none}
+.cat-body.open{display:block}
+
+.insp-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);cursor:default;transition:background .12s}
+.insp-item:last-child{border-bottom:none}
+.insp-item.flagged{background:rgba(245,158,11,.05)}
+.insp-item.failed{background:rgba(239,68,68,.05)}
+.ii-num{font-size:9.5px;color:var(--txt3);width:24px;flex-shrink:0;text-align:right;font-variant-numeric:tabular-nums}
+.ii-name{flex:1;font-size:12.5px;line-height:1.3}
+.ii-btns{display:flex;gap:5px;flex-shrink:0}
+.ii-btn{width:38px;height:38px;border-radius:9px;border:1.5px solid var(--brd);background:var(--srf);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.ii-btn:hover{border-color:var(--brd2);background:var(--srf2)}
+.ii-btn.st-ok{border-color:var(--ok);background:rgba(16,185,129,.15)}
+.ii-btn.st-flag{border-color:var(--warn);background:rgba(245,158,11,.15)}
+.ii-btn.st-fail{border-color:var(--err);background:rgba(239,68,68,.15)}
+.ii-icon{width:34px;height:34px;border-radius:8px;border:1.5px solid var(--brd);background:var(--srf);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;color:var(--txt3);transition:all .15s;flex-shrink:0}
+.ii-icon:hover{border-color:var(--blue);color:var(--blue);background:rgba(59,130,246,.1)}
+.ii-icon.active{border-color:var(--blue);color:var(--blue);background:rgba(59,130,246,.1)}
+.ii-icon.note-on{border-color:var(--info);color:var(--info);background:rgba(99,102,241,.1)}
+
+/* ── PHOTO STEP ── */
+.photo-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.pf-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--brd);background:var(--srf);color:var(--txt2);cursor:pointer;font-size:12px;font-weight:500;transition:all .2s}
+.pf-btn:hover{border-color:var(--gold);color:var(--gold)}
+.pf-btn.active{background:var(--goldD);border-color:rgba(201,168,76,.4);color:var(--gold);font-weight:700}
+.upload-zone{border:2px dashed var(--brd);border-radius:12px;padding:26px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px}
+.upload-zone:hover{border-color:var(--gold);background:var(--goldD)}
+.uz-icon{font-size:34px;margin-bottom:7px}
+.uz-txt{font-size:13px;font-weight:700;color:var(--txt2)}
+.uz-sub{font-size:11px;color:var(--txt3);margin-top:3px}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.photo-thumb{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:4/3;border:1px solid var(--brd);transition:all .2s;cursor:pointer}
+.photo-thumb:hover{border-color:var(--gold);transform:scale(1.03)}
+.pt-face{width:100%;height:100%;background:var(--srf3);display:flex;align-items:center;justify-content:center;font-size:30px}
+.pt-info{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.75);padding:5px 8px}
+.pt-lbl{font-size:9.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pt-cat{font-size:8.5px;color:var(--txt3)}
+.pt-del{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.75);border:none;color:var(--err);width:22px;height:22px;border-radius:5px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
+.photo-thumb:hover .pt-del{opacity:1}
+
+/* ── OS PREVIEW ── */
+.os-card{background:var(--srf2);border:1px solid var(--gold);border-radius:12px;overflow:hidden}
+.os-head{background:var(--goldD);border-bottom:1px solid rgba(201,168,76,.25);padding:14px 18px;display:flex;justify-content:space-between;align-items:flex-start}
+.os-num{font-size:13px;font-weight:900;color:var(--gold);letter-spacing:1px}
+.os-date{font-size:10px;color:var(--txt3);margin-top:2px}
+.os-status-badge{font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;background:rgba(245,158,11,.15);color:var(--warn);border:1px solid rgba(245,158,11,.3)}
+.os-body{padding:16px 18px}
+.os-sec{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--brd)}
+.os-sec:last-child{border:none;margin-bottom:0;padding-bottom:0}
+.os-sec-lbl{font-size:9.5px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.os-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.os-f label{font-size:9px;color:var(--txt3);text-transform:uppercase;display:block;margin-bottom:2px}
+.os-f span{font-size:12.5px;font-weight:700}
+.obs-row{display:flex;align-items:flex-start;gap:8px;padding:6px 10px;background:var(--srf3);border-radius:7px;margin-bottom:5px;font-size:12px}
+.obs-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.obs-dot.warn{background:var(--warn)}.obs-dot.err{background:var(--err)}
+.chip-wrap{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px}
+.chip-neu{background:var(--srf3);border:1px solid var(--brd);color:var(--txt2)}
+.chip-ok{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:var(--ok)}
+.chip-warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:var(--warn)}
+.chip-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--err)}
+
+/* ── SIGN PAD ── */
+.sign-pad{background:var(--srf2);border:1px dashed var(--brd);border-radius:10px;height:110px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s}
+.sign-pad:hover{border-color:var(--gold)}
+.sign-pad.signed{border-style:solid;border-color:var(--ok);cursor:default}
+
+/* ── DIST OPTIONS ── */
+.dist-row{display:flex;align-items:center;gap:12px;padding:11px 13px;background:var(--srf2);border:1px solid var(--brd);border-radius:9px;margin-bottom:8px;cursor:pointer;transition:border-color .2s}
+.dist-row:hover{border-color:var(--brd2)}
+.dist-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--gold);flex-shrink:0;cursor:pointer}
+.dist-row span{font-size:13px}
+
+/* ── BOTTOM BAR ── */
+.bottom-bar{background:var(--srf);border-top:1px solid var(--brd);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.bb-info{font-size:12px;color:var(--txt3)}
+.bb-btns{display:flex;gap:10px}
+.btn-sec{background:var(--srf2);border:1px solid var(--brd);color:var(--txt2);padding:10px 20px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;transition:all .2s}
+.btn-sec:hover{border-color:var(--txt2);color:var(--txt)}
+.btn-prime{background:var(--gold);color:#070b14;border:none;padding:10px 22px;border-radius:10px;cursor:pointer;font-weight:900;font-size:13px;display:flex;align-items:center;gap:6px;transition:all .2s}
+.btn-prime:hover{background:var(--goldL)}
+
+/* ── MODALS ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:600;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(5px)}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--srf);border:1px solid var(--brd);border-radius:16px;width:660px;max-width:96vw;max-height:90vh;overflow-y:auto;transform:translateY(18px);transition:transform .2s}
+.overlay.open .modal{transform:translateY(0)}
+.modal.sm{width:500px}
+.modal.lg{width:820px}
+.m-hdr{padding:15px 20px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--srf);z-index:1}
+.m-title{font-size:15px;font-weight:800}
+.m-close{background:var(--srf2);border:1px solid var(--brd);color:var(--txt2);width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s}
+.m-close:hover{border-color:var(--err);color:var(--err)}
+.m-body{padding:20px}
+.m-ftr{padding:13px 20px;border-top:1px solid var(--brd);display:flex;gap:8px;justify-content:flex-end;background:var(--srf);position:sticky;bottom:0}
+
+/* ── HISTORY TIMELINE ── */
+.hist-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.hkpi{background:var(--srf2);border:1px solid var(--brd);border-radius:10px;padding:12px;text-align:center}
+.hkpi-val{font-size:22px;font-weight:900}
+.hkpi-lbl{font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.hist-tl{position:relative}
+.ht-item{display:flex;gap:13px;margin-bottom:14px}
+.ht-item:not(:last-child)::before{content:'';display:none}
+.ht-dot{width:34px;height:34px;border-radius:50%;background:var(--srf3);border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.ht-dot.gold{border-color:var(--gold);background:var(--goldD)}
+.ht-body{flex:1;background:var(--srf2);border:1px solid var(--brd);border-radius:10px;padding:12px}
+.ht-date{font-size:9.5px;color:var(--txt3);margin-bottom:3px}
+.ht-title{font-size:13px;font-weight:800;margin-bottom:4px}
+.ht-obs{font-size:11.5px;color:var(--txt2);line-height:1.5;margin-bottom:5px}
+.ht-meta{font-size:10px;color:var(--txt3);display:flex;gap:10px}
+
+/* ── CAM MODAL ── */
+.cam-preview{background:var(--srf3);border-radius:12px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;margin-bottom:14px;border:1px solid var(--brd);overflow:hidden;position:relative}
+.cam-sim{text-align:center}
+.cam-sim .ci{font-size:44px;display:block;margin-bottom:6px}
+.cam-sim .ct{font-size:12px;color:var(--txt3)}
+.cam-overlay-lbl{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-size:10px;color:rgba(255,255,255,.5);font-family:monospace}
+.cam-btns{display:flex;gap:8px;justify-content:center}
+.cam-btn{padding:10px 18px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;border:1px solid var(--brd);transition:all .2s}
+.cb-photo{background:var(--gold);color:#070b14;border:none}
+.cb-photo:hover{background:var(--goldL)}
+.cb-video{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.4);color:var(--err)}
+.cb-video:hover{background:rgba(239,68,68,.2)}
+.cb-file{background:var(--srf2);color:var(--txt2)}
+.cb-file:hover{border-color:var(--txt2);color:var(--txt)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--srf);border:1px solid var(--brd);border-radius:10px;padding:11px 16px;font-size:13px;font-weight:700;z-index:2000;transform:translateY(100px);opacity:0;transition:all .3s;display:flex;align-items:center;gap:8px;max-width:340px;box-shadow:0 8px 28px rgba(0,0,0,.5)}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok-t{border-color:var(--ok)}.toast.err-t{border-color:var(--err)}.toast.warn-t{border-color:var(--warn)}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--brd);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--brd2)}
+
+/* ── APPOINTMENT CARDS ── */
+.appt-card{display:flex;align-items:center;gap:14px;padding:13px 14px;background:var(--srf2);border:1px solid var(--brd);border-left:3px solid var(--brd);border-radius:10px;margin-bottom:8px;transition:all .2s;cursor:default}
+.appt-card:last-child{margin-bottom:0}
+.appt-card.status-confirmada{border-left-color:var(--ok)}
+.appt-card.status-pendiente{border-left-color:var(--warn)}
+.appt-card.en-recepcion{border-color:var(--gold);border-left-color:var(--gold);background:var(--goldD)}
+.ac-time{font-size:20px;font-weight:900;color:var(--gold);width:54px;text-align:center;flex-shrink:0;font-variant-numeric:tabular-nums;line-height:1}
+.ac-info{flex:1;min-width:0}
+.ac-model{font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ac-client{font-size:11px;color:var(--txt2);margin-top:2px}
+.ac-svc{font-size:11.5px;color:var(--txt2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ac-meta{font-size:10.5px;color:var(--txt3);margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ac-st{font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:8px;flex-shrink:0}
+.ac-st.conf{background:rgba(16,185,129,.12);color:var(--ok);border:1px solid rgba(16,185,129,.3)}
+.ac-st.pend{background:rgba(245,158,11,.12);color:var(--warn);border:1px solid rgba(245,158,11,.3)}
+.ac-st.recv{background:var(--goldD);color:var(--gold);border:1px solid rgba(201,168,76,.4)}
+.ac-btn{background:var(--gold);color:#070b14;border:none;padding:10px 16px;border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:900;white-space:nowrap;flex-shrink:0;transition:all .2s}
+.ac-btn:hover{background:var(--goldL)}
+.walkin-sep{display:flex;align-items:center;gap:12px;margin:2px 0 14px;color:var(--txt3);font-size:11px;font-weight:500}
+.walkin-sep::before,.walkin-sep::after{content:'';flex:1;height:1px;background:var(--brd)}
+.appt-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:var(--ok);font-size:11px;font-weight:700;padding:6px 11px;border-radius:8px;margin-top:10px}
+
+/* ── LAYOUT PRINCIPAL ── */
+.body-layout{display:flex;flex:1;overflow:hidden}
+/* ── NAV SIDEBAR (solo opciones) ── */
+.nav-sb{width:80px;flex-shrink:0;background:var(--srf);border-right:1px solid var(--brd);display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:4px}
+.nsb-logo{width:34px;height:34px;background:var(--goldD);border:1px solid var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:14px;flex-shrink:0}
+.nsb-item{width:66px;display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 5px;border-radius:10px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-align:center;user-select:none}
+.nsb-item:hover{background:var(--srf2)}
+.nsb-item.active{background:var(--goldD);border-color:rgba(201,168,76,.3)}
+.nsb-ico{font-size:20px;line-height:1}
+.nsb-lbl{font-size:8.5px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;line-height:1.35}
+.nsb-item.active .nsb-lbl{color:var(--gold)}
+/* ── PANELS ── */
+.main-panels{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.main-panel{display:none;flex:1;flex-direction:column;overflow:hidden}
+.main-panel.active{display:flex}
+/* ── CONTENT AREA (panel recepción) ── */
+.content-area{flex:1;overflow-y:auto;overflow-x:hidden;padding:18px 20px 10px}
+/* ── HISTORIAL PANEL ── */
+.hist-search-bar{background:var(--srf);border-bottom:1px solid var(--brd);padding:18px 24px;flex-shrink:0}
+.hist-search-lbl{font-size:10.5px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
+.hist-search-row{display:flex;gap:8px;max-width:560px}
+.hist-vin-input{flex:1;background:var(--srf2);border:1px solid var(--brd);color:var(--txt);padding:11px 14px;border-radius:10px;font-size:15px;font-family:monospace;letter-spacing:3px;text-transform:uppercase;outline:none;transition:border-color .2s}
+.hist-vin-input:focus{border-color:var(--gold)}
+.hist-vin-input::placeholder{color:var(--txt3);letter-spacing:0;font-family:inherit;font-size:12px}
+.hist-srch-btn{background:var(--gold);border:none;color:#070b14;padding:11px 22px;border-radius:10px;cursor:pointer;font-weight:900;font-size:13px;transition:all .2s;white-space:nowrap}
+.hist-srch-btn:hover{background:var(--goldL)}
+.hist-content{flex:1;overflow-y:auto;padding:24px}
+.hist-init{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--txt3);text-align:center;gap:10px}
+.hist-init-ico{font-size:44px}
+.hist-init-txt{font-size:16px;font-weight:800;color:var(--txt2)}
+.hist-init-sub{font-size:13px;max-width:340px;line-height:1.7}
+.hvc{background:var(--srf);border:2px solid var(--gold);border-radius:14px;padding:18px 22px;margin-bottom:22px}
+.hvc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.hvc-model{font-size:20px;font-weight:900;line-height:1.15}
+.hvc-vin{font-size:10.5px;font-family:monospace;letter-spacing:2px;color:var(--gold);margin-top:5px}
+.hvc-lvl{font-size:12px;font-weight:800;padding:5px 14px;border-radius:9px;border:1px solid;flex-shrink:0}
+.hvc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.hvc-f label{font-size:9.5px;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;display:block;margin-bottom:2px}
+.hvc-f span{font-size:13px;font-weight:800}
+.htl-title{font-size:10.5px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.htl-title span{color:var(--gold);font-size:13px}
+.htl{position:relative;padding-left:26px}
+.htl::before{content:'';position:absolute;left:9px;top:0;bottom:0;width:2px;background:var(--brd)}
+.htl-item{position:relative;margin-bottom:12px}
+.htl-dot{position:absolute;left:-21px;top:13px;width:12px;height:12px;border-radius:50%;border:2px solid var(--gold);background:var(--srf)}
+.htl-card{background:var(--srf);border:1px solid var(--brd);border-radius:10px;padding:13px 16px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;transition:border-color .2s}
+.htl-card:hover{border-color:var(--brd2)}
+.htl-svc{font-size:13.5px;font-weight:800;margin-bottom:5px}
+.htl-meta{display:flex;flex-wrap:wrap;gap:12px;font-size:11.5px;color:var(--txt3)}
+.htl-km{font-size:13px;font-weight:900;color:var(--gold);text-align:right;white-space:nowrap}
+.htl-date{font-size:11px;color:var(--txt3);text-align:right;margin-top:3px}
+.hist-notfound{text-align:center;padding:48px;color:var(--txt3);font-size:13px}
+/* ── HIST PANEL: MASTER-DETAIL ── */
+.hist-body{display:flex;flex:1;overflow:hidden;min-height:0}
+.hist-catalog{width:300px;flex-shrink:0;border-right:1px solid var(--brd);display:flex;flex-direction:column;overflow:hidden}
+.hcat-filter{padding:10px 14px;border-bottom:1px solid var(--brd);flex-shrink:0}
+.hcat-input{width:100%;background:var(--srf2);border:1px solid var(--brd);color:var(--txt);padding:7px 11px;border-radius:8px;font-size:12px;outline:none;transition:border-color .2s}
+.hcat-input:focus{border-color:var(--gold)}
+.hcat-input::placeholder{color:var(--txt3)}
+.hcat-count{font-size:9.5px;color:var(--txt3);padding:5px 14px 0;flex-shrink:0}
+.hcat-list{flex:1;overflow-y:auto}
+.hcat-item{display:flex;align-items:center;gap:9px;padding:10px 14px;cursor:pointer;transition:background .15s;border-bottom:1px solid rgba(255,255,255,.03)}
+.hcat-item:hover{background:var(--srf2)}
+.hcat-item.active{background:var(--goldD);border-left:3px solid var(--gold)}
+.hcat-ico{font-size:18px;flex-shrink:0;width:22px;text-align:center}
+.hcat-info{flex:1;min-width:0}
+.hcat-model{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.hcat-sub{font-size:10px;color:var(--txt3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.hcat-vin{font-size:9.5px;font-family:monospace;color:var(--txt3);letter-spacing:1px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hcat-lvl{font-size:9px;font-weight:800;padding:2px 6px;border-radius:5px;background:var(--goldD);color:var(--gold);flex-shrink:0;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- ══════════════ HEADER ══════════════ -->
+<header class="hdr">
+  <a href="index.html" style="display:flex;align-items:center;gap:6px;color:var(--txt3);font-size:12px;font-weight:600;text-decoration:none;padding:5px 9px;border-radius:7px;border:1px solid transparent;transition:all .2s;flex-shrink:0;white-space:nowrap" onmouseover="this.style.borderColor='var(--brd)';this.style.color='var(--txt)'" onmouseout="this.style.borderColor='transparent';this.style.color='var(--txt3)'">← Home</a>
+  <div class="hdiv"></div>
+  <div class="logo">
+    <div class="logo-ico">🛡</div>
+    <span>Blindados&nbsp;Premium &nbsp;<span style="color:var(--txt3);font-weight:400">|</span>&nbsp; Recepción de Vehículo</span>
+  </div>
+  <div class="hdiv"></div>
+  <div class="tech-info">
+    <div class="tech-av">JL</div>
+    <div>
+      <div class="tech-name">Jorge López</div>
+      <div class="tech-role">Técnico Receptor</div>
+    </div>
+  </div>
+  <div class="hdiv"></div>
+  <div class="branch-pill">
+    <div class="branch-dot"></div>
+    MTY — Monterrey
+  </div>
+  <div class="hdr-clock">
+    <div class="hdr-time" id="clock">--:--:--</div>
+    <div class="hdr-date" id="clockDate"></div>
+  </div>
+</header>
+
+<div class="body-layout">
+
+<!-- ── NAV SIDEBAR ── -->
+<nav class="nav-sb">
+  <div class="nsb-logo">🛡</div>
+  <div class="nsb-item active" id="nsb-recv" onclick="setView('recv')">
+    <span class="nsb-ico">📋</span>
+    <span class="nsb-lbl">Recepción<br>Vehículos</span>
+  </div>
+  <div class="nsb-item" id="nsb-hist" onclick="setView('hist')">
+    <span class="nsb-ico">🔍</span>
+    <span class="nsb-lbl">Historial<br>Vehículo</span>
+  </div>
+</nav>
+
+<!-- ── PANELS ── -->
+<div class="main-panels">
+
+<!-- Panel: Recepción (activo por defecto) -->
+<div class="main-panel active" id="panel-recv">
+
+<!-- Wizard bar -->
+<div class="wizard-bar">
+  <div class="wiz-steps">
+    <div class="wiz-step active" id="ws-1" onclick="goStep(1)">
+      <div class="wiz-num" id="wn-1">1</div>
+      <div class="wiz-lbl">Identificación</div>
+    </div>
+    <div class="wiz-step" id="ws-2" onclick="goStep(2)">
+      <div class="wiz-num" id="wn-2">2</div>
+      <div class="wiz-lbl">Recepción</div>
+    </div>
+    <div class="wiz-step" id="ws-3" onclick="goStep(3)">
+      <div class="wiz-num" id="wn-3">3</div>
+      <div class="wiz-lbl">Inspección 170 pts.</div>
+    </div>
+    <div class="wiz-step" id="ws-4" onclick="goStep(4)">
+      <div class="wiz-num" id="wn-4">4</div>
+      <div class="wiz-lbl">Evidencia Fotog.</div>
+    </div>
+    <div class="wiz-step" id="ws-5" onclick="goStep(5)">
+      <div class="wiz-num" id="wn-5">5</div>
+      <div class="wiz-lbl">Orden de Servicio</div>
+    </div>
+  </div>
+</div>
+
+<!-- Content area -->
+<div class="content-area">
+
+  <!-- ── PASO 1: IDENTIFICACIÓN ── -->
+  <div class="step-panel active" id="step-1">
+
+    <!-- CITAS DEL DÍA -->
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">📅</span> Citas Programadas para Hoy
+        <span style="margin-left:auto;font-size:11px;color:var(--txt3);font-weight:400;text-transform:none;letter-spacing:0" id="apptSubtitle"></span>
+      </div>
+      <div id="apptList"></div>
+    </div>
+
+    <div class="walkin-sep">el cliente llega sin cita (walk-in)</div>
+
+    <!-- BÚSQUEDA MANUAL -->
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">🔍</span> Recepción sin Cita — Buscar Vehículo</div>
+      <div class="fg">
+        <label class="flbl">VIN del Vehículo (17 caracteres)</label>
+        <div class="vin-wrap">
+          <input class="fc vin-input" id="vinInput" placeholder="Ej. WDD2221561A123401"
+                 maxlength="17" autocomplete="off"
+                 oninput="this.value=this.value.toUpperCase()"
+                 onkeydown="if(event.key==='Enter')searchVIN()">
+          <button class="vin-go" onclick="searchVIN()">🔍 Buscar</button>
+        </div>
+      </div>
+      <div style="text-align:center;margin:10px 0;font-size:11px;color:var(--txt3)">— o selecciona del catálogo —</div>
+      <button onclick="openCatalog()" style="width:100%;padding:11px;background:var(--srf2);border:1.5px dashed var(--brd);border-radius:10px;color:var(--txt2);cursor:pointer;font-size:13px;font-weight:700;transition:all .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--brd)';this.style.color='var(--txt2)'">
+        📋 &nbsp;Catálogo de Unidades Blindadas
+      </button>
+    </div>
+
+    <!-- Vehículo identificado -->
+    <div class="veh-found" id="vehFound">
+      <div class="vf-top">
+        <div>
+          <div class="vf-model" id="vf-model"></div>
+          <div class="vf-sub" id="vf-sub"></div>
+        </div>
+        <span class="vf-level" id="vf-level"></span>
+      </div>
+      <div class="vf-grid" id="vf-grid"></div>
+      <div id="apptBadge"></div>
+      <div class="vf-footer">
+        <span style="font-size:10.5px;color:var(--txt3)" id="vf-last"></span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="hist-link" onclick="openHistory()">📋 Ver Historial →</button>
+          <button class="hist-link" onclick="if(vehicle)window.location.href='HistorialVIN.html?vin='+vehicle.vin" style="color:var(--blue)">🔍 Historial VIN completo</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── PASO 2: RECEPCIÓN ── -->
+  <div class="step-panel" id="step-2">
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">📋</span> Datos Generales de Recepción</div>
+      <div class="frow">
+        <div class="fg" style="margin:0">
+          <label class="flbl">Fecha de Recepción</label>
+          <input type="date" class="fc" id="rec-fecha">
+        </div>
+        <div class="fg" style="margin:0">
+          <label class="flbl">Hora de Entrada</label>
+          <input type="time" class="fc" id="rec-hora">
+        </div>
+      </div>
+      <div class="fg" style="margin-top:12px">
+        <label class="flbl">Técnico Receptor</label>
+        <select class="fc" id="rec-tech">
+          <option value="JL">Jorge López — Técnico Receptor</option>
+          <option value="MA">Miguel Ángel Torres — Técnico Senior</option>
+          <option value="RF">Ricardo Fuentes — Técnico Líder</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="flbl">Tipo de Servicio Solicitado</label>
+        <select class="fc" id="rec-service">
+          <option value="">— Seleccionar tipo de servicio —</option>
+          <option>Servicio Mayor — Paquete Blindado</option>
+          <option>Revisión Sistema de Blindaje VR7+</option>
+          <option>Mantenimiento Cristales Balísticos</option>
+          <option>Diagnóstico Electrónico Integral</option>
+          <option>Revisión de Placas Balísticas</option>
+          <option>Cambio de Aceite Sintético + Filtros Blindado</option>
+          <option>Neumáticos Run-Flat — Alineación y Balanceo</option>
+          <option>Inspección General Nivel B6/B7</option>
+          <option>Revisión Sistema de Comunicaciones Seguras</option>
+        </select>
+      </div>
+      <div class="fg" style="margin:0">
+        <label class="flbl">Motivo / Queja del Cliente</label>
+        <textarea class="fc" id="rec-motivo" placeholder="Describe el motivo de ingreso, quejas específicas o solicitudes especiales del cliente..."></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">⚡</span> Kilometraje al Momento de Recepción</div>
+      <div style="text-align:center;padding:8px 0 4px">
+        <div style="font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Lectura del odómetro</div>
+        <div class="km-wrap">
+          <input type="number" class="fc km-input" id="rec-km" placeholder="00000" min="0" max="999999" oninput="updateKmNote()">
+          <span class="km-unit">km</span>
+        </div>
+        <div class="km-note" id="kmNote"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">🎒</span> Accesorios y Pertenencias Entregadas con el Vehículo</div>
+      <div class="acc-grid" id="accGrid"></div>
+      <div style="margin-top:12px">
+        <label class="flbl">Otros (especificar)</label>
+        <input class="fc" id="acc-otros" placeholder="Ej. Extintor, Gato hidráulico, Herramienta adicional...">
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PASO 3: INSPECCIÓN 170 PUNTOS ── -->
+  <div class="step-panel" id="step-3">
+    <div class="insp-prog-wrap">
+      <div class="insp-prog-top">
+        <div>
+          <div style="font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">Progreso de Inspección</div>
+          <div style="font-size:13px;font-weight:700" id="inspLbl">0 de 170 puntos inspeccionados</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="insp-pct" id="inspPct">0%</div>
+          <button onclick="markAllOk()" style="padding:8px 14px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:var(--ok);border-radius:9px;cursor:pointer;font-size:12px;font-weight:700;white-space:nowrap">✔ Marcar todo OK</button>
+        </div>
+      </div>
+      <div class="insp-bar"><div class="insp-fill" id="inspFill"></div></div>
+      <div class="insp-counts">
+        <span class="ic-ok">✔ <b id="cntOk">0</b> OK</span>
+        <span class="ic-flag">⚠ <b id="cntFlag">0</b> Observación</span>
+        <span class="ic-fail">✖ <b id="cntFail">0</b> Falla</span>
+        <span class="ic-pend">· <b id="cntPend">170</b> Pendientes</span>
+      </div>
+    </div>
+    <div id="inspSections"></div>
+  </div>
+
+  <!-- ── PASO 4: EVIDENCIA FOTOGRÁFICA ── -->
+  <div class="step-panel" id="step-4">
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">📷</span> Registro de Evidencia Fotográfica y de Video</div>
+      <div style="font-size:12px;color:var(--txt2);margin-bottom:12px">Cada archivo se vincula automáticamente al VIN del vehículo y a la Orden de Servicio. Los puntos con observación o falla quedan marcados para captura inmediata.</div>
+      <div class="photo-filter" id="photoFilter"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">➕</span> Agregar Evidencia</div>
+      <div class="upload-zone" onclick="openCamModal(null,'General')">
+        <div class="uz-icon">📸</div>
+        <div class="uz-txt">Tomar Foto &nbsp;/&nbsp; Grabar Video</div>
+        <div class="uz-sub">Captura directa desde la cámara de la tablet, o agrega desde la galería</div>
+      </div>
+      <div class="photo-grid" id="photoGrid"></div>
+    </div>
+  </div>
+
+  <!-- ── PASO 5: ORDEN DE SERVICIO ── -->
+  <div class="step-panel" id="step-5">
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">📄</span> Vista Previa — Orden de Servicio</div>
+      <div class="os-card" id="osPreview"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">✍</span> Firma de Conformidad del Cliente</div>
+      <div style="position:relative">
+        <canvas id="signCanvas" style="width:100%;height:160px;background:var(--srf2);border:1.5px dashed var(--brd);border-radius:10px;cursor:crosshair;touch-action:none;display:block"></canvas>
+        <div id="signPlaceholder" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;pointer-events:none;color:var(--txt3)">
+          <div style="font-size:28px;margin-bottom:5px">✍</div>
+          <div style="font-size:13px;font-weight:700">Firma aquí con el dedo o lápiz</div>
+          <div style="font-size:10px;margin-top:3px">El cliente acepta el estado del vehículo documentado</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+        <div style="font-size:11px;color:var(--txt3)" id="signStatus">Sin firma</div>
+        <button onclick="clearSign()" style="padding:5px 14px;background:var(--srf2);border:1px solid var(--brd);color:var(--txt2);border-radius:7px;cursor:pointer;font-size:12px;font-weight:700;transition:all .2s" onmouseover="this.style.borderColor='var(--err)';this.style.color='var(--err)'" onmouseout="this.style.borderColor='var(--brd)';this.style.color='var(--txt2)'">🗑 Limpiar firma</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">📤</span> Distribución de la Orden de Servicio</div>
+      <label class="dist-row"><input type="checkbox" id="dist-email" checked><span>📧 Enviar copia al cliente por correo electrónico</span></label>
+      <label class="dist-row"><input type="checkbox" id="dist-whats" checked><span>💬 Enviar resumen al cliente por WhatsApp</span></label>
+      <label class="dist-row"><input type="checkbox" id="dist-print" checked><span>🖨 Imprimir OS física en la impresora del taller</span></label>
+      <label class="dist-row" style="margin:0"><input type="checkbox" id="dist-erp" checked><span>🔗 Sincronizar con ERP — elimina doble captura en ClearMechanic</span></label>
+    </div>
+  </div>
+
+</div><!-- /content-area -->
+
+<!-- Bottom bar (dentro del panel recepción) -->
+<div class="bottom-bar">
+  <div class="bb-info" id="bbInfo"></div>
+  <div class="bb-btns">
+    <button class="btn-sec" id="btnPrev" onclick="prevStep()">← Anterior</button>
+    <button class="btn-prime" id="btnNext" onclick="nextStep()">Siguiente →</button>
+  </div>
+</div>
+
+</div><!-- /panel-recv -->
+
+<!-- Panel: Historial -->
+<div class="main-panel" id="panel-hist">
+  <!-- Barra de búsqueda por VIN -->
+  <div class="hist-search-bar">
+    <div class="hist-search-lbl">🔍 Buscar por VIN o matrícula (o selecciona de la lista)</div>
+    <div class="hist-search-row">
+      <input class="hist-vin-input" id="histVinInput" type="text" maxlength="17"
+             placeholder="Ej: WDD2221561A123401 o AEX-1204"
+             oninput="this.value=this.value.toUpperCase();histFilterCatalog()"
+             onkeydown="if(event.key==='Enter')histSearch()">
+      <button class="hist-srch-btn" onclick="histSearch()">Buscar</button>
+    </div>
+  </div>
+
+  <!-- Cuerpo: catálogo izquierda + detalle derecha -->
+  <div class="hist-body">
+
+    <!-- Catálogo filtrable -->
+    <div class="hist-catalog">
+      <div class="hcat-filter">
+        <input class="hcat-input" id="hcatInput" type="text"
+               placeholder="Filtrar por modelo, cliente…"
+               oninput="histFilterCatalog()">
+      </div>
+      <div class="hcat-count" id="hcatCount"></div>
+      <div class="hcat-list" id="hcatList"></div>
+    </div>
+
+    <!-- Detalle del vehículo seleccionado -->
+    <div class="hist-content" id="histContent">
+      <div class="hist-init">
+        <div class="hist-init-ico">📋</div>
+        <div class="hist-init-txt">Selecciona un vehículo</div>
+        <div class="hist-init-sub">Haz clic en cualquier unidad del catálogo para ver su historial de servicios.</div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /panel-hist -->
+
+</div><!-- /main-panels -->
+</div><!-- /body-layout -->
+</div><!-- /app -->
+
+<!-- ══════════════ MODAL: CATÁLOGO ══════════════ -->
+<div class="overlay" id="catalogOverlay">
+  <div class="modal lg">
+    <div class="m-hdr">
+      <span class="m-title">📋 Catálogo de Unidades Blindadas</span>
+      <button class="m-close" onclick="closeModal('catalogOverlay')">✕</button>
+    </div>
+    <div class="m-body" style="padding:14px">
+      <input class="fc" id="catSearch" placeholder="Buscar por VIN, Matrícula, Modelo, Color, Cliente..." oninput="renderCatalog()" style="margin-bottom:10px">
+      <div style="font-size:10.5px;color:var(--txt3);margin-bottom:8px" id="catCount"></div>
+      <div style="overflow-y:auto;max-height:420px;border:1px solid var(--brd);border-radius:8px">
+        <table style="width:100%;border-collapse:collapse">
+          <thead style="position:sticky;top:0;background:var(--srf2);z-index:2">
+            <tr>
+              <th style="padding:9px 10px;text-align:left;font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--brd)">Marca / Modelo</th>
+              <th style="padding:9px 10px;text-align:left;font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--brd)">VIN</th>
+              <th style="padding:9px 10px;text-align:left;font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--brd)">Matrícula</th>
+              <th style="padding:9px 10px;text-align:left;font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--brd)">Cliente</th>
+              <th style="padding:9px 10px;text-align:left;font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--brd)">Nivel</th>
+              <th style="padding:9px 10px;text-align:left;font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--brd)">Km</th>
+            </tr>
+          </thead>
+          <tbody id="catBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="m-ftr">
+      <span style="font-size:11px;color:var(--txt3);margin-right:auto">Toca una unidad para seleccionarla</span>
+      <button class="btn-sec" onclick="closeModal('catalogOverlay')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MODAL: HISTORIAL ══════════════ -->
+<div class="overlay" id="historyOverlay">
+  <div class="modal">
+    <div class="m-hdr">
+      <span class="m-title" id="histTitle">📋 Historial del Vehículo</span>
+      <button class="m-close" onclick="closeModal('historyOverlay')">✕</button>
+    </div>
+    <div class="m-body">
+      <div class="hist-kpi" id="histKpi"></div>
+      <div style="font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px">Servicios Anteriores</div>
+      <div class="hist-tl" id="histTl"></div>
+    </div>
+    <div class="m-ftr">
+      <button class="btn-sec" onclick="closeModal('historyOverlay')">Cerrar</button>
+      <button class="btn-prime" onclick="closeModal('historyOverlay');goStep(2)">🔧 Abrir Recepción →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MODAL: NOTA DE INSPECCIÓN ══════════════ -->
+<div class="overlay" id="noteOverlay">
+  <div class="modal sm">
+    <div class="m-hdr">
+      <span class="m-title">📝 Observación del Punto</span>
+      <button class="m-close" onclick="closeModal('noteOverlay')">✕</button>
+    </div>
+    <div class="m-body">
+      <div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:6px" id="notePtName"></div>
+      <textarea class="fc" id="noteText" placeholder="Describe la observación o falla encontrada con el mayor detalle posible..." style="min-height:100px"></textarea>
+      <button onclick="openCamFromNote()" style="margin-top:10px;width:100%;padding:9px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:var(--blue);border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:700">
+        📷 Vincular foto a este punto de inspección
+      </button>
+    </div>
+    <div class="m-ftr">
+      <button class="btn-sec" onclick="closeModal('noteOverlay')">Cancelar</button>
+      <button class="btn-prime" onclick="saveNote()">💾 Guardar Nota</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MODAL: CÁMARA ══════════════ -->
+<div class="overlay" id="camOverlay">
+  <div class="modal sm">
+    <div class="m-hdr">
+      <span class="m-title" id="camTitle">📷 Captura de Evidencia</span>
+      <button class="m-close" onclick="closeModal('camOverlay')">✕</button>
+    </div>
+    <div class="m-body">
+      <div style="font-size:11px;color:var(--txt3);margin-bottom:10px" id="camPtLabel"></div>
+      <div class="cam-preview">
+        <div class="cam-sim">
+          <span class="ci">📷</span>
+          <div class="ct">Vista previa de cámara (tablet)</div>
+          <div style="font-size:10px;color:var(--txt3);margin-top:3px">Simulado — en producción usaría la cámara nativa del dispositivo</div>
+        </div>
+        <div class="cam-overlay-lbl" id="camVinLabel"></div>
+      </div>
+      <div class="fg">
+        <label class="flbl">Etiqueta / Descripción de la evidencia</label>
+        <input class="fc" id="camLabel" placeholder="Ej. Rayón puerta trasera izquierda, grieta parabrisas...">
+      </div>
+      <div class="cam-btns">
+        <button class="cam-btn cb-photo" onclick="captureMedia('photo')">📷 Foto</button>
+        <button class="cam-btn cb-video" onclick="captureMedia('video')">🎥 Video</button>
+        <button class="cam-btn cb-file"  onclick="captureMedia('file')">📁 Galería</button>
+      </div>
+    </div>
+    <div class="m-ftr">
+      <button class="btn-sec" onclick="closeModal('camOverlay')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="toastIcon"></span><span id="toastMsg"></span></div>
+
+<script>
+'use strict';
+// ═══════════════════════════════════════════════════════
+//  DATOS
+// ═══════════════════════════════════════════════════════
+const VEHICLES = [
+  { vin:'WDD2221561A123401', brand:'Mercedes-Benz', model:'S600 Pullman Guard',            year:2024, level:'VR7',  color:'Negro Obsidiana', km:28450, client:'Grupo Alfa — Dir. General',      plate:'AEX-1204', lastSvc:'2026-03-12', email:'dg@grupoalfa.mx' },
+  { vin:'WBAGV8100PCB12302', brand:'BMW',           model:'760Li Individual Protection',    year:2025, level:'VR6+', color:'Azul Midnight',   km:12780, client:'Constructora Coppel SA',         plate:'BLD-9901', lastSvc:'2026-05-02', email:'flota@coppel.com' },
+  { vin:'JTJHY7AX5N4190203', brand:'Lexus',         model:'LX 600 Blindado B6',            year:2024, level:'B6',   color:'Blanco Lunar',    km:41200, client:'Familia Zambrano Treviño',       plate:'CCC-2345', lastSvc:'2025-11-20', email:'rzambrano@gmail.com' },
+  { vin:'1GNSKFKJ4PR200804', brand:'Chevrolet',     model:'Tahoe PPV Blindado',            year:2025, level:'B6+',  color:'Grafito Met.',    km:9820,  client:'Gobierno de NL — Seguridad',    plate:'GOB-0042', lastSvc:'2026-04-18', email:'flota.gnl@nl.gob.mx' },
+  { vin:'1FMJK2AT0PEA40905', brand:'Ford',          model:'Expedition Max Armor',          year:2024, level:'VR6',  color:'Blanco Ártico',   km:33760, client:'Familia Garza Sada',             plate:'GSD-7788', lastSvc:'2026-01-30', email:'ma@garzasada.mx' },
+  { vin:'JTMRX3FV7ND060006', brand:'Toyota',        model:'Land Cruiser 300 Blindado',     year:2025, level:'VR7+', color:'Negro Carbón',    km:6540,  client:'Embajada Alemana — CDMX',       plate:'CC-4400',  lastSvc:'2026-06-01', email:'admin@botschaft.de' },
+  { vin:'W1N4N4HB3NJ310207', brand:'Mercedes-Benz', model:'GLS 600 Maybach Blindado',      year:2026, level:'B7',   color:'Plata Selenita',  km:2100,  client:'Familia Hank González',          plate:'FHG-2026', lastSvc:'2026-02-14', email:'hank@hg.mx' },
+  { vin:'1FTFW3F81PFA83308', brand:'Ford',          model:'F-450 Super Duty Blindado',     year:2024, level:'B6',   color:'Azul Marino',     km:55000, client:'Minera Peñoles — Logística',    plate:'MNR-5500', lastSvc:'2025-09-10', email:'flota@penoles.com' },
+];
+
+const HISTORY = {
+  'WDD2221561A123401':[
+    { date:'2026-03-12', svc:'Revisión Sistema de Blindaje VR7+',           km:28200, tech:'Ricardo Fuentes',       obs:'Sellado de panel lateral revisado. Sin anomalías en cristales balísticos. Actualizacion de firmware del sistema de comunicaciones.', fotos:4 },
+    { date:'2025-12-05', svc:'Servicio Mayor — Paquete Blindado',           km:24800, tech:'Jorge López',            obs:'Cambio de aceite sintético y filtros. Revisión integral de placas. Cristal balístico trasero con micro-fisura reparada con resina especializada.', fotos:8 },
+    { date:'2025-08-20', svc:'Neumáticos Run-Flat — Alineación y Balanceo', km:20100, tech:'Miguel Ángel Torres',   obs:'Sustitución de 4 llantas run-flat. Alineación corregida a especificaciones de fábrica. Sin observaciones adicionales.', fotos:2 },
+    { date:'2025-04-14', svc:'Diagnóstico Electrónico Integral',            km:15300, tech:'Ricardo Fuentes',       obs:'Sistema de comunicaciones seguras actualizado. Sensor de puerta trasera izquierda reemplazado. Sin fallas activas.', fotos:1 },
+  ],
+  'WBAGV8100PCB12302':[
+    { date:'2026-05-02', svc:'Cambio de Aceite Sintético + Filtros Blindado', km:12500, tech:'Jorge López',         obs:'Servicio de rutina. Vehículo en excelente estado. Sin observaciones.', fotos:1 },
+    { date:'2025-11-15', svc:'Revisión de Placas Balísticas',               km:8200,  tech:'Ricardo Fuentes',       obs:'Placas laterales en buen estado. Sin deformaciones. Se limpian y aplica tratamiento anticorrosión.', fotos:3 },
+  ],
+  'JTJHY7AX5N4190203':[
+    { date:'2025-11-20', svc:'Inspección General Nivel B6/B7',              km:40800, tech:'Miguel Ángel Torres',   obs:'Desgaste en cristales laterales detectado. Frenos delanteros al 35% — se recomienda cambio inmediato. Suspensión delantera con juego.', fotos:6 },
+    { date:'2025-06-10', svc:'Servicio Mayor — Paquete Blindado',           km:36200, tech:'Jorge López',            obs:'Servicio completo realizado. Sistema de blindaje en condiciones normales.', fotos:5 },
+  ],
+};
+
+const ACCESSORIES = [
+  'Llanta de Emergencia','Gato Hidráulico','Extintor','Triángulos de Seguridad',
+  'Kit de Herramientas','Radio Comunicación','Botiquín de Primeros Auxilios','Chaleco Antibalas',
+  'Documentos del Vehículo','Tapetes Originales','Cargador USB / Inalámbrico','Control de Apertura Remota',
+  'Portaequipaje','Cable de Corriente','Candado de Volante','Gafete / Identificación',
+];
+
+// ── 170 PUNTOS DE INSPECCIÓN (8 categorías) ──────────────────
+const CATS = [
+  { id:'ext',    icon:'🚘', name:'Exterior — Carrocería', pts:[
+    'Cofre / Capó — estado y bisagras','Paragolpes delantero — sin deformaciones',
+    'Rejilla frontal / parrilla','Panel aleta delantera izquierda',
+    'Panel aleta delantera derecha','Puerta delantera izquierda — carrocería',
+    'Puerta delantera derecha — carrocería','Puerta trasera izquierda — carrocería',
+    'Puerta trasera derecha — carrocería','Panel trasero izquierdo',
+    'Panel trasero derecho','Cajuela / maletero — cierre y estado',
+    'Paragolpes trasero — sin deformaciones','Techo / toldo exterior',
+    'Molduras y guarniciones perimetrales','Antena',
+    'Estribo izquierdo','Estribo derecho',
+    'Piso exterior — sin abolladuras','Emblemas y logotipos',
+    'Jaladera delantera izquierda','Jaladera delantera derecha',
+    'Jaladera trasera izquierda','Jaladera trasera derecha',
+  ]},
+  { id:'crist',  icon:'🪟', name:'Cristales y Vidrios Balísticos', pts:[
+    'Parabrisas delantero — integridad balística','Parabrisas trasero — integridad balística',
+    'Cristal puerta delantera izquierda','Cristal puerta delantera derecha',
+    'Cristal puerta trasera izquierda','Cristal puerta trasera derecha',
+    'Cristales laterales traseros fijos','Luneta trasera',
+    'Mecanismo elevador delantero izquierdo','Mecanismo elevador delantero derecho',
+    'Mecanismo elevador trasero izquierdo','Mecanismo elevador trasero derecho',
+    'Burletes y sellos perimetrales — estanqueidad','Tinte y tratamiento balístico visible',
+  ]},
+  { id:'blind',  icon:'🛡', name:'Sistema de Blindaje', pts:[
+    'Placa de acero — puerta delantera izquierda','Placa de acero — puerta delantera derecha',
+    'Placa de acero — puerta trasera izquierda','Placa de acero — puerta trasera derecha',
+    'Blindaje de piso — zona delantera','Blindaje de piso — zona trasera',
+    'Blindaje de techo','Blindaje de cofre','Blindaje de cajuela',
+    'Protección de tanque de combustible','Anillos internos de run-flat',
+    'Batería auxiliar / respaldo eléctrico','Panel de control de seguridad',
+    'Botón de pánico — funcionalidad','Intercomunicador interior-exterior',
+    'Portillones de disparo (si aplica)','Sellado perimetral de placas — sin separaciones',
+    'Nivel de protección certificado visible',
+  ]},
+  { id:'int',    icon:'🪑', name:'Interior — Habitáculo', pts:[
+    'Asiento delantero izquierdo — estado y ajuste','Asiento delantero derecho — estado y ajuste',
+    'Asiento trasero izquierdo','Asiento trasero centro','Asiento trasero derecho',
+    'Tapicería — sin rasgaduras visibles','Alfombra — limpieza y estado',
+    'Tablero principal — sin grietas','Consola central','Guantera — cierre correcto',
+    'Techo interior / relleno','Viseras parasol','Espejo retrovisor interior',
+    'Iluminación interior y de cortesía','Cinturones de seguridad — los 5',
+    'Airbags — testigo apagado en tablero','Sistema de sonido / pantalla central',
+    'Control de climatización — funcionalidad','Mandos al volante',
+    'Pedales y alfombrilla','Parasoles traseros','Reposapiés trasero','Portavasos',
+  ]},
+  { id:'elec',   icon:'⚡', name:'Eléctrico y Electrónico', pts:[
+    'Batería principal — carga y terminales','Alternador — carga correcta',
+    'Luces delanteras — bajo haz','Luces delanteras — alto haz',
+    'Luces antiniebla delanteras','Luces traseras — posición y freno',
+    'Luz de reversa','Cuatro direccionales / emergencias','Bocina',
+    'Limpiaparabrisas delantero — ambas velocidades','Limpiaparabrisas trasero',
+    'Cámara de reversa / sistema 360°','Sensores de proximidad (parktronic)',
+    'GPS y rastreo satelital','Sistema de comunicaciones seguras',
+    'Cargador inalámbrico / USB',
+  ]},
+  { id:'motor',  icon:'🔧', name:'Motor y Sistema Mecánico', pts:[
+    'Nivel de aceite de motor','Nivel de refrigerante','Nivel de aceite de frenos',
+    'Nivel de dirección hidráulica','Nivel de agua limpiaparabrisas',
+    'Correa de distribución / serpentina — desgaste visible',
+    'Mangueras — sin fugas ni fisuras','Compresor de A/C — funcionamiento',
+    'Filtro de aire — limpieza','Motor de arranque — respuesta normal',
+    'Transmisión — respuesta sin vibraciones','Caja de cambios — tiempos correctos',
+    'Diferencial — sin ruidos anómalos','Cardán / semiejes — sin holguras',
+    'Sistema de escape — sin fugas','Catalizador — estado',
+  ]},
+  { id:'frenos', icon:'🛑', name:'Frenos y Suspensión', pts:[
+    'Disco de freno delantero izquierdo — desgaste','Disco de freno delantero derecho — desgaste',
+    'Disco de freno trasero izquierdo — desgaste','Disco de freno trasero derecho — desgaste',
+    'Pastillas delanteras — grosor','Pastillas traseras — grosor',
+    'Freno de mano / estacionamiento','Amortiguador delantero izquierdo',
+    'Amortiguador delantero derecho','Amortiguador trasero izquierdo',
+    'Amortiguador trasero derecho','Resortes — sin deformación',
+    'Rótulas y terminales de dirección','Dirección — sin holguras excesivas',
+    'Fuelles de dirección — sin roturas',
+  ]},
+  { id:'llantas',icon:'🔘', name:'Llantas Run-Flat y Rines', pts:[
+    'Llanta delantera izquierda — profundidad de banda','Llanta delantera derecha — profundidad de banda',
+    'Llanta trasera izquierda — profundidad de banda','Llanta trasera derecha — profundidad de banda',
+    'Llanta delantera izquierda — presión','Llanta delantera derecha — presión',
+    'Llanta trasera izquierda — presión','Llanta trasera derecha — presión',
+    'Rin delantero izquierdo — sin grietas','Rin delantero derecho — sin grietas',
+    'Rin trasero izquierdo — sin grietas','Rin trasero derecho — sin grietas',
+    'Llanta de repuesto run-flat — estado','TPMS — sensor de presión funcional',
+  ]},
+];
+
+const PHOTO_CATS = ['Todos','Exterior','Cristales','Blindaje','Interior','Motor','Frenos','Llantas'];
+
+const TECHS = { JL:'Jorge López', MA:'Miguel Ángel Torres', RF:'Ricardo Fuentes' };
+
+const APPOINTMENTS = [
+  { id:'A001', time:'08:00', vin:'WDD2221561A123401', svc:'Revisión Sistema de Blindaje VR7+',              tech:'RF', bay:'Bahía 2', status:'confirmada', notas:'Cliente llegará puntual. Cristal trasero con prioridad.' },
+  { id:'A002', time:'09:30', vin:'WBAGV8100PCB12302', svc:'Cambio de Aceite Sintético + Filtros Blindado',  tech:'JL', bay:'Bahía 1', status:'confirmada', notas:'' },
+  { id:'A003', time:'10:00', vin:'1GNSKFKJ4PR200804', svc:'Inspección General Nivel B6/B7',                 tech:'MA', bay:'Bahía 3', status:'confirmada', notas:'Vehículo gubernamental, requiere documentación adicional.' },
+  { id:'A004', time:'11:30', vin:'JTJHY7AX5N4190203', svc:'Mantenimiento Cristales Balísticos',             tech:'RF', bay:'Bahía 2', status:'pendiente',   notas:'Cliente avisó posible retraso de 30 min.' },
+  { id:'A005', time:'14:00', vin:'1FMJK2AT0PEA40905', svc:'Neumáticos Run-Flat — Alineación y Balanceo',   tech:'JL', bay:'Bahía 4', status:'confirmada', notas:'' },
+];
+
+// ═══════════════════════════════════════════════════════
+//  ESTADO
+// ═══════════════════════════════════════════════════════
+let step = 1;
+let vehicle = null;
+let inspSt   = {};    // pid -> 'ok'|'flag'|'fail'
+let inspNote = {};    // pid -> string
+let inspHasPh= {};    // pid -> bool
+let photos   = [];    // [{id,cat,label,type,ptId}]
+let photoFilter = 'Todos';
+let accSt    = {};
+let signed   = false;
+let notePid  = null;
+let camPid   = null;
+let camCat   = 'General';
+let fromAppointment = null;
+
+// ═══════════════════════════════════════════════════════
+//  RELOJ
+// ═══════════════════════════════════════════════════════
+(function tick(){
+  const n = new Date();
+  document.getElementById('clock').textContent = n.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('clockDate').textContent = n.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  setTimeout(tick,1000);
+})();
+
+// ═══════════════════════════════════════════════════════
+//  NAVEGACIÓN
+// ═══════════════════════════════════════════════════════
+function goStep(n){
+  if(n<1||n>5) return;
+  if(n>1&&!vehicle){ showToast('warn','⚠ Identifica el vehículo primero'); return; }
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('step-'+n).classList.add('active');
+  for(let i=1;i<=5;i++){
+    const ws=document.getElementById('ws-'+i);
+    const wn=document.getElementById('wn-'+i);
+    ws.className='wiz-step'+(i<n?' done':i===n?' active':'');
+    wn.textContent=i<n?'✔':i;
+  }
+  step=n;
+  updateBar();
+  if(n===2) initStep2();
+  if(n===3) renderInspection();
+  if(n===4) renderPhotoStep();
+  if(n===5){ renderOS(); setTimeout(initSignCanvas,120); }
+}
+function nextStep(){
+  if(step===2){
+    const km=parseInt(document.getElementById('rec-km').value)||0;
+    const svc=document.getElementById('rec-service').value;
+    if(!km){ showToast('err','⚠ Registra el kilometraje antes de continuar'); return; }
+    if(!svc){ showToast('err','⚠ Selecciona el tipo de servicio antes de continuar'); return; }
+  }
+  goStep(step+1);
+}
+function prevStep(){ goStep(step-1); }
+
+function updateBar(){
+  const lbls=['','Identificación del Vehículo','Datos de Recepción','Inspección (170 puntos)','Evidencia Fotográfica','Orden de Servicio'];
+  document.getElementById('bbInfo').textContent=`Paso ${step} de 5 — ${lbls[step]}`;
+  document.getElementById('btnPrev').style.display=step===1?'none':'';
+  const nb=document.getElementById('btnNext');
+  if(step===5){ nb.textContent='✔ Confirmar y Generar OS'; nb.onclick=confirmOS; }
+  else { nb.textContent='Siguiente →'; nb.onclick=nextStep; }
+}
+
+// ═══════════════════════════════════════════════════════
+//  PASO 1 — IDENTIFICACIÓN
+// ═══════════════════════════════════════════════════════
+function searchVIN(){
+  const val=document.getElementById('vinInput').value.trim().toUpperCase();
+  if(!val){ showToast('err','Ingresa un VIN'); return; }
+  const v=VEHICLES.find(x=>x.vin===val);
+  if(!v){ showToast('err','❌ VIN no encontrado en el catálogo'); return; }
+  // Walk-in: limpiar estado de cita
+  fromAppointment=null;
+  document.querySelectorAll('.appt-card').forEach(c=>{ c.style.opacity=''; });
+  document.getElementById('apptBadge').innerHTML='';
+  selectVehicle(v);
+}
+
+function selectVehicle(v){
+  vehicle=v;
+  const found=document.getElementById('vehFound');
+  found.classList.add('show');
+  document.getElementById('vf-model').textContent=`${v.brand} ${v.model} ${v.year}`;
+  document.getElementById('vf-sub').textContent=`👤 ${v.client}`;
+
+  const LC={
+    'VR7+':['#6366f1','rgba(99,102,241,.18)'],
+    'VR7' :['#6366f1','rgba(99,102,241,.18)'],
+    'VR6+':['var(--gold)','var(--goldD)'],
+    'VR6' :['var(--gold)','var(--goldD)'],
+    'B7'  :['var(--err)','rgba(239,68,68,.15)'],
+    'B6+' :['var(--blue)','rgba(59,130,246,.15)'],
+    'B6'  :['var(--blue)','rgba(59,130,246,.15)'],
+  };
+  const lc=LC[v.level]||['var(--txt2)','var(--srf3)'];
+  const lvl=document.getElementById('vf-level');
+  lvl.textContent=v.level;
+  lvl.style.color=lc[0]; lvl.style.background=lc[1]; lvl.style.borderColor=lc[0];
+
+  document.getElementById('vf-grid').innerHTML=`
+    <div class="vf-item"><label>VIN</label><span style="font-family:monospace;font-size:11px">${v.vin}</span></div>
+    <div class="vf-item"><label>Matrícula</label><span>${v.plate}</span></div>
+    <div class="vf-item"><label>Color</label><span>${v.color}</span></div>
+    <div class="vf-item"><label>Año</label><span>${v.year}</span></div>
+    <div class="vf-item"><label>Km Registrados</label><span>${v.km.toLocaleString('es-MX')} km</span></div>
+    <div class="vf-item"><label>Nivel Blindaje</label><span style="color:${lc[0]};font-weight:900">${v.level}</span></div>
+    <div class="vf-item"><label>Correo</label><span style="font-size:10.5px;color:var(--txt3)">${v.email}</span></div>
+    <div class="vf-item"><label>Último Servicio</label><span style="font-size:11.5px">${v.lastSvc?new Date(v.lastSvc).toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'}):'—'}</span></div>
+  `;
+  document.getElementById('vf-last').textContent=`Último servicio: ${v.lastSvc?new Date(v.lastSvc).toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'}):'sin registro'}`;
+  showToast('ok',`✔ ${v.brand} ${v.model} identificado`);
+}
+
+function renderAppointments(){
+  const list=document.getElementById('apptList');
+  const sub=document.getElementById('apptSubtitle');
+  if(!APPOINTMENTS.length){ list.innerHTML='<div style="text-align:center;color:var(--txt3);padding:16px;font-size:12px">Sin citas programadas para hoy</div>'; return; }
+  sub.textContent=`${APPOINTMENTS.length} cita${APPOINTMENTS.length!==1?'s':''} · ${new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'})}`;
+  list.innerHTML=APPOINTMENTS.map(a=>{
+    const v=VEHICLES.find(x=>x.vin===a.vin); if(!v) return '';
+    const conf=a.status==='confirmada';
+    return `
+      <div class="appt-card status-${a.status}" id="ac-${a.id}">
+        <div class="ac-time">${a.time}</div>
+        <div class="ac-info">
+          <div class="ac-model">${v.brand} ${v.model} <span style="font-size:10px;color:var(--gold);font-weight:800;margin-left:4px">${v.level}</span></div>
+          <div class="ac-client">👤 ${v.client}</div>
+          <div class="ac-svc">🔧 ${a.svc}</div>
+          <div class="ac-meta">
+            🏗 ${a.bay} &nbsp;·&nbsp; 👤 ${TECHS[a.tech]||a.tech}
+            ${a.notas?`<span style="color:var(--warn)">· 📝 ${a.notas.substring(0,45)}${a.notas.length>45?'…':''}</span>`:''}
+            <span class="ac-st ${conf?'conf':'pend'}">${conf?'Confirmada':'Pendiente'}</span>
+          </div>
+        </div>
+        <button class="ac-btn" onclick="selectFromAppointment('${a.id}')">▶ Iniciar Recepción</button>
+      </div>`;
+  }).join('');
+}
+
+function selectFromAppointment(id){
+  const appt=APPOINTMENTS.find(a=>a.id===id);
+  if(!appt) return;
+  const v=VEHICLES.find(x=>x.vin===appt.vin);
+  if(!v) return;
+  fromAppointment=appt;
+  // Highlight selected card, dim others
+  document.querySelectorAll('.appt-card').forEach(c=>{ c.style.opacity='0.35'; c.querySelector('.ac-btn').disabled=true; });
+  const card=document.getElementById('ac-'+id);
+  if(card){
+    card.style.opacity='1';
+    card.classList.add('en-recepcion');
+    card.querySelector('.ac-btn').textContent='▶ En Recepción';
+    card.querySelector('.ac-btn').disabled=true;
+    card.querySelector('.ac-st').className='ac-st recv';
+    card.querySelector('.ac-st').textContent='En Recepción';
+  }
+  selectVehicle(v);
+  document.getElementById('apptBadge').innerHTML=`
+    <div class="appt-badge">📅 Cita ${appt.id} · ${appt.time} · ${appt.bay} · ${TECHS[appt.tech]||appt.tech} — datos pre-llenados automáticamente</div>`;
+  showToast('ok',`📅 Cita ${appt.id} · ${v.brand} ${v.model} — iniciando recepción`);
+}
+
+// ── Catálogo ─────────────────────────────────────────────────
+function openCatalog(){ renderCatalog(); openModal('catalogOverlay'); }
+function renderCatalog(){
+  const q=(document.getElementById('catSearch')?.value||'').toLowerCase();
+  const fl=VEHICLES.filter(v=>[v.vin,v.brand,v.model,v.plate,v.client,v.color,v.level].some(s=>s.toLowerCase().includes(q)));
+  document.getElementById('catCount').textContent=`${fl.length} unidad${fl.length!==1?'es':''} encontrada${fl.length!==1?'s':''}`;
+  document.getElementById('catBody').innerHTML=fl.map(v=>`
+    <tr onclick='catPick("${v.vin}")' style="cursor:pointer;border-bottom:1px solid var(--brd);transition:background .12s" onmouseover="this.style.background='var(--srf3)'" onmouseout="this.style.background=''">
+      <td style="padding:10px;font-size:12.5px;font-weight:700">${v.brand}<br><span style="font-size:10.5px;color:var(--txt3);font-weight:400">${v.model} ${v.year}</span></td>
+      <td style="padding:10px;font-size:11px;font-family:monospace;color:var(--txt2)">${v.vin}</td>
+      <td style="padding:10px;font-size:12.5px;font-weight:700">${v.plate}</td>
+      <td style="padding:10px;font-size:11.5px;color:var(--txt2)">${v.client}</td>
+      <td style="padding:10px"><span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:8px;background:var(--goldD);color:var(--gold);border:1px solid rgba(201,168,76,.3)">${v.level}</span></td>
+      <td style="padding:10px;font-size:12px;font-weight:700">${v.km.toLocaleString('es-MX')} km</td>
+    </tr>
+  `).join('');
+}
+function catPick(vin){
+  const v=VEHICLES.find(x=>x.vin===vin);
+  if(v){
+    fromAppointment=null;
+    document.querySelectorAll('.appt-card').forEach(c=>{ c.style.opacity=''; });
+    document.getElementById('apptBadge').innerHTML='';
+    closeModal('catalogOverlay');
+    document.getElementById('vinInput').value=v.vin;
+    selectVehicle(v);
+  }
+}
+
+// ── Historial ─────────────────────────────────────────────────
+function openHistory(){
+  if(!vehicle) return;
+  const v=vehicle;
+  const hist=HISTORY[v.vin]||[];
+  document.getElementById('histTitle').textContent=`📋 Historial — ${v.brand} ${v.model}`;
+  const totFotos=hist.reduce((a,h)=>a+(h.fotos||0),0);
+  document.getElementById('histKpi').innerHTML=`
+    <div class="hkpi"><div class="hkpi-val" style="color:var(--gold)">${v.km.toLocaleString('es-MX')}</div><div class="hkpi-lbl">Km Actuales</div></div>
+    <div class="hkpi"><div class="hkpi-val">${hist.length}</div><div class="hkpi-lbl">Servicios Previos</div></div>
+    <div class="hkpi"><div class="hkpi-val" style="color:var(--blue)">${totFotos}</div><div class="hkpi-lbl">Fotos en Expediente</div></div>
+  `;
+  document.getElementById('histTl').innerHTML=hist.length
+    ? hist.map((h,i)=>`
+        <div class="ht-item">
+          <div class="ht-dot ${i===0?'gold':''}">🔧</div>
+          <div class="ht-body">
+            <div class="ht-date">${new Date(h.date).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
+            <div class="ht-title">${h.svc}</div>
+            <div class="ht-obs">${h.obs}</div>
+            <div class="ht-meta">
+              <span>📏 ${h.km.toLocaleString('es-MX')} km</span>
+              <span>·</span><span>👤 ${h.tech}</span>
+              ${h.fotos?`<span>·</span><span style="color:var(--blue)">📷 ${h.fotos} foto${h.fotos!==1?'s':''}</span>`:''}
+            </div>
+          </div>
+        </div>
+      `).join('')
+    : '<div style="text-align:center;color:var(--txt3);padding:24px">Sin historial registrado para este vehículo</div>';
+  openModal('historyOverlay');
+}
+
+// ═══════════════════════════════════════════════════════
+//  PASO 2 — RECEPCIÓN
+// ═══════════════════════════════════════════════════════
+function initStep2(){
+  const now=new Date();
+  if(!document.getElementById('rec-fecha').value)
+    document.getElementById('rec-fecha').value=now.toISOString().split('T')[0];
+  if(!document.getElementById('rec-hora').value)
+    document.getElementById('rec-hora').value=now.toTimeString().slice(0,5);
+  if(fromAppointment){
+    const svcEl=document.getElementById('rec-service');
+    const techEl=document.getElementById('rec-tech');
+    Array.from(svcEl.options).forEach(o=>{ if(o.value===fromAppointment.svc||o.text===fromAppointment.svc) o.selected=true; });
+    Array.from(techEl.options).forEach(o=>{ if(o.value===fromAppointment.tech) o.selected=true; });
+    if(fromAppointment.notas&&!document.getElementById('rec-motivo').value)
+      document.getElementById('rec-motivo').value=fromAppointment.notas;
+    showToast('info',`📅 Datos pre-llenados desde la cita ${fromAppointment.id} · ${fromAppointment.time}`);
+  }
+}
+
+function updateKmNote(){
+  const entered=parseInt(document.getElementById('rec-km').value)||0;
+  const base=vehicle?vehicle.km:0;
+  const note=document.getElementById('kmNote');
+  if(!entered){ note.innerHTML=''; return; }
+  const diff=entered-base;
+  if(diff>=0)
+    note.innerHTML=`<span style="color:var(--ok)">+${diff.toLocaleString('es-MX')} km</span> desde el último registro (${base.toLocaleString('es-MX')} km)`;
+  else
+    note.innerHTML=`<span style="color:var(--warn)">⚠ Valor menor al último registro registrado (${base.toLocaleString('es-MX')} km) — verificar odómetro</span>`;
+}
+
+function renderAccGrid(){
+  document.getElementById('accGrid').innerHTML=ACCESSORIES.map(a=>`
+    <div class="acc-item ${accSt[a]?'chk':''}" onclick="toggleAcc('${a}')">
+      <div class="acc-chk">${accSt[a]?'✔':''}</div>
+      <div class="acc-lbl">${a}</div>
+    </div>
+  `).join('');
+}
+function toggleAcc(a){ accSt[a]=!accSt[a]; renderAccGrid(); }
+
+// ═══════════════════════════════════════════════════════
+//  PASO 3 — INSPECCIÓN
+// ═══════════════════════════════════════════════════════
+function renderInspection(){
+  let n=0;
+  document.getElementById('inspSections').innerHTML=CATS.map(cat=>{
+    const rows=cat.pts.map((pt,pi)=>{
+      n++;
+      const pid=`${cat.id}_${pi}`;
+      const st=inspSt[pid]||'';
+      const flag=st==='flag'||st==='fail';
+      return `
+        <div class="insp-item ${st==='flag'?'flagged':st==='fail'?'failed':''}" id="ii-${pid}">
+          <div class="ii-num">${n}</div>
+          <div class="ii-name">${pt}</div>
+          <div class="ii-btns">
+            <button class="ii-btn ${st==='ok'?'st-ok':''}"   onclick="setInsp('${pid}','ok')"   title="OK / Sin novedad">✔</button>
+            <button class="ii-btn ${st==='flag'?'st-flag':''}" onclick="setInsp('${pid}','flag')" title="Observación">⚠</button>
+            <button class="ii-btn ${st==='fail'?'st-fail':''}" onclick="setInsp('${pid}','fail')" title="Falla">✖</button>
+            <button class="ii-icon ${inspHasPh[pid]?'active':''}" onclick="openCamFromInsp('${pid}')" title="Foto">${inspHasPh[pid]?'📷':'📷'}</button>
+            <button class="ii-icon ${inspNote[pid]?'note-on':''}" onclick="openNote('${pid}','${pt.replace(/'/g,'\\\'').substring(0,50)}')" title="Nota">📝</button>
+          </div>
+        </div>`;
+    }).join('');
+    return `
+      <div class="cat-section">
+        <div class="cat-hdr" id="ch-${cat.id}" onclick="toggleCat('${cat.id}')">
+          <span class="cat-icon">${cat.icon}</span>
+          <div style="flex:1">
+            <div class="cat-name">${cat.name}</div>
+            <div class="cat-count">${cat.pts.length} puntos</div>
+          </div>
+          <span class="cat-badge cb-pend" id="cb-${cat.id}">Pendiente</span>
+          <span class="cat-chev">▼</span>
+        </div>
+        <div class="cat-body" id="cbody-${cat.id}">${rows}</div>
+      </div>`;
+  }).join('');
+  updateProgress();
+}
+
+function toggleCat(id){
+  document.getElementById('ch-'+id).classList.toggle('open');
+  document.getElementById('cbody-'+id).classList.toggle('open');
+}
+
+function setInsp(pid,status){
+  inspSt[pid]=inspSt[pid]===status?null:status;
+  const st=inspSt[pid]||'';
+  const row=document.getElementById('ii-'+pid);
+  if(row){
+    row.className=`insp-item ${st==='flag'?'flagged':st==='fail'?'failed':''}`;
+    const btns=row.querySelectorAll('.ii-btn');
+    btns[0].className=`ii-btn ${st==='ok'?'st-ok':''}`;
+    btns[1].className=`ii-btn ${st==='flag'?'st-flag':''}`;
+    btns[2].className=`ii-btn ${st==='fail'?'st-fail':''}`;
+  }
+  updateCatBadge(pid.split('_')[0]);
+  updateProgress();
+}
+
+function updateCatBadge(cid){
+  const cat=CATS.find(c=>c.id===cid); if(!cat) return;
+  const pids=cat.pts.map((_,i)=>`${cid}_${i}`);
+  const fail=pids.filter(p=>inspSt[p]==='fail').length;
+  const flag=pids.filter(p=>inspSt[p]==='flag').length;
+  const done=pids.filter(p=>inspSt[p]).length;
+  const b=document.getElementById('cb-'+cid); if(!b) return;
+  if(done===cat.pts.length&&!fail&&!flag){ b.className='cat-badge cb-ok'; b.textContent='Completo ✔'; }
+  else if(fail){ b.className='cat-badge cb-err'; b.textContent=`${fail} falla${fail!==1?'s':''}`; }
+  else if(flag){ b.className='cat-badge cb-warn'; b.textContent=`${flag} obs.`; }
+  else if(done){ b.className='cat-badge cb-pend'; b.textContent=`${done}/${cat.pts.length}`; }
+  else { b.className='cat-badge cb-pend'; b.textContent='Pendiente'; }
+}
+
+function updateProgress(){
+  const all=CATS.flatMap(c=>c.pts.map((_,i)=>`${c.id}_${i}`));
+  const ok  =all.filter(p=>inspSt[p]==='ok').length;
+  const flag=all.filter(p=>inspSt[p]==='flag').length;
+  const fail=all.filter(p=>inspSt[p]==='fail').length;
+  const done=ok+flag+fail;
+  const pct=Math.round(done/all.length*100);
+  document.getElementById('inspLbl').textContent=`${done} de ${all.length} puntos inspeccionados`;
+  document.getElementById('inspPct').textContent=pct+'%';
+  document.getElementById('inspFill').style.width=pct+'%';
+  document.getElementById('cntOk').textContent=ok;
+  document.getElementById('cntFlag').textContent=flag;
+  document.getElementById('cntFail').textContent=fail;
+  document.getElementById('cntPend').textContent=all.length-done;
+}
+
+function markAllOk(){
+  CATS.forEach(c=>c.pts.forEach((_,i)=>{ const pid=`${c.id}_${i}`; if(!inspSt[pid]) inspSt[pid]='ok'; }));
+  renderInspection();
+  CATS.forEach(c=>{
+    const h=document.getElementById('ch-'+c.id);
+    const b=document.getElementById('cbody-'+c.id);
+    if(h&&!h.classList.contains('open')){ h.classList.add('open'); b.classList.add('open'); }
+  });
+  showToast('ok','✔ Puntos sin revisar marcados como OK');
+}
+
+// ── Nota ────────────────────────────────────────────────────
+function openNote(pid,ptName){
+  notePid=pid;
+  document.getElementById('notePtName').textContent='📌 '+ptName;
+  document.getElementById('noteText').value=inspNote[pid]||'';
+  openModal('noteOverlay');
+}
+function openCamFromNote(){
+  closeModal('noteOverlay');
+  openCamModal(notePid,'Inspección');
+}
+function saveNote(){
+  const val=document.getElementById('noteText').value.trim();
+  if(notePid){ inspNote[notePid]=val; }
+  const btn=document.querySelector(`#ii-${notePid} .ii-icon.note-on`)||document.querySelectorAll(`#ii-${notePid} .ii-icon`)[1];
+  if(btn) btn.className=`ii-icon ${val?'note-on':''}`;
+  closeModal('noteOverlay');
+  if(val) showToast('ok','📝 Nota guardada');
+}
+
+// ═══════════════════════════════════════════════════════
+//  PASO 4 — FOTOS
+// ═══════════════════════════════════════════════════════
+function renderPhotoStep(){
+  document.getElementById('photoFilter').innerHTML=PHOTO_CATS.map(c=>
+    `<button class="pf-btn ${c===photoFilter?'active':''}" onclick="setPhotoFilter('${c}')">${c}</button>`
+  ).join('');
+  renderPhotoGrid();
+}
+function setPhotoFilter(cat){ photoFilter=cat; renderPhotoStep(); }
+function renderPhotoGrid(){
+  const g=document.getElementById('photoGrid');
+  const fl=photoFilter==='Todos'?photos:photos.filter(p=>p.cat===photoFilter);
+  if(!fl.length){ g.innerHTML='<div style="color:var(--txt3);font-size:12px;text-align:center;padding:20px;grid-column:1/-1">Sin evidencia en esta categoría. Toca el área de arriba para agregar.</div>'; return; }
+  const icons={photo:'📷',video:'🎥',file:'🖼'};
+  g.innerHTML=fl.map(p=>`
+    <div class="photo-thumb">
+      <div class="pt-face">${icons[p.type]||'📷'}</div>
+      <div class="pt-info">
+        <div class="pt-lbl">${p.label}</div>
+        <div class="pt-cat">${p.cat}</div>
+      </div>
+      <button class="pt-del" onclick="delPhoto('${p.id}',event)">✕</button>
+    </div>
+  `).join('');
+}
+function openCamFromInsp(pid){
+  const cat=CATS.find(c=>c.pts.some((_,i)=>`${c.id}_${i}`===pid));
+  openCamModal(pid, cat?cat.name.split('—')[0].trim():'Inspección');
+}
+function openCamModal(pid,cat){
+  camPid=pid; camCat=cat||'General';
+  const ptName=pid?getPtName(pid):'';
+  document.getElementById('camTitle').textContent='📷 Captura de Evidencia'+(ptName?` — ${ptName.substring(0,30)}`:'');
+  document.getElementById('camPtLabel').textContent=ptName?`Punto de inspección: ${ptName}`:'Evidencia general del vehículo';
+  document.getElementById('camLabel').value=ptName?ptName.substring(0,50):'';
+  document.getElementById('camVinLabel').textContent=vehicle?`${vehicle.brand} ${vehicle.model} · ${vehicle.vin}`:'';
+  openModal('camOverlay');
+}
+function getPtName(pid){
+  const [cid,pi]=pid.split('_');
+  const cat=CATS.find(c=>c.id===cid);
+  return cat?(cat.pts[parseInt(pi)]||''):'';
+}
+function captureMedia(type){
+  const label=document.getElementById('camLabel').value.trim()||camCat;
+  photos.push({ id:'ph_'+Date.now(), cat:camCat, label, type, ptId:camPid });
+  if(camPid){ inspHasPh[camPid]=true; const b=document.querySelector(`#ii-${camPid} .ii-icon`); if(b) b.classList.add('active'); }
+  closeModal('camOverlay');
+  renderPhotoStep();
+  const icon={photo:'📷',video:'🎥',file:'🖼'}[type];
+  showToast('ok',`${icon} Evidencia capturada: ${label.substring(0,28)}`);
+}
+function delPhoto(id,e){
+  e.stopPropagation();
+  photos=photos.filter(p=>p.id!==id);
+  renderPhotoGrid();
+}
+
+// ═══════════════════════════════════════════════════════
+//  PASO 5 — ORDEN DE SERVICIO
+// ═══════════════════════════════════════════════════════
+function renderOS(){
+  if(!vehicle) return;
+  const v=vehicle;
+  const osNum=`OS-${new Date().getFullYear()}-${String(Math.floor(Math.random()*90000)+10000)}`;
+  const fecha=document.getElementById('rec-fecha')?.value||new Date().toISOString().split('T')[0];
+  const hora =document.getElementById('rec-hora')?.value ||new Date().toTimeString().slice(0,5);
+  const km   =document.getElementById('rec-km')?.value;
+  const svcEl=document.getElementById('rec-service');
+  const svc  =svcEl?.value||'—';
+  const motivo=document.getElementById('rec-motivo')?.value||'—';
+  const techEl=document.getElementById('rec-tech');
+  const tech =(techEl?.options[techEl.selectedIndex]?.text||'Jorge López').split('—')[0].trim();
+
+  const all=CATS.flatMap(c=>c.pts.map((_,i)=>(`${c.id}_${i}`)));
+  const ok  =all.filter(p=>inspSt[p]==='ok').length;
+  const flag=all.filter(p=>inspSt[p]==='flag').length;
+  const fail=all.filter(p=>inspSt[p]==='fail').length;
+  const pend=all.length-ok-flag-fail;
+
+  const obs=CATS.flatMap(c=>c.pts.map((pt,i)=>({pid:`${c.id}_${i}`,pt}))).filter(({pid})=>inspSt[pid]==='flag'||inspSt[pid]==='fail').slice(0,10);
+  const accList=Object.keys(accSt).filter(a=>accSt[a]);
+  const otros=(document.getElementById('acc-otros')?.value||'').trim();
+
+  document.getElementById('osPreview').innerHTML=`
+    <div class="os-head">
+      <div>
+        <div class="os-num">${osNum}</div>
+        <div class="os-date">${new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} · ${new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+      <span class="os-status-badge">⏳ En proceso</span>
+    </div>
+    <div class="os-body">
+      <div class="os-sec">
+        <div class="os-sec-lbl">Vehículo</div>
+        <div class="os-grid">
+          <div class="os-f"><label>Marca / Modelo</label><span>${v.brand} ${v.model}</span></div>
+          <div class="os-f"><label>Año</label><span>${v.year}</span></div>
+          <div class="os-f"><label>Color</label><span>${v.color}</span></div>
+          <div class="os-f"><label>VIN</label><span style="font-family:monospace;font-size:11px">${v.vin}</span></div>
+          <div class="os-f"><label>Matrícula</label><span>${v.plate}</span></div>
+          <div class="os-f"><label>Nivel Blindaje</label><span style="color:var(--gold);font-weight:900">${v.level}</span></div>
+        </div>
+      </div>
+      <div class="os-sec">
+        <div class="os-sec-lbl">Datos de Recepción</div>
+        <div class="os-grid">
+          <div class="os-f"><label>Cliente</label><span style="font-size:11.5px">${v.client}</span></div>
+          <div class="os-f"><label>Fecha / Hora Ingreso</label><span>${fecha} ${hora}</span></div>
+          <div class="os-f"><label>Técnico Receptor</label><span>${tech}</span></div>
+          <div class="os-f"><label>Km de Ingreso</label><span>${km?parseInt(km).toLocaleString('es-MX')+' km':'— no registrado'}</span></div>
+          <div class="os-f"><label>Sucursal</label><span>MTY — Monterrey</span></div>
+          <div class="os-f"><label>Servicio Solicitado</label><span style="font-size:11px">${svc||'No especificado'}</span></div>
+        </div>
+        ${motivo&&motivo!=='—'?`
+          <div style="margin-top:10px">
+            <div style="font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Motivo de ingreso</div>
+            <div style="font-size:12.5px;color:var(--txt2)">${motivo}</div>
+          </div>`:''}
+      </div>
+      <div class="os-sec">
+        <div class="os-sec-lbl">Resumen Inspección — 170 Puntos</div>
+        <div class="chip-wrap" style="margin-bottom:${obs.length?'10px':'0'}">
+          <span class="chip chip-ok">✔ ${ok} OK</span>
+          <span class="chip chip-warn">⚠ ${flag} Observación${flag!==1?'es':''}</span>
+          <span class="chip chip-err">✖ ${fail} Falla${fail!==1?'s':''}</span>
+          ${pend?`<span class="chip chip-neu">· ${pend} sin inspeccionar</span>`:''}
+        </div>
+        ${obs.length?`
+          <div style="font-size:9.5px;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Puntos con observación o falla</div>
+          ${obs.map(({pid,pt})=>`
+            <div class="obs-row">
+              <div class="obs-dot ${inspSt[pid]==='fail'?'err':'warn'}"></div>
+              <div>${pt}${inspNote[pid]?` <span style="color:var(--txt3);font-size:10.5px">— ${inspNote[pid]}</span>`:''}${inspHasPh[pid]?' <span style="color:var(--blue);font-size:10px">📷</span>':''}</div>
+            </div>
+          `).join('')}`:''}
+      </div>
+      <div class="os-sec">
+        <div class="os-sec-lbl">Accesorios Entregados (${accList.length}${otros?'+':''})</div>
+        ${accList.length||otros
+          ?`<div class="chip-wrap">${accList.map(a=>`<span class="chip chip-neu">${a}</span>`).join('')}${otros?`<span class="chip chip-neu">${otros}</span>`:''}</div>`
+          :'<div style="font-size:12px;color:var(--txt3)">Ninguno registrado</div>'}
+      </div>
+      <div class="os-sec" style="border:none;margin:0;padding:0">
+        <div class="os-sec-lbl">Expediente Digital</div>
+        <div style="font-size:13px;font-weight:700">${photos.length} archivo${photos.length!==1?'s':''} capturado${photos.length!==1?'s':''} <span style="font-size:10.5px;color:var(--txt3);font-weight:400">— vinculados al VIN y la OS</span></div>
+      </div>
+    </div>
+  `;
+}
+
+// ── Firma — Canvas real ───────────────────────────────────────
+let signCtx=null, signDrawing=false;
+
+function initSignCanvas(){
+  const cv=document.getElementById('signCanvas');
+  if(!cv||signCtx) return;
+  const dpr=window.devicePixelRatio||1;
+  cv.width=cv.offsetWidth*dpr;
+  cv.height=cv.offsetHeight*dpr;
+  signCtx=cv.getContext('2d');
+  signCtx.scale(dpr,dpr);
+  signCtx.strokeStyle='#c9a84c';
+  signCtx.lineWidth=2.5;
+  signCtx.lineCap='round';
+  signCtx.lineJoin='round';
+  function pos(e){ const r=cv.getBoundingClientRect(),s=e.touches?e.touches[0]:e; return {x:s.clientX-r.left,y:s.clientY-r.top}; }
+  function start(e){ e.preventDefault(); signDrawing=true; const p=pos(e); signCtx.beginPath(); signCtx.moveTo(p.x,p.y); document.getElementById('signPlaceholder').style.display='none'; }
+  function draw(e){ if(!signDrawing) return; e.preventDefault(); const p=pos(e); signCtx.lineTo(p.x,p.y); signCtx.stroke(); signed=true; document.getElementById('signStatus').innerHTML='<span style="color:var(--ok)">✔ Firma registrada · '+new Date().toLocaleTimeString('es-MX')+'</span>'; cv.style.borderColor='var(--ok)'; cv.style.borderStyle='solid'; }
+  function end(){ signDrawing=false; if(signed) signCtx.beginPath(); }
+  cv.addEventListener('mousedown',start);
+  cv.addEventListener('mousemove',draw);
+  cv.addEventListener('mouseup',end);
+  cv.addEventListener('mouseleave',end);
+  cv.addEventListener('touchstart',start,{passive:false});
+  cv.addEventListener('touchmove',draw,{passive:false});
+  cv.addEventListener('touchend',end);
+}
+
+function clearSign(){
+  const cv=document.getElementById('signCanvas');
+  if(!signCtx||!cv) return;
+  signCtx.clearRect(0,0,cv.width,cv.height);
+  signed=false;
+  document.getElementById('signPlaceholder').style.display='flex';
+  document.getElementById('signStatus').textContent='Sin firma';
+  cv.style.borderColor='var(--brd)';
+  cv.style.borderStyle='dashed';
+  showToast('info','🗑 Firma borrada');
+}
+
+// ── Confirmar OS ──────────────────────────────────────────────
+function confirmOS(){
+  if(!vehicle){ showToast('err','Identifica el vehículo primero'); return; }
+  if(!signed){ showToast('warn','⚠ Se requiere la firma del cliente para generar la OS'); return; }
+
+  const email=document.getElementById('dist-email')?.checked;
+  const whats=document.getElementById('dist-whats')?.checked;
+  const print=document.getElementById('dist-print')?.checked;
+  const erp  =document.getElementById('dist-erp')?.checked;
+
+  if(!email&&!whats&&!print&&!erp){
+    showToast('warn','⚠ Selecciona al menos un canal de distribución'); return;
+  }
+
+  const acciones=[];
+  if(email) acciones.push({t:'ok',m:`📧 Correo enviado a ${vehicle.email}`});
+  if(whats) acciones.push({t:'ok',m:'💬 Resumen enviado por WhatsApp'});
+  if(print) acciones.push({t:'ok',m:'🖨 OS enviada a la impresora del taller'});
+  if(erp)   acciones.push({t:'ok',m:'🔗 Sincronizado con ERP — doble captura eliminada'});
+
+  showToast('ok','✔ Orden de Servicio generada correctamente');
+  let delay=700;
+  acciones.forEach(a=>{ setTimeout(()=>showToast(a.t,a.m),delay); delay+=1500; });
+
+  setTimeout(()=>{
+    vehicle=null; inspSt={}; inspNote={}; inspHasPh={}; photos=[]; accSt={}; signed=false; signCtx=null; fromAppointment=null;
+    document.getElementById('vinInput').value='';
+    document.getElementById('vehFound').classList.remove('show');
+    document.getElementById('apptBadge').innerHTML='';
+    document.getElementById('rec-km').value='';
+    document.getElementById('rec-service').value='';
+    document.getElementById('rec-motivo').value='';
+    document.getElementById('kmNote').innerHTML='';
+    renderAppointments(); renderAccGrid();
+    for(let i=1;i<=5;i++){ document.getElementById('ws-'+i).className='wiz-step'; document.getElementById('wn-'+i).textContent=i; }
+    document.getElementById('ws-1').classList.add('active');
+    document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('step-1').classList.add('active');
+    step=1; updateBar();
+    setTimeout(()=>showToast('ok','🚘 Listo para recibir el siguiente vehículo'),200);
+  },delay+700);
+}
+
+// ═══════════════════════════════════════════════════════
+//  MODALES
+// ═══════════════════════════════════════════════════════
+function openModal(id) { document.getElementById(id)?.classList.add('open'); }
+function closeModal(id){ document.getElementById(id)?.classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(o=>{
+  o.addEventListener('click',e=>{ if(e.target===o) closeModal(o.id); });
+});
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+let _toastT;
+function showToast(type,msg){
+  clearTimeout(_toastT);
+  const t=document.getElementById('toast');
+  t.className=`toast ${type}-t show`;
+  document.getElementById('toastIcon').textContent={ok:'✔',err:'✖',warn:'⚠',info:'ℹ'}[type]||'';
+  document.getElementById('toastMsg').textContent=msg;
+  _toastT=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+renderAppointments();
+renderAccGrid();
+updateBar();
+
+// ═══════════════════════════════════════════════════════
+//  NAVEGACIÓN DE PANELES
+// ═══════════════════════════════════════════════════════
+function setView(view){
+  ['recv','hist'].forEach(v=>{
+    document.getElementById('panel-'+v).classList.toggle('active', v===view);
+    document.getElementById('nsb-'+v).classList.toggle('active', v===view);
+  });
+  if(view==='hist'){ histRenderCatalog(); document.getElementById('histVinInput').focus(); }
+}
+
+// ═══════════════════════════════════════════════════════
+//  HISTORIAL POR VIN (panel derecho)
+// ═══════════════════════════════════════════════════════
+let histActiveVin = null;
+
+const BRAND_ICO = b => b.includes('Mercedes')?'🚗':b.includes('BMW')?'🚙':
+                       b.includes('Lexus')?'🚘':b.includes('Toyota')?'🚐':
+                       b.includes('Ford')?'🛻':b.includes('Chevrolet')?'🚗':'🚗';
+
+function histRenderCatalog(){
+  histFilterCatalog();
+}
+
+function histFilterCatalog(){
+  const q = [
+    document.getElementById('histVinInput').value,
+    document.getElementById('hcatInput').value
+  ].map(s=>s.trim().toLowerCase()).find(s=>s) || '';
+
+  const filtered = VEHICLES.filter(v =>
+    !q || [v.vin,v.brand,v.model,v.client,v.plate,v.level,v.color]
+           .join(' ').toLowerCase().includes(q)
+  );
+
+  document.getElementById('hcatCount').textContent =
+    `${filtered.length} vehículo${filtered.length!==1?'s':''}`;
+
+  document.getElementById('hcatList').innerHTML = filtered.length
+    ? filtered.map(v => `
+        <div class="hcat-item${histActiveVin===v.vin?' active':''}" onclick="histSelectVeh('${v.vin}')">
+          <span class="hcat-ico">${BRAND_ICO(v.brand)}</span>
+          <div class="hcat-info">
+            <div class="hcat-model">${v.brand} ${v.model} ${v.year}</div>
+            <div class="hcat-sub">${v.client}</div>
+            <div class="hcat-vin">${v.vin}</div>
+          </div>
+          <span class="hcat-lvl">${v.level}</span>
+        </div>`).join('')
+    : '<div style="padding:16px;text-align:center;color:var(--txt3);font-size:12px">Sin resultados</div>';
+}
+
+function histSelectVeh(vin){
+  histActiveVin = vin;
+  histFilterCatalog();   // refresca clase active
+  histRenderDetail(VEHICLES.find(v => v.vin === vin));
+}
+
+function histSearch(){
+  const q = document.getElementById('histVinInput').value.trim().toUpperCase();
+  if(!q) return;
+  let v = VEHICLES.find(x => x.vin === q || x.plate.toUpperCase() === q);
+  if(!v) v = VEHICLES.find(x =>
+    [x.vin,x.brand,x.model,x.client,x.plate].join(' ').toUpperCase().includes(q)
+  );
+  if(v){ histSelectVeh(v.vin); histFilterCatalog(); }
+  else {
+    document.getElementById('histContent').innerHTML =
+      `<div class="hist-notfound">No se encontró ningún vehículo con ese VIN o matrícula.</div>`;
+  }
+}
+
+function histRenderDetail(v){
+  if(!v) return;
+  const hist = HISTORY[v.vin] || [];
+  const LC = {'VR7+':'#6366f1','VR7':'#6366f1','VR6+':'var(--gold)','VR6':'var(--gold)',
+               'B7':'var(--err)','B6+':'var(--blue)','B6':'var(--blue)'};
+  const lc = LC[v.level] || 'var(--txt2)';
+
+  document.getElementById('histContent').innerHTML = `
+    <div class="hvc">
+      <div class="hvc-top">
+        <div>
+          <div class="hvc-model">${v.brand} ${v.model} ${v.year}</div>
+          <div class="hvc-vin">${v.vin}</div>
+        </div>
+        <div class="hvc-lvl" style="color:${lc};border-color:${lc};background:rgba(0,0,0,.2)">${v.level}</div>
+      </div>
+      <div class="hvc-grid">
+        <div class="hvc-f"><label>Cliente</label><span style="font-size:12px">${v.client}</span></div>
+        <div class="hvc-f"><label>Matrícula</label><span>${v.plate}</span></div>
+        <div class="hvc-f"><label>Km actuales</label><span>${v.km.toLocaleString('es-MX')}</span></div>
+        <div class="hvc-f"><label>Último servicio</label><span style="font-size:12px">${v.lastSvc?new Date(v.lastSvc).toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'}):'—'}</span></div>
+      </div>
+    </div>
+    <div class="htl-title">Historial de servicios <span>${hist.length} registro${hist.length!==1?'s':''}</span></div>
+    ${hist.length
+      ? `<div class="htl">${hist.map(h=>`
+          <div class="htl-item">
+            <div class="htl-dot"></div>
+            <div class="htl-card">
+              <div>
+                <div class="htl-svc">${h.svc}</div>
+                <div class="htl-meta">
+                  <span>👨‍🔧 ${h.tech}</span>
+                  ${h.fotos?`<span>📸 ${h.fotos} fotos</span>`:''}
+                </div>
+              </div>
+              <div>
+                ${h.km?`<div class="htl-km">${h.km.toLocaleString('es-MX')} km</div>`:''}
+                <div class="htl-date">${new Date(h.date).toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'})}</div>
+              </div>
+            </div>
+          </div>`).join('')}</div>`
+      : '<div class="hist-notfound">Sin servicios previos registrados para este veh\u00edculo.</div>'}`;
+}
+</script>
+</body>
+</html>

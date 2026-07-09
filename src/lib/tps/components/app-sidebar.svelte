@@ -163,8 +163,12 @@
 			items: [
 				{ label: 'Dashboard', href: '/taller', icon: Wrench },
 				{ label: 'Agenda de Servicio', href: '/taller/agenda', icon: CalendarDays },
-				{ label: 'Recepción Vehículo', href: '/taller/recepcion', icon: ClipboardCheck },
-				{ label: 'Bifurcación Siniestros', href: '/taller/siniestros', icon: AlertTriangle }
+				{ label: 'Capacidad Bahías', href: '/taller/bahias', icon: Wrench },
+				{ label: 'Multi-Sucursal', href: '/taller/multi-sucursal', icon: Building2 },
+				{ label: 'Alertas Mantenimiento', href: '/taller/alertas-mantenimiento', icon: AlertTriangle },
+				{ label: 'Recepción Vehículo', href: '/taller/recepcion', icon: Tablet },
+				{ label: 'Historial por VIN', href: '/taller/historial', icon: History },
+				{ label: 'Bifurcación Siniestros', href: '/taller/siniestros', icon: ShieldAlert }
 			]
 		},
 		{
