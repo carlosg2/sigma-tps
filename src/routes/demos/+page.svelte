@@ -15,4 +15,5 @@
 	<Button href="/ds" variant="outline">Design System →</Button>
 	<Button href="/sv-grid" variant="outline">SV Grid →</Button>
 	<Button href="/font-features" variant="outline">Font Features Playground →</Button>
+	<Button href="/demos/dyamic-layouts-sidebars" variant="outline">Layout & Sidebar Configurator →</Button>
 </div>
