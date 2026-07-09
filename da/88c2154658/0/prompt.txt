@@ -1,0 +1,5 @@
+Las rutas de /taller no se ven completos los flujos y falta demasiada funcionalidad, analiza estos dos ejemplos y complementa los que ya tenemos refactorizando cada ruta dentro de /taller
+
+sigue el nuestro design system y ejemplos de dashboard.
+
+pero lo mas importante es contar con toda la funcionalidad ya que en estos html se sigue mas a detalle los gaps de taller. si tienes dudas, preguntame
