@@ -1,0 +1,500 @@
+agrega una 4 pagina canonica que se llame dynamic page refactorizando esta app con toda su funcionalidad a nuestro layout:
+
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Header colapsable + toggle sin brinco (padding consistente)</title>
+
+  <style>
+    :root {
+      --bg: #0b0c10;
+      --card: rgba(255,255,255,.08);
+      --card2: rgba(255,255,255,.12);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.65);
+
+      --expanded: 180px;
+      --collapsed: 64px;
+      --collapse-range: 140px;
+      --header-radius: 18px;
+      --header-padding: 16px; /* ✅ fijo en ambos estados */
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(1200px 800px at 30% -10%, #1c2a52 0%, transparent 55%),
+        radial-gradient(900px 700px at 90% 0%, #2b164d 0%, transparent 55%),
+        var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      height: 100svh;
+      padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .shell {
+      width: min(430px, 100%);
+      height: 100%;
+      border-radius: 22px;
+      overflow: hidden;
+      background: rgba(255,255,255,.04);
+      outline: 1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .scroller {
+      position: relative;
+      height: 100%;
+      overflow: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      padding: 12px;
+
+      /* evita “anclaje” automático del browser que a veces provoca saltos */
+      overflow-anchor: none;
+    }
+
+    .header-card {
+      position: sticky;
+      top: 12px;
+      z-index: 10;
+
+      height: var(--expanded);
+
+      border-radius: var(--header-radius); /* ✅ fijo */
+      background: linear-gradient(180deg, var(--card2), var(--card));
+      outline: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      overflow: hidden;
+      transform-origin: top center;
+      will-change: height, opacity, transform;
+    }
+
+    .header-inner {
+      height: 100%;
+      padding: var(--header-padding); /* ✅ fijo */
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 8px;
+    }
+
+    .row-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 32px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 650;
+      letter-spacing: .2px;
+      margin: 0;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .chip {
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,.10);
+      white-space: nowrap;
+    }
+
+    .hero {
+      border-radius: 14px;
+      background:
+        radial-gradient(450px 240px at 30% 20%, rgba(85,170,255,.45), transparent 55%),
+        radial-gradient(420px 260px at 85% 50%, rgba(217,105,255,.35), transparent 58%),
+        rgba(255,255,255,.06);
+      outline: 1px solid rgba(255,255,255,.08);
+      min-height: 70px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      color: rgba(255,255,255,.85);
+      font-size: 13px;
+    }
+
+    .row-bottom {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .btn {
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .btn-mini {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.10);
+    }
+    .btn-mini:active { transform: translateY(1px); }
+
+    .content {
+      padding-top: 14px;
+      padding-bottom: 18px;
+    }
+
+    .section-title {
+      margin: 10px 4px 10px;
+      color: rgba(255,255,255,.85);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .2px;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .item {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.10);
+      flex: 0 0 auto;
+    }
+
+    .meta {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .meta b {
+      font-size: 14px;
+      font-weight: 650;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .meta span {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ================================
+       Scroll-Driven Animations (SDA)
+       (solo aplica si hay soporte real)
+       ================================ */
+    @supports (scroll-timeline: --t block) and (animation-timeline: --t) and (animation-range: 0px 1px) {
+      .scroller { scroll-timeline: --headerCollapse block; }
+
+      .header-card {
+        animation: collapseHeader 1s linear both;
+        animation-timeline: --headerCollapse;
+        animation-range: 0px var(--collapse-range);
+      }
+
+      .hero {
+        animation: fadeHero 1s linear both;
+        animation-timeline: --headerCollapse;
+        animation-range: 0px var(--collapse-range);
+      }
+
+      .row-bottom {
+        animation: fadeBottom 1s linear both;
+        animation-timeline: --headerCollapse;
+        animation-range: 0px var(--collapse-range);
+      }
+
+      /* ✅ Ya NO animamos padding ni radius */
+      @keyframes collapseHeader {
+        from { height: var(--expanded); }
+        to   { height: var(--collapsed); }
+      }
+
+      @keyframes fadeHero {
+        from { opacity: 1; transform: translateY(0); }
+        to   { opacity: 0; transform: translateY(-6px); }
+      }
+
+      @keyframes fadeBottom {
+        from { opacity: 1; transform: translateY(0); }
+        to   { opacity: 0; transform: translateY(-6px); }
+      }
+    }
+
+    /* ================================
+       Manual override: expandido forzado
+       ================================ */
+    body.manual-expanded .header-card {
+      animation: none !important;
+      height: var(--expanded) !important;
+    }
+    body.manual-expanded .hero {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+    }
+    body.manual-expanded .row-bottom {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+    }
+    /* padding y radius ya son fijos, no hace falta forzarlos */
+
+    /* ================================
+       Fallback styles (si JS activa .no-sda)
+       ================================ */
+    .no-sda .header-card { transition: height 120ms linear; }
+    .no-sda .hero, .no-sda .row-bottom { transition: opacity 120ms linear, transform 120ms linear; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .no-sda .header-card,
+      .no-sda .hero,
+      .no-sda .row-bottom { transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <div class="shell">
+      <div class="scroller" id="scroller">
+        <header class="header-card" id="header">
+          <div class="header-inner">
+            <div class="row-top">
+              <h1 class="title">Tarjeta</h1>
+              <div class="actions">
+                <button class="btn-mini" id="toggleHeader" type="button" hidden aria-expanded="false">
+                  Expandir
+                </button>
+                <span class="chip" id="chip">SDA: ?</span>
+              </div>
+            </div>
+
+            <div class="hero">
+              Contenido del cabecero (métricas, filtros, etc). Se desvanece al colapsar.
+            </div>
+
+            <div class="row-bottom">
+              <span>Actualizado: hoy</span>
+              <button class="btn" type="button" id="toTop">Volver arriba</button>
+            </div>
+          </div>
+        </header>
+
+        <main class="content">
+          <div class="section-title">Detalle</div>
+          <div class="list" id="list"></div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Demo items
+    const list = document.getElementById('list');
+    for (let i = 1; i <= 60; i++) {
+      const el = document.createElement('div');
+      el.className = 'item';
+      el.innerHTML = `
+        <div class="dot"></div>
+        <div class="meta">
+          <b>Item ${i}</b>
+          <span>Detalle / descripción del item ${i}</span>
+        </div>
+      `;
+      list.appendChild(el);
+    }
+
+    const scroller = document.getElementById('scroller');
+    const header = document.getElementById('header');
+    const hero = header.querySelector('.hero');
+    const bottom = header.querySelector('.row-bottom');
+
+    document.getElementById('toTop').addEventListener('click', () => {
+      scroller.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    const supportsSDA =
+      CSS.supports('scroll-timeline: --t block') &&
+      CSS.supports('animation-timeline: --t') &&
+      CSS.supports('animation-range: 0px 1px');
+
+    const chip = document.getElementById('chip');
+    chip.textContent = supportsSDA ? 'SDA: ON' : 'SDA: OFF (fallback)';
+
+    const clamp01 = (x) => Math.max(0, Math.min(1, x));
+    const getVarPx = (name, fallback) => {
+      const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      const n = parseFloat(v);
+      return Number.isFinite(n) ? n : fallback;
+    };
+
+    const expanded = getVarPx('--expanded', 180);
+    const collapsed = getVarPx('--collapsed', 64);
+    const range = getVarPx('--collapse-range', 140);
+
+    const toggleBtn = document.getElementById('toggleHeader');
+    let manualExpanded = false;
+
+    function collapsedByScroll() {
+      const t = clamp01(scroller.scrollTop / range);
+      return t >= 0.99;
+    }
+
+    function updateToggleVisibility() {
+      const isCollapsed = collapsedByScroll();
+      const show = manualExpanded || isCollapsed;
+
+      toggleBtn.hidden = !show;
+      toggleBtn.textContent = manualExpanded ? 'Contraer' : 'Expandir';
+      toggleBtn.setAttribute('aria-expanded', manualExpanded ? 'true' : 'false');
+    }
+
+    function applyFallbackFromScroll() {
+      if (manualExpanded) return;
+
+      const t = clamp01(scroller.scrollTop / range);
+      const h = expanded + (collapsed - expanded) * t;
+
+      header.style.height = `${h}px`;
+
+      const o = 1 - t;
+      hero.style.opacity = `${o}`;
+      hero.style.transform = `translateY(${(-6 * t)}px)`;
+      bottom.style.opacity = `${o}`;
+      bottom.style.transform = `translateY(${(-6 * t)}px)`;
+    }
+
+    // ===== Compensación anti-brinco (anchor-based) =====
+    function pickAnchorForCompensation() {
+      const rect = scroller.getBoundingClientRect();
+      const x = rect.left + Math.min(40, rect.width / 2);
+
+      // Elegimos un Y dentro de la lista (debajo del header actual)
+      const yOffset = manualExpanded ? (expanded + 28) : (collapsed + 28);
+      const y = Math.min(rect.bottom - 20, rect.top + yOffset);
+
+      const el = document.elementFromPoint(x, y);
+      const anchor = el?.closest?.('.item') || null;
+      if (!anchor) return null;
+
+      return { el: anchor, top: anchor.getBoundingClientRect().top };
+    }
+
+    function compensateAfterLayout(anchor) {
+      if (!anchor?.el) return;
+      const newTop = anchor.el.getBoundingClientRect().top;
+      const delta = newTop - anchor.top;
+      if (Math.abs(delta) > 0.5) scroller.scrollTop += delta;
+    }
+
+    function setManualExpanded(next) {
+      if (manualExpanded === next) return;
+      if (!manualExpanded && !collapsedByScroll()) return;
+
+      const anchor = pickAnchorForCompensation();
+      const prevBehavior = scroller.style.scrollBehavior;
+      scroller.style.scrollBehavior = 'auto';
+
+      manualExpanded = next;
+      document.body.classList.toggle('manual-expanded', manualExpanded);
+
+      if (!supportsSDA) {
+        if (manualExpanded) {
+          header.style.height = `${expanded}px`;
+          hero.style.opacity = `1`;
+          hero.style.transform = `translateY(0)`;
+          bottom.style.opacity = `1`;
+          bottom.style.transform = `translateY(0)`;
+        }
+      }
+
+      requestAnimationFrame(() => {
+        if (!supportsSDA && !manualExpanded) applyFallbackFromScroll();
+
+        compensateAfterLayout(anchor);
+        requestAnimationFrame(() => {
+          compensateAfterLayout(anchor);
+          scroller.style.scrollBehavior = prevBehavior;
+          updateToggleVisibility();
+        });
+      });
+    }
+
+    toggleBtn.addEventListener('click', () => setManualExpanded(!manualExpanded));
+
+    function onScroll() {
+      if (!supportsSDA) applyFallbackFromScroll();
+
+      if (manualExpanded && scroller.scrollTop < range * 0.6) {
+        setManualExpanded(false);
+        return;
+      }
+
+      updateToggleVisibility();
+    }
+
+    scroller.addEventListener('scroll', onScroll, { passive: true });
+
+    if (!supportsSDA) document.body.classList.add('no-sda');
+    if (!supportsSDA) applyFallbackFromScroll();
+    updateToggleVisibility();
+  </script>
+</body>
+</html>
+
+todo siguiendo nuestro sistema
+
+---
+
+body scroll priority
