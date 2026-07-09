@@ -1,0 +1,28 @@
+la ruta pa podemos sacar de page store?
+
+Read [flow3-nav.ts](
+Sí, se puede. La idea sería que [defineTransition] como string manual, sino que lo saque de `$app/state` o del `page store`.
+
+Pero hay un problema: el `<script module>` se ejecuta cuando SvelteKit **importa** el módulo de la ruta, no cuando el componente se monta. En ese momento `$app/state` no está disponible en `<script module>` porque no hay instancia de componente.
+
+Opciones:
+
+1. **Seguir pasando el pathname manual** en `<script module>` (lo más simple y explícito).
+2. **Usar `$app/state` dentro del `<script>` normal** del [+page.svelte]ahí. Pero entonces el registro ocurre tarde: el layout ya necesitó la transición en `onNavigate`.
+3. **Inferir el pathname desde [import.meta.url] en `<script module>`. Esto es frágil porque en build el path cambia.
+4. **No usar [defineTransition] en cada página**, sino un `+page.js` que devuelva la transición en `data`, y que el layout la lea de `$page.data`. Eso sí funciona con el store y es más "SvelteKit".
+¿Te interesa la opción 4? Es la más limpia: cada página declara su transición en `+page.js` (`export const load = () => ({ transition: 'cover' })`) y el layout la lee de [$page.data.transition] por completo.
+
+me inetersa la ocpcion 4 en todo /flow3
+
+---
+
+https://sveltekit-view-transition.vercel.app/docs for reference
+
+---
+
+las dos animaciones android no funcionan bien en en el modo de reversa, backward, para enfrente si se ve bien pero para atras sucede de forma abrupta. porque?
+
+---
+
+agrega los dos preview al grid de la pagina de inicio de /flow3
