@@ -1,4 +1,4 @@
 /** @type {import('./$types').PageLoad} */
 export function load() {
-	return { transition: 'cover' };
+	return { transition: 'fade' };
 }

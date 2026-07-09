@@ -16,6 +16,8 @@
 	import Circle from '@lucide/svelte/icons/circle';
 	import Smartphone from '@lucide/svelte/icons/smartphone';
 	import Info from '@lucide/svelte/icons/info';
+	import LayoutTemplate from '@lucide/svelte/icons/layout-template';
+	import LayoutDashboard from '@lucide/svelte/icons/layout-dashboard';
 
 	// El título de la animación de ESTA página se pasa por prop (lo declara la
 	// propia página). El grid enlaza al resto de páginas, cada una con su
@@ -47,7 +49,9 @@
 		{ href: '/flow3/flip', key: 'flip', label: 'Flip', desc: 'Rotación 3D en Y', icon: FlipHorizontal2, color: 'bg-fuchsia-500' },
 		{ href: '/flow3/circle', key: 'circle', label: 'Circle', desc: 'Revelado circular', icon: Circle, color: 'bg-rose-500' },
 		{ href: '/flow3/android-fade', key: 'android-fade', label: 'Android Fade', desc: 'Fade desde abajo tipo Android', icon: Smartphone, color: 'bg-green-500' },
-		{ href: '/flow3/android-fade-rtl', key: 'android-fade-rtl', label: 'Android Fade RTL', desc: 'Fade de derecha a izquierda', icon: Smartphone, color: 'bg-lime-600' }
+		{ href: '/flow3/android-fade-rtl', key: 'android-fade-rtl', label: 'Android Fade RTL', desc: 'Fade de derecha a izquierda', icon: Smartphone, color: 'bg-lime-600' },
+		{ href: '/flow3/preview', key: 'preview', label: 'Preview', desc: 'Vista previa — lista de inventario', icon: LayoutTemplate, color: 'bg-indigo-500' },
+		{ href: '/flow3/preview-02', key: 'preview-02', label: 'Preview 02', desc: 'Vista previa — detalle de artículo', icon: LayoutDashboard, color: 'bg-orange-500' }
 	];
 
 	// Enlaces a las OTRAS páginas (se excluye la actual).

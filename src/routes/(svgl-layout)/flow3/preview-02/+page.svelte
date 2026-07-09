@@ -1,8 +1,3 @@
-<script module lang="ts">
-	import { defineTransition } from '../flow3-nav';
-	defineTransition('/flow3/preview-02', 'cover-v');
-</script>
-
 <script lang="ts">
 	import PageHeader from '$lib/components/layout/pageHeader.svelte';
 	import { Button } from '$lib/components/ui/button';
