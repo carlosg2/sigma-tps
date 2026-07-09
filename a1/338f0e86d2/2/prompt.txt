@@ -1,0 +1,9 @@
+en el folde (tps) hemos estado implementando gaps (que son proyectos de desarrollo), necesitamos validad y completar los que nos falte. haz un analisis y determina que falta.
+
+en el proyecto presentaciones, puedes encontrar toda la informacion de las minutas, muy bien detallado. solo buscalo
+
+---
+
+en el folde (tps) hemos estado implementando gaps (que son proyectos de desarrollo), necesitamos validad y completar los que nos falte. haz un analisis y determina que falta por implementar del documento de gaps.html
+
+en el proyecto presentaciones, puedes encontrar toda la informacion de las minutas, muy bien detallado. solo buscalo
