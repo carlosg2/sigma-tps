@@ -3,7 +3,7 @@
   "checkpoint_id": "a09b8fb7594e",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 8,
+  "checkpoints_count": 9,
   "files_touched": [
     "src/routes/demos/dyamic-layouts-sidebars/(config)/dynamic-page/+page.svelte"
   ],
@@ -19,6 +19,12 @@
       "transcript": "/a0/9b8fb7594e/1/full.jsonl",
       "content_hash": "/a0/9b8fb7594e/1/content_hash.txt",
       "prompt": "/a0/9b8fb7594e/1/prompt.txt"
+    },
+    {
+      "metadata": "/a0/9b8fb7594e/2/metadata.json",
+      "transcript": "/a0/9b8fb7594e/2/full.jsonl",
+      "content_hash": "/a0/9b8fb7594e/2/content_hash.txt",
+      "prompt": "/a0/9b8fb7594e/2/prompt.txt"
     }
   ],
   "token_usage": {

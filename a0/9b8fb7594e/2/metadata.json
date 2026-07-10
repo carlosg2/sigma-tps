@@ -1,0 +1,58 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "a09b8fb7594e",
+  "session_id": "ccdbcca8-fff1-44fb-ac62-94feb30a8a02",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-10T21:56:56.023315Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/routes/demos/dyamic-layouts-sidebars/(config)/dynamic-page/+page.svelte"
+  ],
+  "agent": "Copilot CLI",
+  "model": "",
+  "turn_id": "90bcbac93890",
+  "checkpoint_transcript_start": 633,
+  "transcript_lines_at_start": 633,
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-10T21:56:56.003716Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 272,
+    "human_removed": 19,
+    "total_committed": 0,
+    "total_lines_changed": 291,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 2414,
+      "user_lines_removed": 202,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "documentacion/Ventas/Pantalla_Cotizador_Ventas (1).html": 2309,
+        "src/routes/demos/dyamic-layouts-sidebars/(config)/config-panel.svelte": 9,
+        "src/routes/demos/dyamic-layouts-sidebars/(config)/dynamic-page/+page.svelte": 96
+      },
+      "user_removed_per_file": {
+        "src/routes/demos/dyamic-layouts-sidebars/(config)/config-panel.svelte": 3,
+        "src/routes/demos/dyamic-layouts-sidebars/(config)/dynamic-page/+page.svelte": 199
+      }
+    }
+  ]
+}
