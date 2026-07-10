@@ -11,7 +11,10 @@
 	// Estado
 	let sda = $state(true); // Scroll-Driven Animations soportadas
 	let manualExpanded = $state(false);
+	let animating = $state(false); // Transición manual (expandir/contraer) en curso
 	let scrollY = $state(0);
+
+	const DURATION = 280; // ms — debe coincidir con la transición CSS de .animating
 
 	// Se leen de las CSS custom props en onMount (para no duplicar valores)
 	let expanded = 180;
@@ -40,17 +43,37 @@
 		if (!sda) applyFallback();
 	});
 
+	// Estilos del cabecero para un progreso de colapso t (0 = expandido, 1 = colapsado)
+	function frameStyle(t: number) {
+		return {
+			height: `${expanded + (collapsed - expanded) * t}px`,
+			opacity: `${1 - t}`,
+			transform: `perspective(600px) translateY(${-6 * t}px) translateZ(${-40 * t}px)`,
+		};
+	}
+
+	function setFrame(s: { height: string; opacity: string; transform: string }) {
+		if (!headerEl || !heroEl || !bottomEl) return;
+		headerEl.style.height = s.height;
+		heroEl.style.opacity = s.opacity;
+		heroEl.style.transform = s.transform;
+		bottomEl.style.opacity = s.opacity;
+		bottomEl.style.transform = s.transform;
+	}
+
+	function clearFrame() {
+		if (!headerEl || !heroEl || !bottomEl) return;
+		headerEl.style.height = "";
+		heroEl.style.opacity = "";
+		heroEl.style.transform = "";
+		bottomEl.style.opacity = "";
+		bottomEl.style.transform = "";
+	}
+
 	// Fallback (sin SDA): mapeamos el scroll del documento a height/opacity
 	function applyFallback() {
 		if (sda || manualExpanded || !headerEl || !heroEl || !bottomEl) return;
-		const t = clamp01(window.scrollY / range);
-		headerEl.style.height = `${expanded + (collapsed - expanded) * t}px`;
-		const o = `${1 - t}`;
-		const ty = `translateY(${-6 * t}px)`;
-		heroEl.style.opacity = o;
-		heroEl.style.transform = ty;
-		bottomEl.style.opacity = o;
-		bottomEl.style.transform = ty;
+		setFrame(frameStyle(clamp01(window.scrollY / range)));
 	}
 
 	function onScroll() {
@@ -80,7 +103,7 @@
 	}
 
 	function setManualExpanded(next: boolean) {
-		if (manualExpanded === next) return;
+		if (manualExpanded === next || animating) return;
 		// Solo se puede expandir manualmente cuando está colapsado por scroll
 		if (!manualExpanded && !isCollapsed) return;
 
@@ -88,18 +111,42 @@
 		const prev = document.documentElement.style.scrollBehavior;
 		document.documentElement.style.scrollBehavior = "auto";
 
-		manualExpanded = next;
+		// ── SDA: transición explícita entre colapsado y expandido ──
+		// La anim de scroll aplica de golpe, así que la desactivamos (clase
+		// .animating) y hacemos un tween CSS entre el estado actual y el destino.
+		if (sda && headerEl && heroEl && bottomEl) {
+			const currentT = clamp01(window.scrollY / range);
+			const from = next ? frameStyle(currentT) : frameStyle(0);
+			const to = next ? frameStyle(0) : frameStyle(currentT);
 
-		if (!sda && manualExpanded && headerEl && heroEl && bottomEl) {
-			headerEl.style.height = `${expanded}px`;
-			heroEl.style.opacity = "1";
-			heroEl.style.transform = "translateY(0)";
-			bottomEl.style.opacity = "1";
-			bottomEl.style.transform = "translateY(0)";
+			animating = true;
+			manualExpanded = next;
+			setFrame(from); // congela el estado inicial (inline gana sobre la anim)
+
+			requestAnimationFrame(() => {
+				void headerEl!.offsetHeight; // fuerza reflow para asegurar el tween
+				setFrame(to);
+				compensate(anchor);
+			});
+
+			window.setTimeout(() => {
+				animating = false; // devuelve el control a la anim de scroll / CSS
+				compensate(anchor);
+				requestAnimationFrame(() => {
+					clearFrame();
+					compensate(anchor);
+					document.documentElement.style.scrollBehavior = prev;
+				});
+			}, DURATION);
+			return;
 		}
 
+		// ── Fallback (sin SDA): la transición la da el CSS de .no-sda ──
+		manualExpanded = next;
+		if (manualExpanded) setFrame(frameStyle(0));
+
 		requestAnimationFrame(() => {
-			if (!sda && !manualExpanded) applyFallback();
+			if (!manualExpanded) applyFallback();
 			compensate(anchor);
 			requestAnimationFrame(() => {
 				compensate(anchor);
@@ -118,6 +165,7 @@
 <div
 	class="dyn "
 	class:manual-expanded={manualExpanded}
+	class:animating={animating}
 	class:no-sda={!sda}
 	bind:this={root}
 >
@@ -148,10 +196,10 @@
 			</div>
 
 			<div
-				class="hero-anim from-primary/25 via-accent/10 flex min-h-16 items-center rounded-xl border bg-linear-to-br to-transparent p-3 text-sm"
+				class="hero-anim from-primary/25 via-accent/10 flex min-h-40 items-center rounded-xl border bg-linear-to-br to-transparent p-3 text-sm"
 				bind:this={heroEl}
 			>
-				Contenido del cabecero (métricas, filtros, etc). Se desvanece al colapsar.
+				Contenido del cabecero (métricas, filtros, etc). Se desvanece al colapsar. Aqui
 			</div>
 
 			<div
@@ -167,6 +215,8 @@
 					Volver arriba
 				</button>
 			</div>
+
+			
 		</div>
 	</header>
 
@@ -192,7 +242,14 @@
 	.dyn {
 		--expanded: 280px;
 		--collapsed: 64px;
-		--collapse-range: 200px;
+		/*
+		  IMPORTANTE: el header es sticky (in-flow), así que al colapsar encoge
+		  el documento. Si el rango de scroll es MENOR que el delta de colapso
+		  (--expanded − --collapsed = 216px), la altura se reduce más rápido de
+		  lo que scrolleas → derivada negativa → rebote/zona muerta que impide
+		  el scroll táctil en móvil. Mantener siempre --collapse-range > 216px.
+		*/
+		--collapse-range: 280px;
 	}
 
 	/* Altura base (estado expandido). El padding es FIJO (no salta). */
@@ -229,22 +286,39 @@
 		@keyframes dynFade {
 			from {
 				opacity: 1;
-				transform: translateY(0);
+				transform: perspective(600px) translateY(0) translateZ(0);
 			}
 			to {
 				opacity: 0;
-				transform: translateY(-6px);
+				transform: perspective(600px) translateY(-6px) translateZ(-40px);
 			}
 		}
 	}
 
-	/* Override manual: expandido forzado */
-	.dyn.manual-expanded .header-card {
+	/*
+	  Transición manual (expandir/contraer estando colapsado por scroll):
+	  desactivamos la anim de scroll y dejamos que los estilos inline hagan
+	  el tween con esta transición.
+	*/
+	.dyn.animating .header-card {
+		animation: none !important;
+		transition: height 280ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+	.dyn.animating .hero-anim,
+	.dyn.animating .bottom-anim {
+		animation: none !important;
+		transition:
+			opacity 280ms ease,
+			transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	/* Override manual: expandido forzado (una vez terminada la transición) */
+	.dyn.manual-expanded:not(.animating) .header-card {
 		animation: none !important;
 		height: var(--expanded) !important;
 	}
-	.dyn.manual-expanded .hero-anim,
-	.dyn.manual-expanded .bottom-anim {
+	.dyn.manual-expanded:not(.animating) .hero-anim,
+	.dyn.manual-expanded:not(.animating) .bottom-anim {
 		animation: none !important;
 		opacity: 1 !important;
 		transform: none !important;
@@ -265,7 +339,10 @@
 	@media (prefers-reduced-motion: reduce) {
 		.dyn.no-sda .header-card,
 		.dyn.no-sda .hero-anim,
-		.dyn.no-sda .bottom-anim {
+		.dyn.no-sda .bottom-anim,
+		.dyn.animating .header-card,
+		.dyn.animating .hero-anim,
+		.dyn.animating .bottom-anim {
 			transition: none !important;
 		}
 	}
