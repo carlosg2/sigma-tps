@@ -1,0 +1,70 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "a09b8fb7594e",
+  "session_id": "49f7f223-0750-4845-bb9b-0f9c7d0031b7",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-10T21:56:55.410697Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/routes/demos/dyamic-layouts-sidebars/(config)/dynamic-page/+page.svelte"
+  ],
+  "agent": "Copilot CLI",
+  "model": "",
+  "turn_id": "eb67076e1a8f",
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-10T21:56:55.407692Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 272,
+    "human_removed": 19,
+    "total_committed": 0,
+    "total_lines_changed": 291,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 4195,
+      "user_lines_removed": 484,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "documentacion/Ventas/Pantalla_Cotizador_Ventas (1).html": 2309,
+        "src/lib/tps/components/app-sidebar.svelte": 2,
+        "src/lib/tps/ventas/constants.ts": 107,
+        "src/lib/tps/ventas/seed.ts": 65,
+        "src/lib/tps/ventas/store.svelte.ts": 269,
+        "src/lib/tps/ventas/types.ts": 118,
+        "src/routes/(tps)/ventas/+layout.svelte": 4,
+        "src/routes/(tps)/ventas/+page.svelte": 28,
+        "src/routes/(tps)/ventas/cotizaciones/+page.svelte": 263,
+        "src/routes/(tps)/ventas/cotizador/+page.ts": 5,
+        "src/routes/(tps)/ventas/cotizador/[id]/+page.svelte": 748,
+        "src/routes/(tps)/ventas/inventario/+page.svelte": 172,
+        "src/routes/demos/dyamic-layouts-sidebars/(config)/config-panel.svelte": 9,
+        "src/routes/demos/dyamic-layouts-sidebars/(config)/dynamic-page/+page.svelte": 96
+      },
+      "user_removed_per_file": {
+        "src/lib/tps/components/app-sidebar.svelte": 1,
+        "src/routes/(tps)/ventas/+page.svelte": 5,
+        "src/routes/(tps)/ventas/cotizador/+page.svelte": 276,
+        "src/routes/demos/dyamic-layouts-sidebars/(config)/config-panel.svelte": 3,
+        "src/routes/demos/dyamic-layouts-sidebars/(config)/dynamic-page/+page.svelte": 199
+      }
+    }
+  ]
+}

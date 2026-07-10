@@ -1,0 +1,3 @@
+en la ruta: demos/dyamic-layouts-sidebars/list-detail
+
+cuando el la variante inset de structure esta activa, le agrega un pequeño espacio arriba, a la derecha y abajo al panel de contendio, esto provoca que haga scroll la lista y al final haga un pequeño scroll adicional para llegar hasta el final. porque? analiza de que forma se puede compensar para que no exista ese scroll adicional con la variate inset del layout y corrigelo.
