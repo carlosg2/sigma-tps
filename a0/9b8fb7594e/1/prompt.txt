@@ -1,0 +1,33 @@
+agrega un translate z para que al salir se vaya haciendo un poco mas chico
+
+---
+
+asi me gusta el layout, que opinas? es una version minimalista de la de sap:
+
+https://www.sap.com/design-system/fiori-design-web/v1-148/page-types/page-layouts/dynamic-page-web-component
+
+---
+
+me gustaria que cuando hayamos scrolleado y no este expandido, al dar click en expander que suceda animado, con transicion
+
+---
+
+solo en el breakpoint de mobile, al intentar hacer scroll hacia abajo el contenido principal, no te deja, si haces scroll con el scrollbar lo hace con difigultad pero lo logra... en los demas brekpoints si hace scroll bien 
+
+porque? corrigelo en movil
+
+---
+
+no funciona ahora se batalla mas
+
+---
+
+al hacer scroll lo siento muy lento como se va cerrando como puedes hacer las rapida el scroll driven animation.
+
+---
+
+pero ahora si le doy cloick en expandir despues de haber hecho scroll a mitad de la pagia. vuelve a regresar al inicio y ese comporamiento ya estaba bien
+
+---
+
+al expandir lo debe hacer con animacion como lo teniamos

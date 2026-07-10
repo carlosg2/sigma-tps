@@ -1,0 +1,104 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "a09b8fb7594e",
+  "session_id": "7bd670af-fa9b-416e-8c7e-7e221f31e444",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-10T21:56:55.546275Z",
+  "branch": "main",
+  "checkpoints_count": 7,
+  "save_step_count": 7,
+  "files_touched": [
+    "src/routes/demos/dyamic-layouts-sidebars/(config)/dynamic-page/+page.svelte"
+  ],
+  "agent": "Copilot CLI",
+  "model": "",
+  "turn_id": "e82e0b6aebe7",
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "session_metrics": {
+    "turn_count": 7
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-10T21:56:55.539059Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 333,
+    "human_removed": 39,
+    "total_committed": 33,
+    "total_lines_changed": 372,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 2,
+      "user_lines_removed": 2,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "src/routes/demos/dyamic-layouts-sidebars/(config)/dynamic-page/+page.svelte": 2
+      },
+      "user_removed_per_file": {
+        "src/routes/demos/dyamic-layouts-sidebars/(config)/dynamic-page/+page.svelte": 2
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 2,
+      "user_lines_removed": 0,
+      "agent_lines_added": 5,
+      "agent_lines_removed": 5,
+      "user_added_per_file": {
+        "src/routes/demos/dyamic-layouts-sidebars/(config)/dynamic-page/+page.svelte": 2
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 7,
+      "agent_lines_removed": 5
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 96,
+      "agent_lines_removed": 26
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 105,
+      "agent_lines_removed": 29
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 59,
+      "user_lines_removed": 278,
+      "agent_lines_added": 113,
+      "agent_lines_removed": 30,
+      "user_added_per_file": {
+        "src/routes/demos/dyamic-layouts-sidebars/(config)/dynamic-page/+page.svelte": 59
+      },
+      "user_removed_per_file": {
+        "src/routes/demos/dyamic-layouts-sidebars/(config)/dynamic-page/+page.svelte": 278
+      }
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 96,
+      "agent_lines_removed": 199
+    }
+  ]
+}
